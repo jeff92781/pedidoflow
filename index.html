@@ -406,8 +406,8 @@ function go(name){
 
 async function fetchAll(){
   try{
-    var results=await Promise.all([api({action:'getPedidos'}),api({action:'getTransitos'}),api({action:'getMovimentacoes'})]);
-    PEDIDOS=results[0].pedidos||[];TRANSITOS=results[1].transitos||[];MOVS=results[2].movimentacoes||[];
+    var results=await Promise.all([api({action:'getPedidos'}),api({action:'getConfirmacoes'}),api({action:'getMovimentacoes'})]);
+    PEDIDOS=results[0].pedidos||[];TRANSITOS=results[1].confirmacoes||[];MOVS=results[2].movimentacoes||[];
   }catch(e){toast(e.message,'err');}
 }
 async function fetchUsers(){try{var d=await api({action:'getUsuarios'});return d.usuarios||[];}catch(e){toast(e.message,'err');return[];}}
@@ -522,7 +522,7 @@ async function confirmarNota(){
   catch(e){toast(e.message,'err');}finally{ov(false);}
 }
 async function confirmarRec(pedidoId){
-  try{ov(true);var p=getPedido(pedidoId);await api({action:'confirmarRecebimento',pedido_id:pedidoId,usuario:ME.login});await fetchAll();renderPainel();toast('✓ Recebimento confirmado! Pedido #'+(p?p.numero:'?')+' em '+SL[ME.setor||'setor'],'confirm');}
+  try{ov(true);var p=getPedido(pedidoId);await api({action:'confirmarRecebimento',id:pedidoId,usuario:ME.login});await fetchAll();renderPainel();toast('✓ Recebimento confirmado! Pedido #'+(p?p.numero:'?')+' em '+SL[ME.setor||'setor'],'confirm');}
   catch(e){toast(e.message,'err');}finally{ov(false);}
 }
 async function finalizar(id){
