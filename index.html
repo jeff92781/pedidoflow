@@ -519,7 +519,14 @@ function renderTransCard(o){
   var elapsed=now()-tsMs(o.pendente_desde),alerta=elapsed>ALERT_MS;
   var destino=o.setor_pendente||'';
   var origem=o.setor||'';
-  var canConfirm=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor===destino||ME.setor==='atendimento'||(ME.setor==='separacao'&&destino==='retirada'));
+  var _ms=ME?ME.setor:'';
+  var canConfirm=ME&&(
+    ME.role==='admin'||
+    _ms==='todos'||
+    _ms===destino||
+    (_ms==='atendimento'&&(destino==='corte'||destino==='faturamento'||destino==='retirada'))||
+    (_ms==='separacao'&&destino==='retirada')
+  );
   var prioClass=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
   return '<div class="card transito'+(alerta?' transito-alert':'')+' '+prioClass+'">'+
     '<div class="transit-lbl'+(alerta?' alerta':'')+'">'+((alerta?'⚠ Aguardando há ':'⌛ Aguard. confirmação há ')+fmtT(elapsed))+'</div>'+
@@ -540,12 +547,19 @@ function renderCard(o,setor){
   var _pr=o.prioridade||'normal';var pC=_pr==='idoso'?'prio-idoso':_pr==='gestante'?'prio-gestante':'';
   var hora=tsMs(o.entrada_at)?new Date(tsMs(o.entrada_at)).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'--';
   var idx=SETORES.indexOf(setor);
-  var canAct=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor===setor||ME.setor==='atendimento');
+  // Permissões de ação por setor
+  var _s=ME?ME.setor:'';
+  var canAct=ME&&(
+    ME.role==='admin'||
+    _s==='todos'||
+    _s===setor||
+    (_s==='atendimento'&&(setor==='atendimento'||setor==='faturamento'))
+  );
   // Separação também pode confirmar retirada no balcão
-  var canRetirada=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor==='separacao'||ME.setor==='retirada'||ME.setor==='atendimento');
+  var canRetirada=ME&&(ME.role==='admin'||_s==='todos'||_s==='separacao'||_s==='atendimento');
   var actions='';
   if(canAct||setor==='retirada'){
-    var canFaturar=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor==='faturamento'||ME.setor==='atendimento');
+    var canFaturar=ME&&(ME.role==='admin'||_s==='todos'||_s==='faturamento'||_s==='atendimento');
     if(setor==='faturamento'&&canFaturar)actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
     else if(setor==='retirada'&&canRetirada)actions='<button class="bfin" onclick="finalizar(\''+o.id+'\')">Retirado ✓</button>';
     else if(idx>=0&&idx<SETORES.length-1&&canAct)actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
