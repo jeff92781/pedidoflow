@@ -155,6 +155,8 @@ main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
 .tag-do{background:var(--done-dim);color:rgba(240,239,232,.6)}
 @media(max-width:1100px){.kanban{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:700px){.kanban{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+#screen-tv-pub{background:#07070a;min-height:100vh;padding:24px;font-family:var(--font-mono)}
 </style>
 </head>
 <body>
@@ -330,7 +332,14 @@ main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
 </div>
 
 <script>
-(function(){var el=document.getElementById('ov');if(el)el.classList.add('h');})();
+(function(){
+  var el=document.getElementById('ov');if(el)el.classList.add('h');
+  // Modo TV público: ?tv=1 na URL — sem login
+  if(window.location.search.indexOf('tv=1')>=0){
+    document.getElementById('screen-tv-pub').style.display='block';
+    startTVPublica();
+  }
+})();
 function prioBadge(prio){
   var p=prio||'normal';
   if(!p||p==='normal')return '';return '<span class="pb-badge pb-'+p+'">'+p.charAt(0).toUpperCase()+p.slice(1)+'</span>';
@@ -425,16 +434,26 @@ function go(name){
   if(name==='usuarios')fetchUsers().then(function(u){_usuarios=u;renderUsers();});
 }
 
+var _lastHash='';
 async function fetchAll(comMovs){
   try{
+    var r1=await api({action:'getPedidos'});
+    var novos=r1.pedidos||[];
+    // Detecta mudança real por hash simples
+    var hash=novos.map(function(p){return p.id+p.status+p.setor+p.setor_pendente;}).join('|');
+    var mudou=(hash!==_lastHash);
+    _lastHash=hash;
+    PEDIDOS=novos;
     if(comMovs){
-      var results=await Promise.all([api({action:'getPedidos'}),api({action:'getConfirmacoes'}),api({action:'getMovimentacoes'})]);
-      PEDIDOS=results[0].pedidos||[];TRANSITOS=results[1].confirmacoes||[];MOVS=results[2].movimentacoes||[];
-    } else {
-      var results=await Promise.all([api({action:'getPedidos'}),api({action:'getConfirmacoes'})]);
-      PEDIDOS=results[0].pedidos||[];TRANSITOS=results[1].confirmacoes||[];
+      var results=await Promise.all([api({action:'getConfirmacoes'}),api({action:'getMovimentacoes'})]);
+      TRANSITOS=results[0].confirmacoes||[];MOVS=results[1].movimentacoes||[];
+    } else if(mudou){
+      // Só busca confirmacoes se houve mudança
+      var r2=await api({action:'getConfirmacoes'});
+      TRANSITOS=r2.confirmacoes||[];
     }
-  }catch(e){/* silencioso no polling */}
+    return mudou;
+  }catch(e){ return false; }
 }
 async function fetchUsers(){try{var d=await api({action:'getUsuarios'});return d.usuarios||[];}catch(e){toast(e.message,'err');return[];}}
 
@@ -451,10 +470,12 @@ function startTimers(){
   },1000);
   _pi=setInterval(async function(){
     var a=document.querySelector('.screen.active');
-    if(!a||a.id==='screen-login')return;
+    if(!a||a.id==='screen-login'||a.id==='screen-tv-pub')return;
     var prevIds=_prevTransitoIds.slice();
-    await fetchAll();
-    _prevTransitoIds=TRANSITOS.map(function(t){return t.pedido_id;});
+    var mudou=await fetchAll();
+    _prevTransitoIds=PEDIDOS.filter(function(o){return o.status==='aguardando';}).map(function(o){return o.id;});
+    if(mudou&&a.id==='screen-painel')renderPainel();
+    if(mudou&&a.id==='screen-tv')renderTV();
     // Notifica pedidos aguardando confirmação no meu setor
     PEDIDOS.forEach(function(o){
       if(o.status!=='aguardando')return;
@@ -478,7 +499,7 @@ function startTimers(){
         if(p&&!t._alertado){t._alertado=true;toast('⚠ Pedido #'+p.numero+' aguardando confirmação em '+SL[t.setor_destino]+' há '+fmtT(elapsed),'err');}
       }
     });
-  },2000);
+  },4000);
 }
 function stopTimers(){clearInterval(_ti);clearInterval(_pi);}
 function getPedido(id){return PEDIDOS.find(function(p){return p.id===id;});}
@@ -532,7 +553,8 @@ function renderCard(o,setor){
   var canRetirada=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor==='separacao'||ME.setor==='retirada');
   var actions='';
   if(canAct||setor==='retirada'){
-    if(setor==='faturamento'&&canAct)actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
+    var canFaturar=canAct||(ME&&ME.setor==='atendimento');
+    if(setor==='faturamento'&&canFaturar)actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
     else if(setor==='retirada'&&canRetirada)actions='<button class="bfin" onclick="finalizar(\''+o.id+'\')">Retirado ✓</button>';
     else if(idx>=0&&idx<SETORES.length-1&&canAct)actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
   }
