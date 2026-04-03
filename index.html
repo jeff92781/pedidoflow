@@ -331,6 +331,10 @@ main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
 
 <script>
 (function(){var el=document.getElementById('ov');if(el)el.classList.add('h');})();
+function prioBadge(prio){
+  var p=prio||'normal';
+  if(!p||p==='normal')return '';return '<span class="pb-badge pb-'+p+'">'+p.charAt(0).toUpperCase()+p.slice(1)+'</span>';
+}
 var API='',ME=null,PEDIDOS=[],TRANSITOS=[],MOVS=[],_usuarios=[],_ti=null,_pi=null,_notaTarget=null;
 var SETORES=['atendimento','corte','separacao','faturamento'];
 var SL={atendimento:'Atendimento',corte:'Corte',separacao:'Separação',faturamento:'Faturamento',retirada:'Pronto p/ Retirada',finalizado:'Finalizado'};
@@ -456,7 +460,7 @@ function renderPainel(){
   if(ME&&ME.setor&&ME.setor!=='todos'){$('setor-badge').textContent='Seu setor: '+SL[ME.setor];$('setor-badge').style.display='';}
   var allCols=SETORES.concat(['retirada']);
   $('kanban').innerHTML=allCols.map(function(setor){
-    var items=PEDIDOS.filter(function(o){return o.setor===setor&&o.status!=='finalizado'&&o.status!=='em_transito';});
+    var items=PEDIDOS.filter(function(o){return o.setor===setor&&o.status!=='finalizado'&&o.status!=='aguardando';});
     var chegando=TRANSITOS.filter(function(t){return t.setor_destino===setor;});
     return '<div class="kcol">'+
       '<div class="ch"><div class="cdot" style="background:'+SD[setor]+'"></div><span class="cn">'+SL[setor]+'</span><span class="cc">'+items.length+(chegando.length?' +'+chegando.length+'⌛':'')+'</span></div>'+
@@ -474,7 +478,7 @@ function renderTransCard(t){
   return '<div class="card transito'+(alerta?' transito-alert':'')+' '+prioClass+'">'+
     '<div class="transit-lbl'+(alerta?' alerta':'')+'">'+((alerta?'⚠ Aguardando há ':'⌛ Em trânsito há ')+fmtT(elapsed))+'</div>'+
     '<div class="card-top"><span class="card-num">#'+num+'</span>'+
-    ((prio&&prio!=='normal')?'<span class="pb-badge pb-'+prio+'">'+prio.charAt(0).toUpperCase()+prio.slice(1)+'</span>':'')+
+    prioBadge(prio)+
     '</div>'+
     (cli?'<div class="card-cli">'+cli+'</div>':'')+
     '<div class="card-meta">De: '+SL[t.setor_origem]+'</div>'+
@@ -487,7 +491,7 @@ function renderTransCard(t){
 function renderCard(o,setor){
   var totalMs=now()-tsMs(o.entrada_at),setorMs=now()-tsMs(o.setor_entrada_at);
   var tC=totalMs>45*60000?'danger':totalMs>25*60000?'warn':'';
-  var pC=(o.prioridade||'')==='idoso'?'prio-idoso':(o.prioridade||'')==='gestante'?'prio-gestante':'';
+  var _pr=o.prioridade||'normal';var pC=_pr==='idoso'?'prio-idoso':_pr==='gestante'?'prio-gestante':'';
   var hora=tsMs(o.entrada_at)?new Date(tsMs(o.entrada_at)).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'--';
   var idx=SETORES.indexOf(setor);
   var canAct=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor===setor);
@@ -499,7 +503,7 @@ function renderCard(o,setor){
   }
   return '<div class="card '+pC+'">'+
     '<div class="card-top"><span class="card-num">#'+o.numero+'</span>'+
-    ((o.prioridade&&o.prioridade!=='normal')?'<span class="pb-badge pb-'+o.prioridade+'">'+o.prioridade.charAt(0).toUpperCase()+o.prioridade.slice(1)+'</span>':'')+
+    prioBadge(o.prioridade)+
     '</div>'+
     (o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'')+
     '<div class="card-meta">Entrada: '+hora+' · Por: '+o.criado_por+'</div>'+
@@ -602,7 +606,7 @@ function renderRelatorios(){
   }
 
   var ranked=all.slice().sort(function(a,b){return((tsMs(b.finalizado_at)||now())-tsMs(b.entrada_at))-((tsMs(a.finalizado_at)||now())-tsMs(a.entrada_at));}).slice(0,10);
-  var sc={finalizado:'var(--atend)',faturado:'var(--fat)',em_andamento:'var(--muted)',em_transito:'var(--corte)'};
+  var sc={finalizado:'var(--atend)',faturado:'var(--fat)',em_andamento:'var(--muted)',aguardando:'var(--corte)'};
   $('rank-body').innerHTML=ranked.map(function(o,i){
     var t=(tsMs(o.finalizado_at)||now())-tsMs(o.entrada_at);
     return '<tr><td style="color:var(--muted)">'+(i+1)+'</td><td><strong style="font-family:var(--font-head);font-size:15px">#'+o.numero+'</strong></td><td style="color:var(--muted)">'+(o.nome_cliente||'—')+'</td><td><span class="tv-setor '+SC[o.setor]+'">'+SL[o.setor]+'</span></td><td>'+fmtT(t)+'</td><td><span style="color:'+(sc[o.status]||'var(--muted)')+';font-size:12px">'+o.status+'</span></td></tr>';
