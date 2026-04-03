@@ -360,14 +360,25 @@ function toast(msg,type){
 }
 function ov(show){$('ov').classList.toggle('h',!show);}
 
-async function api(params){
+async function api(params,_retry){
   if(!API)throw new Error('API não configurada');
   var qs=Object.entries(params).map(function(kv){return encodeURIComponent(kv[0])+'='+encodeURIComponent(kv[1]||'');}).join('&');
-  var r=await fetch(API+'?'+qs);
-  if(!r.ok)throw new Error('HTTP '+r.status);
-  var d=await r.json();
-  if(d.erro)throw new Error(d.erro);
-  return d;
+  try{
+    var ctrl=new AbortController();
+    var tid=setTimeout(function(){ctrl.abort();},12000);
+    var r=await fetch(API+'?'+qs,{signal:ctrl.signal});
+    clearTimeout(tid);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    if(d.erro)throw new Error(d.erro);
+    return d;
+  }catch(e){
+    if(!_retry&&e.name!=='AbortError'){
+      await new Promise(function(res){setTimeout(res,1500);});
+      return api(params,true);
+    }
+    throw e;
+  }
 }
 
 function checkConfig(){$('cfg-banner').style.display=API?'none':'flex';}
@@ -404,15 +415,20 @@ function go(name){
   document.querySelectorAll('.tab').forEach(function(t){if((t.getAttribute('onclick')||'').includes("'"+name+"'"))t.classList.add('active');});
   if(name==='painel')fetchAll().then(renderPainel);
   if(name==='tv')fetchAll().then(renderTV);
-  if(name==='relatorios')fetchAll().then(renderRelatorios);
+  if(name==='relatorios')fetchAll(true).then(renderRelatorios);
   if(name==='usuarios')fetchUsers().then(function(u){_usuarios=u;renderUsers();});
 }
 
-async function fetchAll(){
+async function fetchAll(comMovs){
   try{
-    var results=await Promise.all([api({action:'getPedidos'}),api({action:'getConfirmacoes'}),api({action:'getMovimentacoes'})]);
-    PEDIDOS=results[0].pedidos||[];TRANSITOS=results[1].confirmacoes||[];MOVS=results[2].movimentacoes||[];
-  }catch(e){toast(e.message,'err');}
+    if(comMovs){
+      var results=await Promise.all([api({action:'getPedidos'}),api({action:'getConfirmacoes'}),api({action:'getMovimentacoes'})]);
+      PEDIDOS=results[0].pedidos||[];TRANSITOS=results[1].confirmacoes||[];MOVS=results[2].movimentacoes||[];
+    } else {
+      var results=await Promise.all([api({action:'getPedidos'}),api({action:'getConfirmacoes'})]);
+      PEDIDOS=results[0].pedidos||[];TRANSITOS=results[1].confirmacoes||[];
+    }
+  }catch(e){/* silencioso no polling */}
 }
 async function fetchUsers(){try{var d=await api({action:'getUsuarios'});return d.usuarios||[];}catch(e){toast(e.message,'err');return[];}}
 
@@ -433,15 +449,21 @@ function startTimers(){
     var prevIds=_prevTransitoIds.slice();
     await fetchAll();
     _prevTransitoIds=TRANSITOS.map(function(t){return t.pedido_id;});
-    // Notifica novo trânsito chegando para meu setor
-    if(ME&&ME.setor&&ME.setor!=='todos'){
-      TRANSITOS.forEach(function(t){
-        if(t.setor_destino===ME.setor&&prevIds.indexOf(t.pedido_id)<0){
-          var p=getPedido(t.pedido_id);
-          toast('📦 Pedido #'+(p?p.numero:'?')+' chegando para '+SL[ME.setor]+'!','warn');
-        }
-      });
-    }
+    // Notifica pedidos aguardando confirmação no meu setor
+    PEDIDOS.forEach(function(o){
+      if(o.status!=='aguardando')return;
+      var destino=o.setor_pendente;
+      if(!destino)return;
+      var key='notif_'+o.id+'_'+destino;
+      if(sessionStorage.getItem(key))return;
+      // notifica todos (admin vê tudo, operador vê seu setor)
+      var ehMeuSetor=!ME||ME.role==='admin'||ME.setor==='todos'||ME.setor===destino;
+      if(ehMeuSetor){
+        sessionStorage.setItem(key,'1');
+        var p=getPedido(o.id);
+        toast('📦 Pedido #'+o.numero+' aguardando confirmação em '+SL[destino]+'!','warn');
+      }
+    });
     // Alerta global: trânsito parado há mais de ALERT_MS
     TRANSITOS.forEach(function(t){
       var elapsed=now()-tsMs(t.enviado_at);
@@ -476,7 +498,7 @@ function renderTransCard(t){
   var canConfirm=ME&&(ME.role==='admin'||ME.setor===t.setor_destino);
   var prioClass=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
   return '<div class="card transito'+(alerta?' transito-alert':'')+' '+prioClass+'">'+
-    '<div class="transit-lbl'+(alerta?' alerta':'')+'">'+((alerta?'⚠ Aguardando há ':'⌛ Em trânsito há ')+fmtT(elapsed))+'</div>'+
+    '<div class="transit-lbl'+(alerta?' alerta':'')+'">'+((alerta?'⚠ Aguardando há ':'⌛ Aguard. confirmação há ')+fmtT(elapsed))+'</div>'+
     '<div class="card-top"><span class="card-num">#'+num+'</span>'+
     prioBadge(prio)+
     '</div>'+
@@ -495,11 +517,13 @@ function renderCard(o,setor){
   var hora=tsMs(o.entrada_at)?new Date(tsMs(o.entrada_at)).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'--';
   var idx=SETORES.indexOf(setor);
   var canAct=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor===setor);
+  // Separação também pode confirmar retirada no balcão
+  var canRetirada=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor==='separacao'||ME.setor==='retirada');
   var actions='';
-  if(canAct){
-    if(setor==='faturamento')actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
-    else if(setor==='retirada')actions='<button class="bfin" onclick="finalizar(\''+o.id+'\')">Retirado ✓</button>';
-    else if(idx>=0&&idx<SETORES.length-1)actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
+  if(canAct||setor==='retirada'){
+    if(setor==='faturamento'&&canAct)actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
+    else if(setor==='retirada'&&canRetirada)actions='<button class="bfin" onclick="finalizar(\''+o.id+'\')">Retirado ✓</button>';
+    else if(idx>=0&&idx<SETORES.length-1&&canAct)actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
   }
   return '<div class="card '+pC+'">'+
     '<div class="card-top"><span class="card-num">#'+o.numero+'</span>'+
@@ -554,10 +578,10 @@ function renderTV(){
     return '<tr class="'+rC+'">'+
       '<td><span class="tv-num">#'+o.numero+'</span></td>'+
       '<td style="font-size:13px">'+(o.nome_cliente||'—')+'</td>'+
-      '<td><span class="tv-setor '+SC[o.setor]+'">'+(t?SL[o.setor]+' ⌛':SL[o.setor])+'</span></td>'+
+      '<td>'+(o.status==="aguardando"?'<span class="tv-setor '+SC[o.setor]+'">'+SL[o.setor]+'</span> <span style="font-size:11px;color:var(--corte)">→ '+SL[o.setor_pendente]+'</span>':'<span class="tv-setor '+SC[o.setor]+'">'+SL[o.setor]+'</span>')+'</td>'+
       '<td><span class="tv-time">'+fmtTs(setorMs)+'</span></td>'+
       '<td><span class="tv-time" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td>'+
-      '<td><span style="font-size:12px;color:var(--muted)">'+(o.status==='faturado'?'✓ Faturado':t?'Em trânsito':'Em andamento')+'</span></td>'+
+      '<td><span style="font-size:12px;color:var(--muted)">'+(o.status==='faturado'?'✓ Faturado':t?'Aguard. confirmação':'Em andamento')+'</span></td>'+
     '</tr>';
   }).join('');
   var done=PEDIDOS.filter(function(o){return o.status==='finalizado';});
@@ -577,7 +601,7 @@ function renderRelatorios(){
     {l:'Total de pedidos',v:all.length,s:'hoje'},
     {l:'Finalizados',v:done.length,s:'hoje'},
     {l:'Em andamento',v:active.filter(function(o){return o.status==='em_andamento';}).length,s:'agora'},
-    {l:'Em trânsito',v:TRANSITOS.length,s:'aguardando confirmação'},
+    {l:'Aguard. confirmação',v:TRANSITOS.length,s:'aguardando confirmação'},
     {l:'Tempo médio',v:avg?fmtT(avg):'--',s:'por pedido'},
     {l:'Mais rápido',v:minT?fmtT(minT):'--',s:''},
     {l:'Mais lento',v:maxT?fmtT(maxT):'--',s:''},
@@ -585,7 +609,7 @@ function renderRelatorios(){
 
   // Barras tempo no setor
   var sAvg={},sCnt={};
-  MOVS.forEach(function(m){var ms=parseInt(m.tempo_setor_ms)||0;if(ms<=0||SETORES.indexOf(m.setor_origem)<0)return;sAvg[m.setor_origem]=(sAvg[m.setor_origem]||0)+ms;sCnt[m.setor_origem]=(sCnt[m.setor_origem]||0)+1;});
+  MOVS.forEach(function(m){var ms=parseInt(m.tempo_ms)||0;if(ms<=0||SETORES.indexOf(m.setor_origem)<0)return;sAvg[m.setor_origem]=(sAvg[m.setor_origem]||0)+ms;sCnt[m.setor_origem]=(sCnt[m.setor_origem]||0)+1;});
   var maxS=Math.max.apply(null,SETORES.map(function(s){return sCnt[s]?(sAvg[s]/sCnt[s]):0;}))||1;
   $('bars-setor').innerHTML=SETORES.map(function(s){
     var a=sCnt[s]?Math.round(sAvg[s]/sCnt[s]):0,pct=Math.round((a/maxS)*100);
