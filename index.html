@@ -156,7 +156,6 @@ main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
 @media(max-width:1100px){.kanban{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:700px){.kanban{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-#screen-tv-pub{background:#07070a;min-height:100vh;padding:24px;font-family:var(--font-mono)}
 </style>
 </head>
 <body>
@@ -203,7 +202,7 @@ main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
       <span class="pt">Painel Operacional</span>
       <span id="panel-date" style="color:var(--muted);font-size:12px"></span>
       <span id="setor-badge" class="sl-badge" style="display:none"></span>
-      <button class="btnn" onclick="openNewOrder()">+ Novo Pedido</button>
+      <button class="btnn" id="btn-novo-pedido" onclick="openNewOrder()" style="display:none">+ Novo Pedido</button>
     </div>
     <div class="kanban" id="kanban"></div>
   </main>
@@ -332,14 +331,7 @@ main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
 </div>
 
 <script>
-(function(){
-  var el=document.getElementById('ov');if(el)el.classList.add('h');
-  // Modo TV público: ?tv=1 na URL — sem login
-  if(window.location.search.indexOf('tv=1')>=0){
-    document.getElementById('screen-tv-pub').style.display='block';
-    startTVPublica();
-  }
-})();
+(function(){var el=document.getElementById('ov');if(el)el.classList.add('h');})();
 function prioBadge(prio){
   var p=prio||'normal';
   if(!p||p==='normal')return '';return '<span class="pb-badge pb-'+p+'">'+p.charAt(0).toUpperCase()+p.slice(1)+'</span>';
@@ -411,7 +403,7 @@ async function doLogin(){
     var btnNovo=document.getElementById('btn-novo-pedido');
     if(btnNovo){
       var podeNovo=ME.role==='admin'||ME.setor==='todos'||ME.setor==='atendimento';
-      btnNovo.style.display=podeNovo?'':'none';
+      btnNovo.style.display=podeNovo?'flex':'none';
     }
   }catch(e){$('lerr').textContent=e.message;}finally{ov(false);}
 }
@@ -470,7 +462,7 @@ function startTimers(){
   },1000);
   _pi=setInterval(async function(){
     var a=document.querySelector('.screen.active');
-    if(!a||a.id==='screen-login'||a.id==='screen-tv-pub')return;
+    if(!a||a.id==='screen-login')return;
     var prevIds=_prevTransitoIds.slice();
     var mudou=await fetchAll();
     _prevTransitoIds=PEDIDOS.filter(function(o){return o.status==='aguardando';}).map(function(o){return o.id;});
