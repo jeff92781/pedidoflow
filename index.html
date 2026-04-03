@@ -402,7 +402,7 @@ async function doLogin(){
     // Esconde botão novo pedido para setores que não são atendimento
     var btnNovo=document.getElementById('btn-novo-pedido');
     if(btnNovo){
-      var podeNovo=ME.role==='admin'||ME.setor==='todos'||ME.setor==='atendimento';
+      var podeNovo=ME.role==='admin'||ME.setor==='atendimento';
       btnNovo.style.display=podeNovo?'flex':'none';
     }
   }catch(e){$('lerr').textContent=e.message;}finally{ov(false);}
@@ -462,7 +462,7 @@ function startTimers(){
   },1000);
   _pi=setInterval(async function(){
     var a=document.querySelector('.screen.active');
-    if(!a||a.id==='screen-login')return;
+    if(!a||a.id==='screen-login'||a.id==='screen-tv-pub')return;
     var prevIds=_prevTransitoIds.slice();
     var mudou=await fetchAll();
     _prevTransitoIds=PEDIDOS.filter(function(o){return o.status==='aguardando';}).map(function(o){return o.id;});
@@ -519,7 +519,7 @@ function renderTransCard(o){
   var elapsed=now()-tsMs(o.pendente_desde),alerta=elapsed>ALERT_MS;
   var destino=o.setor_pendente||'';
   var origem=o.setor||'';
-  var canConfirm=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor===destino);
+  var canConfirm=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor===destino||ME.setor==='atendimento'||(ME.setor==='separacao'&&destino==='retirada'));
   var prioClass=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
   return '<div class="card transito'+(alerta?' transito-alert':'')+' '+prioClass+'">'+
     '<div class="transit-lbl'+(alerta?' alerta':'')+'">'+((alerta?'⚠ Aguardando há ':'⌛ Aguard. confirmação há ')+fmtT(elapsed))+'</div>'+
@@ -540,12 +540,12 @@ function renderCard(o,setor){
   var _pr=o.prioridade||'normal';var pC=_pr==='idoso'?'prio-idoso':_pr==='gestante'?'prio-gestante':'';
   var hora=tsMs(o.entrada_at)?new Date(tsMs(o.entrada_at)).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'--';
   var idx=SETORES.indexOf(setor);
-  var canAct=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor===setor);
+  var canAct=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor===setor||ME.setor==='atendimento');
   // Separação também pode confirmar retirada no balcão
-  var canRetirada=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor==='separacao'||ME.setor==='retirada');
+  var canRetirada=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor==='separacao'||ME.setor==='retirada'||ME.setor==='atendimento');
   var actions='';
   if(canAct||setor==='retirada'){
-    var canFaturar=canAct||(ME&&ME.setor==='atendimento');
+    var canFaturar=ME&&(ME.role==='admin'||ME.setor==='todos'||ME.setor==='faturamento'||ME.setor==='atendimento');
     if(setor==='faturamento'&&canFaturar)actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
     else if(setor==='retirada'&&canRetirada)actions='<button class="bfin" onclick="finalizar(\''+o.id+'\')">Retirado ✓</button>';
     else if(idx>=0&&idx<SETORES.length-1&&canAct)actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
