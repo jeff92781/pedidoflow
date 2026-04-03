@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PedidoFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;500;600;700;800&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0f0f11;--bg2:#18181c;--bg3:#222228;
@@ -46,7 +48,7 @@ main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
 .toast.err{border-color:rgba(226,75,74,.5);color:var(--danger)}
 .toast.warn{border-color:rgba(239,159,39,.5);color:var(--warn)}
 #ov{position:fixed;inset:0;background:rgba(15,15,17,.85);display:flex;align-items:center;justify-content:center;z-index:500;font-family:var(--font-head);font-size:16px;color:var(--atend)}
-#ov.h{display:none}
+#ov.h{display:none!important}
 .lw{min-height:calc(100vh - 52px);display:flex;align-items:center;justify-content:center}
 .lc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px;width:380px}
 .ll{font-family:var(--font-head);font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
@@ -156,7 +158,7 @@ main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
 </style>
 </head>
 <body>
-<div id="ov">Carregando...</div>
+<div id="ov" class="h">Carregando...</div>
 <div id="toasts"></div>
 <div id="cfg-banner" style="display:none">
   <span>⚠ URL da API não configurada:</span>
@@ -328,6 +330,7 @@ main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
 </div>
 
 <script>
+(function(){var el=document.getElementById('ov');if(el)el.classList.add('h');})();
 var API='',ME=null,PEDIDOS=[],TRANSITOS=[],MOVS=[],_usuarios=[],_ti=null,_pi=null,_notaTarget=null;
 var SETORES=['atendimento','corte','separacao','faturamento'];
 var SL={atendimento:'Atendimento',corte:'Corte',separacao:'Separação',faturamento:'Faturamento',retirada:'Pronto p/ Retirada',finalizado:'Finalizado'};
