@@ -398,6 +398,12 @@ async function doLogin(){
     $('main-nav').style.display='flex';
     if(ME.role==='admin')document.querySelectorAll('.adm-only').forEach(function(e){e.style.display='';});
     allHide();go('painel');startTimers();
+    // Esconde botão novo pedido para setores que não são atendimento
+    var btnNovo=document.getElementById('btn-novo-pedido');
+    if(btnNovo){
+      var podeNovo=ME.role==='admin'||ME.setor==='todos'||ME.setor==='atendimento';
+      btnNovo.style.display=podeNovo?'':'none';
+    }
   }catch(e){$('lerr').textContent=e.message;}finally{ov(false);}
 }
 function logout(){
