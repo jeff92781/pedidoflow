@@ -358,6 +358,7 @@ const BC = {atendimento:'#5DCAA5',corte:'#85B7EB',separacao:'#FAC775',faturament
 const ALERT_MS = 5*60*1000;
 let ME=null, PEDIDOS=[], MOVS=[], _ti=null, _notaTarget=null, _ch=null;
 let _tvPub=[], _tvAudioReady=false, _tvLastSnapshot='';
+let _tvSpeakQueue=[], _tvSpeaking=false;
 const el = id => document.getElementById(id);
 const now = () => Date.now();
 const tsMs = ts => ts ? new Date(ts).getTime() : 0;
@@ -750,6 +751,8 @@ function unlockTVAudio() {
 
   var btn = document.getElementById('tv-audio-unlock');
   if (btn) btn.remove();
+
+  processarFilaTV();
 }
 
 function renderTVAudioUnlock() {
@@ -766,11 +769,50 @@ function renderTVAudioUnlock() {
   document.getElementById('tv-audio-btn').addEventListener('click', unlockTVAudio);
 }
 
+function criarUtterance(texto) {
+  var u = new SpeechSynthesisUtterance(texto);
+  u.lang   = 'pt-BR';
+  u.rate   = _vozRate;
+  u.pitch  = _vozPitch;
+  u.volume = 1;
+  var vozes = window.speechSynthesis.getVoices();
+  var voz = null;
+  if(_vozNome) voz = vozes.find(function(v){return v.name===_vozNome;});
+  if(!voz) voz = vozes.find(function(v){return v.lang==='pt-BR'||v.lang.startsWith('pt');});
+  if(voz) u.voice = voz;
+  return u;
+}
+
+function processarFilaTV() {
+  if (!_tvAudioReady || !window.speechSynthesis || _tvSpeaking || !_tvSpeakQueue.length) return;
+
+  _tvSpeaking = true;
+  var texto = _tvSpeakQueue.shift();
+  var u = criarUtterance(texto);
+
+  u.onend = function(){
+    _tvSpeaking = false;
+    setTimeout(processarFilaTV, 250);
+  };
+
+  u.onerror = function(){
+    _tvSpeaking = false;
+    setTimeout(processarFilaTV, 250);
+  };
+
+  window.speechSynthesis.speak(u);
+}
+
+function enfileirarChamadaTV(texto) {
+  _tvSpeakQueue.push(texto);
+  processarFilaTV();
+}
+
 function anunciarTVPublica(listaAtual) {
   if (!_tvAudioReady || !window.speechSynthesis) return;
 
   listaAtual.forEach(function(o) {
-    var prontoRetirada = (o.setor === 'retirada') || (o.status === 'aguardando' && o.setor_pendente === 'retirada');
+    var prontoRetirada = (o.setor === 'retirada' && o.status === 'faturado');
     if (!prontoRetirada) return;
 
     var chave = [o.id,o.status||'',o.setor||'',o.setor_pendente||''].join('|');
@@ -778,7 +820,7 @@ function anunciarTVPublica(listaAtual) {
     if (sessionStorage.getItem(memoria)) return;
     sessionStorage.setItem(memoria, '1');
 
-    narrar('Pedido ' + o.numero + ', por favor dirija-se ao balcão para retirar sua mercadoria.');
+    enfileirarChamadaTV('Pedido ' + o.numero + ', por favor dirija-se ao balcão para retirar sua mercadoria.');
   });
 }
 
