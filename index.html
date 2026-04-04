@@ -602,11 +602,33 @@ function renderCard(o,setor){
   var canAct=ME&&(ME.role==='admin'||_s==='todos'||_s===setor);
   var canFat=ME&&(ME.role==='admin'||_s==='todos'||_s==='faturamento'||_s==='atendimento');
   var canRet=ME&&(ME.role==='admin'||_s==='todos'||_s==='separacao');
+
   var actions='';
-  if(setor==='faturamento'&&canFat)actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
-  else if(setor==='retirada'&&canRet)actions='<button class="bfin" onclick="finalizarPedido(\''+o.id+'\')">Retirado ✓</button>';
-  else if(idx>=0&&idx<SETORES.length-1&&canAct)actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
-  return '<div class="card '+pC+'"><div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>'+(o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'')+'<div class="card-meta">Entrada: '+hora+' · Por: '+o.criado_por+'</div>'+(o.num_nota?'<div class="card-nota">NF: '+o.num_nota+'</div>':'')+'<div class="ct"><div class="ti"><span class="tl">Neste setor</span><span class="tv '+tC+'">'+fmtT(setorMs)+'</span></div><div class="ti"><span class="tl">Total</span><span class="tv '+tC+'">'+fmtT(totalMs)+'</span></div></div>'+(actions||btnRet?'<div class="ca">'+actions+btnRet+'</div>':'')+'</div>';
+  var btnRet='';
+
+  if(setor==='faturamento'&&canFat){
+    actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
+  } else if(setor==='retirada'&&canRet){
+    actions='<button class="bfin" onclick="finalizarPedido(\''+o.id+'\')">Retirado ✓</button>';
+  } else if(idx>=0&&idx<SETORES.length-1&&canAct){
+    actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
+  }
+
+  if(idx>0 && canAct){
+    btnRet='<button class="bret" onclick="retornarPedido(\''+o.id+'\')">← Retornar</button>';
+  }
+
+  return '<div class="card '+pC+'">' +
+    '<div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>' +
+    (o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'') +
+    '<div class="card-meta">Entrada: '+hora+' · Por: '+o.criado_por+'</div>' +
+    (o.num_nota?'<div class="card-nota">NF: '+o.num_nota+'</div>':'') +
+    '<div class="ct">' +
+      '<div class="ti"><span class="tl">Neste setor</span><span class="tv '+tC+'">'+fmtT(setorMs)+'</span></div>' +
+      '<div class="ti"><span class="tl">Total</span><span class="tv '+tC+'">'+fmtT(totalMs)+'</span></div>' +
+    '</div>' +
+    ((actions || btnRet)?'<div class="ca">'+actions+btnRet+'</div>':'') +
+  '</div>';
 }
 async function retornarPedido(id){
   if(!confirm('Retornar este pedido ao setor anterior?')) return;
