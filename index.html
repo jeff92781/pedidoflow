@@ -317,6 +317,25 @@ function ov(show){el('ov').classList.toggle('h',!show);}
 function openM(id){el(id).classList.add('open');}
 function closeM(id){el(id).classList.remove('open');}
 function prioBadge(p){if(!p||p==='normal')return '';return '<span class="pb '+p+'">'+p.charAt(0).toUpperCase()+p.slice(1)+'</span>';}
+function narrar(texto) {
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(texto);
+  u.lang = 'pt-BR';
+  u.rate = 0.95;
+  u.pitch = 1;
+  u.volume = 1;
+  // Tenta usar voz em português
+  var vozes = window.speechSynthesis.getVoices();
+  var voz = vozes.find(function(v){return v.lang==='pt-BR'||v.lang.startsWith('pt');});
+  if(voz) u.voice = voz;
+  window.speechSynthesis.speak(u);
+}
+// Carrega vozes quando disponíveis
+if(window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = function(){window.speechSynthesis.getVoices();};
+}
+
 async function doLogin(){
   var l=el('lu').value.trim(),p=el('lp').value;
   el('lerr').textContent='';
@@ -418,7 +437,7 @@ function renderPainel(){
 function renderTransCard(o){
   var elapsed=now()-tsMs(o.pendente_desde),alerta=elapsed>ALERT_MS;
   var dest=o.setor_pendente||'',_ms=ME?ME.setor:'';
-  var canC=ME&&(ME.role==='admin'||_ms==='todos'||_ms===dest||_ms==='atendimento'||(_ms==='separacao'&&dest==='retirada'));
+  var canC=ME&&(ME.role==='admin'||_ms==='todos'||_ms===dest||(_ms==='separacao'&&dest==='retirada'));
   var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
   var sC=alerta?'cd':elapsed>3*60000?'cw':'';
   return '<div class="card transito '+pC+' '+sC+'"><div class="tlbl"><span class="dp"></span>'+(alerta?'Aguardando há ':'Aguard. confirmação há ')+fmtT(elapsed)+'</div><div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>'+(o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'')+'<div class="card-meta">De: '+(SL[o.setor]||o.setor)+'</div><div class="ca">'+(canC?'<button class="bcon" onclick="confirmarRec(\''+o.id+'\')">✓ Confirmar Recebimento</button>':'<span style="font-size:11px;color:var(--muted)">Aguardando operador do setor</span>')+'</div></div>';
@@ -429,9 +448,9 @@ function renderCard(o,setor){
   var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
   var hora=tsMs(o.entrada_at)?new Date(tsMs(o.entrada_at)).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'--';
   var idx=SETORES.indexOf(setor),_s=ME?ME.setor:'';
-  var canAct=ME&&(ME.role==='admin'||_s==='todos'||_s===setor||(_s==='atendimento'&&(setor==='atendimento'||setor==='faturamento')));
+  var canAct=ME&&(ME.role==='admin'||_s==='todos'||_s===setor);
   var canFat=ME&&(ME.role==='admin'||_s==='todos'||_s==='faturamento'||_s==='atendimento');
-  var canRet=ME&&(ME.role==='admin'||_s==='todos'||_s==='separacao'||_s==='atendimento');
+  var canRet=ME&&(ME.role==='admin'||_s==='todos'||_s==='separacao');
   var actions='';
   if(setor==='faturamento'&&canFat)actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
   else if(setor==='retirada'&&canRet)actions='<button class="bfin" onclick="finalizarPedido(\''+o.id+'\')">Retirado ✓</button>';
@@ -461,6 +480,12 @@ async function confirmarRec(id){
     await sb.from('movimentacoes').insert({pedido_id:id,setor_origem:o.setor,setor_destino:dest,usuario:ME.login,entrada_at:o.setor_entrada_at,saida_at:agora,tempo_ms:tempoSetor,confirmado_por:ME.login,confirmado_at:agora,tempo_confirmacao_ms:tempoConf});
     await sb.from('confirmacoes').insert({pedido_id:id,setor_origem:o.setor,setor_destino:dest,enviado_at:o.pendente_desde,confirmado_at:agora,tempo_confirmacao_ms:tempoConf,confirmado_por:ME.login});
     toast('Recebimento confirmado em '+(SL[dest]||dest),'ok');
+    // Narração
+    if(dest==='retirada'){
+      narrar('Pedido '+o.numero+', por favor dirija-se ao balcão para retirar sua mercadoria.');
+    } else {
+      narrar('Pedido '+o.numero+' recebido pelo setor de '+(SL[dest]||dest)+'.');
+    }
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
@@ -487,6 +512,7 @@ async function finalizarPedido(id){
     if(res.error)throw res.error;
     await sb.from('movimentacoes').insert({pedido_id:id,setor_origem:o.setor,setor_destino:'finalizado',usuario:ME.login,entrada_at:o.setor_entrada_at,saida_at:agora,tempo_ms:tempoMs,confirmado_por:'',confirmado_at:null,tempo_confirmacao_ms:0});
     toast('Pedido finalizado — material retirado!','ok');
+    narrar('Pedido '+o.numero+' finalizado. Obrigado!');
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
