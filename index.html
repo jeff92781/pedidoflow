@@ -446,6 +446,13 @@ if(window.speechSynthesis) {
   setTimeout(carregarVozes, 300);
 }
 
+// ── CHECAGEM DE PERMISSÃO NAS AÇÕES ──
+function canDo(key){
+  if(!ME) return false;
+  if(ME.role==='admin') return true;
+  return temPerm(ME.id, key);
+}
+
 async function doLogin(){
   var l=el('lu').value.trim(),p=el('lp').value;
   el('lerr').textContent='';
@@ -621,12 +628,6 @@ function salvarPermissoes(){
   toast('Permissões atualizadas!','ok');
 }
 
-// ── CHECAGEM DE PERMISSÃO NAS AÇÕES ──
-function canDo(key){
-  if(!ME) return false;
-  if(ME.role==='admin') return true;
-  return temPerm(ME.id, key);
-}
 
 var _tvPub=[];
 function iniciarTVPublica(){
@@ -722,15 +723,11 @@ async function retornarPedido(id){
       status:'em_andamento',
       setor_entrada_at:agora,
       pendente_desde:null
-    }).eq('id', id);
+    }).eq('id',id);
     if(res.error)throw res.error;
-    toast('Pedido #'+ o.numero +' retornado para '+ setorAnterior +'.','warn');
-  }catch(e) {
-    console.error(e);
-    toast(e.message,'err');}
-  } finally{
-     ov(false);
-  }
+    toast('Pedido #'+o.numero+' retornado para '+SL[setorAnterior]+'.','warn');
+  }catch(e){toast(e.message,'err');}
+  finally{ov(false);}
 }
 
 async function enviar(id,destino){
