@@ -1,814 +1,1118 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Call Order</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAnUlEQVR4nO3WwQ2AIAyFYcbg4N2pnM2Ty7iMK3gzsUhfX6EkJBpOpvwfiR5IqXhyXtyrrPXpYqlvXRoR9ZcxOWCZ286jtrDRUrcYGgDTFoYGlPccYNlvmfkG4M5rX5+lT2JAr/cHRB2ehgPKehMAz67Pg7+otgQjpFaAStMAm+YAR5oAfGkr4E7T3+AHooD5bxUjgPCr44jLb9z1/QZ6ue7lOijDnAAAAABJRU5ErkJggg==">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAEUklEQVR4nO3dy62iRxCAUcKYhfcTlWPzysk4Gacwlq6EEdMvbsFf/TitL4DuqoPEAonb7fLz48cf+lDXb/ODJ32aupdtYfikT0rdso1UTvpc9FLZXh5O+iz07dDRG0JHb4geRUNHb4geRaNH0ehRNHoUjR5Fo0fR6FE0gBSKHkWjR9EAUih6FA0ghaJH0QD6vz//+Tte+isu7nQ9b0FzOKbjAH0UzYGYTtGT4uYQSZsDSkezPaM9AaUrOUfSboDSWZzGaB896RSOZbQDoHQBJxtaG1D64jFaFVD6sjFaGFD6jhlaGFD6dhlaFVD6UjFaGFD6LhmqAkq/BD1rG0q/AT1LG5oaUPrm5il9F+sBSt/ZbKVvZCVA6duas/S9rAEofU8zl76d2QGlb2j+0nc0L6D03axS+qZmBJS+ldqq0u8ws6FZAC26jEWvDdB0C1j9/msD2mnuO71lDUBbjnvLR80IaO8p7/26UwDlPnD7N2YC2nuyh7x0W0DpaA55bxqgLad54KtzAO03x2PfvhugdB+nPT8B0E7jM4R9AKWbOHMOVwPaY2qmcW8HQOkOTh7I8oDSBRw+k0sBLT0pkykG0BStO5nrAK07I/NptCqg9H0b0VcADfXvXz/vGdFjFwFacTSPXQNoxUEBNBRAtdYDdM2Fn7oM0HKzAmgogGpdAWitiRS7EtBaEwOo36MegJ4CqB9AjVYCdMFVi12sZ62hfRzQQh+mWksD+vTcAOoHUKNlAF22uaeu/wK01ugA6gRQO4A6AdQOoE4AtQOoE0DtAGqVqGeV0QHUCqBuALUCqBtArQDqNu9voi/eVrFcQEtMD6BWAHUDqNqTHoCKAVQNoJEAqjaPnpmnB1A1gEYCqBpAIwFUbqovQDNPD6ByAA0GUDmABgOoHECD5f9f2JzNBmjaAOpEUjuAOgHUDqBOALUDqBM97QDqBFA7gDoB1A6gVvR0A6gVQN0AagVQN4Ba0dMNoFYAdQOoFUDdAKpGz0gAVQNoJICqATQSQNXoGQmgagCNBFA1gEYCqBw9gwFUDqDBACoH0GAAlaNnMIDKATQYQOUAGgygQvSMB1AhgMYDqBBA4wFUiJ7xACoE0HgAFQJoPICeo+elAHoOoJcC6DmAXgoghQJIoQBSKIAUCiCFAkihAFIogBQKIIUCSKEAUiiAFAoghQJIoQBSKIAUCiCFAkihAFIogBQKIIUCSKFu/530S2jRbl8n/R5aNIAUCiCFAkihAFIogBQKIIW63U/6VbRct8eTfhstF0AKBZBC3Z5O+oW0UM96ANJLFQAxpMHKegDSYFVADKlbSw9A6tYBxJAa9fUApEZDgBhSsVE9DOn3XtMDkJ56GRBDuvcdPQzpq+/rYUhRPQyd3Hv0MHRm79TD0Gm9Xw9D5/QpPRht38fpMLRx1+nBaLMS6GC0R8l0Hk/6LPRS2V4qJ30u6pZtZPikT0r3si289aRPc+Ou3+YvsFviKHQ70LYAAAAASUVORK5CYII=">
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ2FsbCBPcmRlciIsInNob3J0X25hbWUiOiJDYWxsIE9yZGVyIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBTUFBQUFEQUNBSUFBQURkdnZ0UUFBQUVVa2xFUVZSNG5PM2R5NjJpUnhDQVVjS1loZmNUbFdQenlzazRHYWN3bHE2RUVkTXZic0ZmL1RpdEw0RHVxb1BFQW9uYjdmTHo0OGNmK2xEWGIvT0RKMzJhdXBkdFlmaWtUMHJkc28xVVR2cGM5RkxaWGg1TytpejA3ZERSRzBKSGI0Z2VSVU5IYjRnZVJhTkgwZWhSTkhvVWpSNUZvMGZSNkZFMGdCU0tIa1dqUjlFQVVpaDZGQTBnaGFKSDBRRDZ2ei8vK1R0ZStpc3U3blE5YjBGek9LYmpBSDBVellHWVR0R1Q0dVlRU1pzRFNrZXpQYU05QWFVck9VZlNib0RTV1p6R2FCODk2UlNPWmJRRG9IUUJKeHRhRzFENjRqRmFGVkQ2c2pGYUdGRDZqaGxhR0ZENmRobGFGVkQ2VWpGYUdGRDZMaG1xQWtxL0JEMXJHMHEvQVQxTEc1b2FVUHJtNWlsOUYrc0JTdC9aYktWdlpDVkE2ZHVhcy9TOXJBRW9mVTh6bDc2ZDJRR2xiMmorMG5jMEw2RDAzYXhTK3FabUJKUytsZHFxMHU4d3M2RlpBQzI2akVXdkRkQjBDMWo5L21zRDJtbnVPNzFsRFVCYmpudkxSODBJYU84cDcvMjZVd0RsUG5EN04yWUMybnV5aDd4MFcwRHBhQTU1YnhxZ0xhZDU0S3R6QU8wM3gyUGZ2aHVnZEIrblBUOEIwRTdqTTRSOUFLV2JPSE1PVndQYVkycW1jVzhIUU9rT1RoN0k4b0RTQlJ3K2swc0JMVDBwa3lrRzBCU3RPNW5yQUswN0kvTnB0Q3FnOUgwYjBWY0FEZlh2WHovdkdkRmpGd0ZhY1RTUFhRTm94VUVCTkJSQXRkWURkTTJGbjdvTTBIS3pBbWdvZ0dwZEFXaXRpUlM3RXRCYUV3T28zNk1lZ0o0Q3FCOUFqVllDZE1GVmkxMnNaNjJoZlJ6UVFoK21Xa3NEK3ZUY0FPb0hVS05sQUYyMnVhZXUvd0swMXVnQTZnUlFPNEE2QWRRT29FNEF0UU9vRTBEdEFHcVZxR2VWMFFIVUNxQnVBTFVDcUJ0QXJRRHFOdTl2b2kvZVZyRmNRRXRNRDZCV0FIVURxTnFUSG9DS0FWUU5vSkVBcWphUG5wbW5CMUExZ0VZQ3FCcEFJd0ZVYnFvdlFETlBENkJ5QUEwR1VEbUFCZ09vSEVDRDVmOWYySnpOQm1qYUFPcEVVanVBT2dIVURxQk9BTFVEcUJNOTdRRHFCRkE3Z0RvQjFBNmdWdlIwQTZnVlFOMEFhZ1ZRTjRCYTBkTU5vRllBZFFPb0ZVRGRBS3BHejBnQVZRTm9KSUNxQVRRU1FOWG9HUW1nYWdDTkJGQTFnRVlDcUJ3OWd3RlVEcURCQUNvSDBHQUFsYU5uTUlES0FUUVlRT1VBR2d5Z1F2U01CMUFoZ01ZRHFCQkE0d0ZVaUo3eEFDb0UwSGdBRlFKb1BJQ2VvK2VsQUhvT29KY0M2RG1BWGdvZ2hRSklvUUJTS0lBVUNpQ0ZBa2loQUZJb2dCUUtJSVVDU0tFQVVpaUFGQW9naFFKSW9RQlNLSUFVQ2lDRkFraWhBRklvZ0JRS0lJVUNTS0Z1LzUzMFMyalJibDhuL1I1YU5JQVVDaUNGQWtpaEFGSW9nQlFLSUlXNjNVLzZWYlJjdDhlVGZoc3RGMEFLQlpCQzNaNU8rb1cwVU05NkFOSkxGUUF4cE1IS2VnRFNZRlZBREtsYlN3OUE2dFlCeEpBYTlmVUFwRVpEZ0JoU3NWRTlET24zWHRNRGtKNTZHUkJEdXZjZFBRenBxKy9yWVVoUlBReWQzSHYwTUhSbTc5VEQwR205WHc5RDUvUXBQUmh0MzhmcE1MUngxK25CYUxNUzZHQzBSOGwwSGsvNkxQUlMyVjRxSjMwdTZwWnRaUGlrVDByM3NpMjg5YVJQYytPdTMrWXZzRnZpS0hRNzBMWUFBQUFBU1VWT1JLNUNZSUk9Iiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9XSwidGhlbWVfY29sb3IiOiIjMGYwZjExIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwZjBmMTEiLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSJ9">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0f0f11;--bg2:#18181c;--bg3:#222228;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
-  --text:#f0efe8;--muted:rgba(240,239,232,0.45);
-  --atend:#5DCAA5;--atend-dim:rgba(93,202,165,0.12);
-  --corte:#85B7EB;--corte-dim:rgba(133,183,235,0.12);
-  --sep:#FAC775;--sep-dim:rgba(250,199,117,0.12);
-  --fat:#ED93B1;--fat-dim:rgba(237,147,177,0.12);
-  --done-dim:rgba(240,239,232,0.05);
-  --warn:#EF9F27;--danger:#E24B4A;
-  --radius:10px;
-  --font-head:'Syne',sans-serif;
-  --font-mono:'IBM Plex Mono',monospace;
-}
-body{font-family:var(--font-mono);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
-nav{display:flex;align-items:center;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;height:52px;position:sticky;top:0;z-index:100}
-.logo{font-family:var(--font-head);font-size:17px;font-weight:800;letter-spacing:-0.5px;margin-right:32px}
-.logo span{color:var(--atend)}
-.nav-tabs{display:flex;gap:2px;flex:1}
-.tab{padding:6px 14px;border-radius:6px;cursor:pointer;color:var(--muted);font-family:var(--font-mono);font-size:12px;font-weight:500;border:none;background:none;transition:all .15s;white-space:nowrap}
-.tab:hover{color:var(--text);background:var(--bg3)}
-.tab.active{color:var(--text);background:var(--bg3)}
-.nav-right{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
-.badge-r{padding:2px 8px;border-radius:20px;font-size:11px;background:rgba(93,202,165,0.15);color:var(--atend)}
-.badge-s{padding:2px 8px;border-radius:20px;font-size:11px;background:rgba(133,183,235,0.15);color:var(--corte)}
-main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
-.screen{display:none}.screen.active{display:block}
-#ov{position:fixed;inset:0;background:rgba(15,15,17,.88);display:flex;align-items:center;justify-content:center;z-index:500;font-family:var(--font-head);font-size:16px;color:var(--atend);letter-spacing:.05em}
-#ov.h{display:none!important}
-#tw{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column-reverse;gap:8px;z-index:9999;pointer-events:none;width:310px}
-.toast{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:11px 15px;font-size:12px;color:var(--text);transform:translateX(120%);transition:transform .25s ease;opacity:0}
-.toast.show{transform:translateX(0);opacity:1}
-.toast.t-move{border-color:rgba(93,202,165,.5);color:var(--atend)}
-.toast.t-warn{border-color:rgba(239,159,39,.5);color:var(--warn)}
-.toast.t-err{border-color:rgba(226,75,74,.5);color:var(--danger)}
-.toast.t-ok{border-color:rgba(93,202,165,.4);color:var(--atend)}
-.lw{min-height:100vh;display:flex;align-items:center;justify-content:center}
-.lc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px;width:380px}
-.ll{font-family:var(--font-head);font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:8px}
-.ll span{color:var(--atend)}
-.ls{color:var(--muted);margin-bottom:32px;font-size:12px}
-.f{margin-bottom:16px}
-.fl{color:var(--muted);font-size:11px;margin-bottom:6px;display:block}
-.f input,.f select{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:13px;outline:none;transition:border .15s}
-.f input:focus,.f select:focus{border-color:var(--atend)}
-.f select option{background:var(--bg3)}
-.btnp{width:100%;padding:11px;background:var(--atend);color:#04342C;border:none;border-radius:6px;font-family:var(--font-mono);font-size:13px;font-weight:600;cursor:pointer}
-.btnp:hover{opacity:.85}
-.lerr{margin-top:12px;color:var(--danger);font-size:12px;text-align:center;min-height:16px}
-.ph{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.pt{font-family:var(--font-head);font-size:20px;font-weight:700;flex:1}
-.btnn{padding:8px 16px;background:var(--atend);color:#04342C;border:none;border-radius:6px;font-family:var(--font-mono);font-size:12px;font-weight:600;cursor:pointer;display:none}
-.btnn:hover{opacity:.85}
-.sb{padding:4px 12px;border-radius:20px;border:1px solid var(--border2);font-size:12px;color:var(--muted);display:none}
-.kb{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
-@media(max-width:1100px){.kb{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:700px){.kb{grid-template-columns:1fr}}
-.kc{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);padding:14px;min-height:180px}
-.ch{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-.cdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.cn{font-family:var(--font-head);font-size:13px;font-weight:600;flex:1}
-.cc{color:var(--muted);font-size:11px}
-.card{background:var(--bg3);border-radius:8px;border:1px solid var(--border);padding:12px;margin-bottom:8px;transition:border-color .3s,background .3s}
-.card.prio-idoso{background:rgba(239,159,39,.1);border-color:rgba(239,159,39,.5)}
-.card.prio-gestante{background:rgba(226,75,74,.1);border-color:rgba(226,75,74,.5)}
-.card.cw{border-color:rgba(239,159,39,.7)!important}
-.card.cd{border-color:rgba(226,75,74,.8)!important;animation:pd 1.5s infinite}
-@keyframes pd{0%,100%{box-shadow:0 0 0 0 rgba(226,75,74,0)}50%{box-shadow:0 0 0 4px rgba(226,75,74,.25)}}
-.card.transito{border-style:dashed;border-color:rgba(133,183,235,.6)!important;background:rgba(133,183,235,.06)!important}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px;gap:6px}
-.card-num{font-family:var(--font-head);font-size:18px;font-weight:700}
-.card-cli{font-size:12px;color:var(--text);margin-bottom:2px;font-weight:500}
-.pb{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;flex-shrink:0;margin-top:2px}
-.pb.idoso{background:rgba(239,159,39,.2);color:var(--warn)}
-.pb.gestante{background:rgba(226,75,74,.2);color:var(--danger)}
-.card-meta{color:var(--muted);font-size:10px;line-height:1.7;margin-bottom:6px}
-.card-nota{font-size:10px;color:var(--sep);margin-bottom:4px}
-.tlbl{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(133,183,235,.12);border:1px solid rgba(133,183,235,.35);border-radius:20px;color:var(--corte);font-size:10px;margin-bottom:6px}
-.dp{width:5px;height:5px;border-radius:50%;background:var(--corte);animation:da 1.2s infinite}
-@keyframes da{0%,100%{opacity:1}50%{opacity:.3}}
-.ct{font-size:11px;margin:6px 0;display:flex;gap:12px;flex-wrap:wrap}
-.ti{display:flex;flex-direction:column;gap:1px}
-.tl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.tv{font-weight:600;font-size:12px}
-.tv.warn{color:var(--warn)}.tv.danger{color:var(--danger)}
-.ca{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
-.bmv{padding:4px 10px;background:none;border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--font-mono);font-size:11px;cursor:pointer}
-.bmv:hover{background:rgba(255,255,255,.05)}
-.bret{padding:4px 10px;background:none;border:1px solid rgba(226,75,74,.35);border-radius:4px;color:var(--danger);font-family:var(--font-mono);font-size:11px;cursor:pointer;opacity:0.7}
-.bret:hover{background:rgba(226,75,74,.1);opacity:1}
-.bfin{padding:4px 9px;background:none;border:1px solid rgba(93,202,165,.4);border-radius:4px;color:var(--atend);font-family:var(--font-mono);font-size:11px;cursor:pointer}
-.bfin:hover{background:var(--atend-dim)}
-.bcon{padding:5px 10px;background:rgba(133,183,235,.15);border:1px solid rgba(133,183,235,.5);border-radius:4px;color:var(--corte);font-family:var(--font-mono);font-size:11px;cursor:pointer;font-weight:600}
-.bcon:hover{background:rgba(133,183,235,.25)}
-.tv-wrap{background:#07070a;min-height:100vh;padding:24px}
-.tv-head{display:flex;align-items:center;margin-bottom:20px;gap:16px}
-.tv-logo{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--atend)}
-.tv-clk{font-size:18px;font-weight:500;margin-left:auto}
-.tv-tbl{width:100%;border-collapse:collapse}
-.tv-tbl th{font-family:var(--font-head);font-size:11px;font-weight:600;color:var(--muted);text-align:left;padding:10px 16px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.08em}
-.tv-tbl td{padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
-.tv-num{font-family:var(--font-head);font-size:26px;font-weight:800}
-.tv-set{font-size:14px;font-weight:500;padding:4px 12px;border-radius:20px;display:inline-block}
-.tv-tim{font-size:17px;font-weight:500}
-.tv-foot{margin-top:28px;padding:14px 20px;background:var(--bg2);border-radius:var(--radius);display:flex;gap:32px;border:1px solid var(--border);flex-wrap:wrap}
-.tv-fl{font-size:12px;color:var(--muted)}
-.tv-fv{font-size:20px;font-weight:600;color:var(--atend)}
-.tv-row-warn td{background:rgba(239,159,39,.04)}
-.tv-row-danger td{background:rgba(226,75,74,.05)}
-.rt{font-family:var(--font-head);font-size:20px;font-weight:700;margin-bottom:20px}
-.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:28px}
-.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.kl{font-size:11px;color:var(--muted);margin-bottom:6px}
-.kv{font-family:var(--font-head);font-size:24px;font-weight:700}
-.ks{font-size:11px;color:var(--muted);margin-top:2px}
-.st{font-family:var(--font-head);font-size:15px;font-weight:600;margin-bottom:14px;color:var(--muted)}
-.br{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.bn{width:110px;font-size:12px;color:var(--muted)}
-.bt{flex:1;background:var(--bg3);border-radius:4px;height:8px;overflow:hidden}
-.bf{height:8px;border-radius:4px;transition:width .4s}
-.bv{width:80px;text-align:right;font-size:12px;font-weight:500}
-.rkt{width:100%;border-collapse:collapse;margin-bottom:28px}
-.rkt th{font-size:11px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);font-weight:500}
-.rkt td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
-.uh{display:flex;align-items:center;margin-bottom:20px;gap:12px}
-.utit{font-family:var(--font-head);font-size:20px;font-weight:700;flex:1}
-.utbl{width:100%;border-collapse:collapse;background:var(--bg2);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
-.utbl th{font-size:11px;color:var(--muted);text-align:left;padding:12px 16px;border-bottom:1px solid var(--border);font-weight:500}
-.utbl td{padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
-.bar{padding:2px 8px;border-radius:20px;font-size:11px}
-.bar-a{background:var(--atend-dim);color:var(--atend)}
-.bar-o{background:var(--corte-dim);color:var(--corte)}
-.bon{background:rgba(93,202,165,.12);color:var(--atend);padding:2px 8px;border-radius:20px;font-size:11px}
-.boff{background:rgba(226,75,74,.12);color:var(--danger);padding:2px 8px;border-radius:20px;font-size:11px}
-.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;max-width:380px}
-.mb{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:200}
-.mb.open{display:flex}
-.mo{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:28px;width:400px;max-width:95vw}
-.mt{font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:20px}
-.ma{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
-.bcan{padding:8px 16px;background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;cursor:pointer}
-.bok{padding:8px 16px;background:var(--atend);color:#04342C;border:none;border-radius:6px;font-family:var(--font-mono);font-size:12px;font-weight:600;cursor:pointer}
-.tag-at{background:var(--atend-dim);color:var(--atend)}
-.tag-co{background:var(--corte-dim);color:var(--corte)}
-.tag-se{background:var(--sep-dim);color:var(--sep)}
-.tag-fa{background:var(--fat-dim);color:var(--fat)}
-.tag-do{background:var(--done-dim);color:rgba(240,239,232,.6)}
-</style>
-</head>
-<body>
-<div id="ov" class="h">Carregando...</div>
-<div id="tw"></div>
-<nav id="main-nav" style="display:none">
-  <span class="logo">Call <span>Order</span></span>
-  <div class="nav-tabs">
-    <button class="tab active" onclick="go('painel')">Painel</button>
-    <button class="tab" onclick="go('tv')">Tela TV</button>
-    <button class="tab" onclick="go('relatorios')">Relatórios</button>
-    <button class="tab adm-only" onclick="go('usuarios')" style="display:none">Usuários</button>
-    <button class="tab" onclick="go('senha')">Minha Senha</button>
-    <button class="tab adm-only" onclick="go('config')" style="display:none">Configurações</button>
-  </div>
-  <div class="nav-right">
-    <span id="nav-nome">—</span>
-    <span class="badge-r" id="nav-role">—</span>
-    <span class="badge-s" id="nav-setor" style="display:none">—</span>
-    <button class="tab" onclick="logout()">Sair</button>
-  </div>
-</nav>
-<div class="screen active" id="screen-login">
-  <div class="lw"><div class="lc">
-    <div class="ll">Call <span>Order</span></div>
-    <div class="ls">Sistema interno de acompanhamento de pedidos</div>
-    <div class="f"><label class="fl">Usuário</label><input id="lu" type="text" autocomplete="username"/></div>
-    <div class="f"><label class="fl">Senha</label><input id="lp" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <button class="btnp" onclick="doLogin()">Entrar</button>
-    <div class="lerr" id="lerr"></div>
-  </div></div>
-</div>
-<div class="screen" id="screen-painel">
-  <main>
-    <div class="ph">
-      <span class="pt">Painel Operacional</span>
-      <span style="color:var(--muted);font-size:12px" id="panel-date"></span>
-      <span class="sb" id="setor-badge"></span>
-      <button class="btnn" id="btn-novo" onclick="openNewOrder()">+ Novo Pedido</button>
-    </div>
-    <div class="kb" id="kanban"></div>
-  </main>
-</div>
-<div class="screen" id="screen-tv">
-  <div class="tv-wrap">
-    <div class="tv-head">
-      <span class="tv-logo">Call Order</span>
-      <span style="color:var(--muted);font-size:13px">Acompanhamento em tempo real</span>
-      <div class="tv-clk" id="tv-clock">--:--:--</div>
-    </div>
-    <table class="tv-tbl">
-      <thead><tr><th>Pedido</th><th>Cliente</th><th>Setor</th><th>Tempo no Setor</th><th>Tempo Total</th><th>Status</th></tr></thead>
-      <tbody id="tv-body"></tbody>
-    </table>
-    <div class="tv-foot">
-      <div><div class="tv-fl">Tempo médio do dia</div><div class="tv-fv" id="tv-avg">--:--</div></div>
-      <div><div class="tv-fl">Finalizados hoje</div><div class="tv-fv" id="tv-done">0</div></div>
-      <div><div class="tv-fl">Em andamento</div><div class="tv-fv" id="tv-active">0</div></div>
-    </div>
-  </div>
-</div>
-<div class="screen" id="screen-relatorios">
-  <main>
-    <div class="rt">Relatórios do Dia</div>
-    <div class="kg" id="kpi-grid"></div>
-    <div class="st">Tempo médio por setor</div>
-    <div id="bars-setor" style="margin-bottom:28px"></div>
-    <div class="st adm-only" style="display:none">Tempo de confirmação por setor</div>
-    <div id="bars-conf" class="adm-only" style="margin-bottom:28px;display:none"></div>
-    <div class="st">Ranking — pedidos mais demorados</div>
-    <table class="rkt">
-      <thead><tr><th>#</th><th>Pedido</th><th>Cliente</th><th>Setor</th><th>Tempo Total</th><th>Status</th></tr></thead>
-      <tbody id="rank-body"></tbody>
-    </table>
-  </main>
-</div>
-<div class="screen" id="screen-usuarios">
-  <main>
-    <div class="uh">
-      <span class="utit">Gerenciar Usuários</span>
-      <button class="btnn" style="display:flex" onclick="openM('m-new-user')">+ Novo Usuário</button>
-    </div>
-    <table class="utbl">
-      <thead><tr><th>Nome</th><th>Login</th><th>Setor</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead>
-      <tbody id="users-body"></tbody>
-    </table>
-  </main>
-</div>
-<div class="screen" id="screen-senha">
-  <main>
-    <div class="rt">Alterar Senha</div>
-    <div class="sc">
-      <div class="f"><label class="fl">Senha atual</label><input type="password" id="s-atual"/></div>
-      <div class="f"><label class="fl">Nova senha</label><input type="password" id="s-nova"/></div>
-      <div class="f"><label class="fl">Confirmar nova senha</label><input type="password" id="s-conf"/></div>
-      <button class="btnp" onclick="alterarSenha()">Alterar Senha</button>
-      <div class="lerr" id="s-err"></div>
-    </div>
-  </main>
-</div>
-<div class="screen" id="screen-config">
-  <main>
-    <div class="rt">Configurações do Sistema</div>
-    <div class="sc" style="max-width:520px">
-      <div style="font-family:var(--font-head);font-size:15px;font-weight:600;margin-bottom:16px;color:var(--muted)">Voz da narração</div>
-      <div class="f">
-        <label class="fl">Selecione a voz</label>
-        <select id="cfg-voz" onchange="previewVoz()" style="width:100%"></select>
-      </div>
-      <div class="f">
-        <label class="fl">Velocidade</label>
-        <div style="display:flex;align-items:center;gap:12px">
-          <input type="range" id="cfg-rate" min="0.5" max="1.5" step="0.05" value="0.95" oninput="el('cfg-rate-val').textContent=parseFloat(this.value).toFixed(2)" style="flex:1"/>
-          <span id="cfg-rate-val" style="font-size:12px;width:36px">0.95</span>
-        </div>
-      </div>
-      <div class="f">
-        <label class="fl">Tom</label>
-        <div style="display:flex;align-items:center;gap:12px">
-          <input type="range" id="cfg-pitch" min="0.5" max="2" step="0.05" value="1" oninput="el('cfg-pitch-val').textContent=parseFloat(this.value).toFixed(2)" style="flex:1"/>
-          <span id="cfg-pitch-val" style="font-size:12px;width:36px">1.00</span>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-        <button class="bok" onclick="testarVoz()">▶ Testar voz</button>
-        <button class="bok" style="background:var(--bg3);color:var(--text);border:1px solid var(--border2)" onclick="salvarConfig()">Salvar configuração</button>
-      </div>
-      <div id="cfg-msg" style="margin-top:12px;font-size:12px;color:var(--atend);min-height:16px"></div>
-    </div>
-  </main>
-</div>
-
-<div id="screen-tv-pub" style="display:none;background:#07070a;min-height:100vh;padding:24px;font-family:var(--font-mono)">
-  <div style="display:flex;align-items:center;margin-bottom:24px;gap:16px">
-    <span style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--atend)">Call Order</span>
-    <span style="color:var(--muted);font-size:13px">Acompanhamento em tempo real</span>
-    <div style="font-size:18px;font-weight:500;margin-left:auto" id="tvp-clock">--:--:--</div>
-  </div>
-  <table class="tv-tbl"><thead><tr><th>Pedido</th><th>Cliente</th><th>Setor</th><th>Tempo no Setor</th><th>Tempo Total</th><th>Status</th></tr></thead><tbody id="tvp-body"></tbody></table>
-  <div class="tv-foot" style="margin-top:28px">
-    <div><div class="tv-fl">Tempo médio do dia</div><div class="tv-fv" id="tvp-avg">--:--</div></div>
-    <div><div class="tv-fl">Finalizados hoje</div><div class="tv-fv" id="tvp-done">0</div></div>
-    <div><div class="tv-fl">Em andamento</div><div class="tv-fv" id="tvp-active">0</div></div>
-  </div>
-</div>
-<div class="mb" id="m-new-order">
-  <div class="mo">
-    <div class="mt">Novo Pedido — Atendimento</div>
-    <div class="f"><label class="fl">Número do Pedido *</label><input type="text" id="no-num" placeholder="Ex: 00123"/></div>
-    <div class="f"><label class="fl">Nome do Cliente *</label><input type="text" id="no-cli" placeholder="Nome completo"/></div>
-    <div class="f"><label class="fl">Prioridade</label>
-      <select id="no-prio"><option value="normal">Normal</option><option value="idoso">Idoso</option><option value="gestante">Gestante</option></select>
-    </div>
-    <div class="f"><label class="fl">Observação (opcional)</label><input type="text" id="no-obs"/></div>
-    <div class="ma"><button class="bcan" onclick="closeM('m-new-order')">Cancelar</button><button class="bok" onclick="createOrder()">Criar Pedido</button></div>
-  </div>
-</div>
-<div class="mb" id="m-nota">
-  <div class="mo">
-    <div class="mt">Faturamento — Nota Fiscal</div>
-    <p style="color:var(--muted);font-size:12px;margin-bottom:16px">Informe o número da NF antes de liberar para retirada.</p>
-    <div class="f"><label class="fl">Número da Nota Fiscal *</label><input type="text" id="nota-num" placeholder="000123"/></div>
-    <div class="ma"><button class="bcan" onclick="closeM('m-nota')">Cancelar</button><button class="bok" onclick="confirmarNota()">Faturar e Enviar</button></div>
-  </div>
-</div>
-<div class="mb" id="m-new-user">
-  <div class="mo">
-    <div class="mt">Novo Usuário</div>
-    <div class="f"><label class="fl">Nome</label><input type="text" id="nu-nome"/></div>
-    <div class="f"><label class="fl">Login</label><input type="text" id="nu-login"/></div>
-    <div class="f"><label class="fl">Senha</label><input type="password" id="nu-senha"/></div>
-    <div class="f"><label class="fl">Perfil</label>
-      <select id="nu-role"><option value="operador">Operador</option><option value="admin">Administrador</option></select>
-    </div>
-    <div class="f"><label class="fl">Setor</label>
-      <select id="nu-setor">
-        <option value="todos">Todos os setores</option>
-        <option value="atendimento">Atendimento</option>
-        <option value="corte">Corte</option>
-        <option value="separacao">Separação</option>
-        <option value="faturamento">Faturamento</option>
-      </select>
-    </div>
-    <div class="ma"><button class="bcan" onclick="closeM('m-new-user')">Cancelar</button><button class="bok" onclick="createUser()">Criar</button></div>
-  </div>
-</div>
 <script>
 const SUPA_URL = 'https://egshgwnnaxfvtxwvgnnh.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnc2hnd25uYXhmdnR4d3Znbm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNTQ2MjIsImV4cCI6MjA5MDgzMDYyMn0.udgUHpDU4wldbwsnl46AuzyljIRxNPtY00n6YrOtje4';
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
 const SETORES = ['atendimento','corte','separacao','faturamento'];
-const SL = {atendimento:'Atendimento',corte:'Corte',separacao:'Separação',faturamento:'Faturamento',retirada:'Pronto p/ Retirada',finalizado:'Finalizado'};
-const SC = {atendimento:'tag-at',corte:'tag-co',separacao:'tag-se',faturamento:'tag-fa',retirada:'tag-do',finalizado:'tag-do'};
-const SD = {atendimento:'#5DCAA5',corte:'#85B7EB',separacao:'#FAC775',faturamento:'#ED93B1',retirada:'rgba(240,239,232,.3)'};
-const BC = {atendimento:'#5DCAA5',corte:'#85B7EB',separacao:'#FAC775',faturamento:'#ED93B1'};
-const ALERT_MS = 5*60*1000;
-let ME=null, PEDIDOS=[], MOVS=[], _ti=null, _notaTarget=null, _ch=null;
+const SL = {
+  atendimento:'Atendimento',
+  corte:'Corte',
+  separacao:'Separação',
+  faturamento:'Faturamento',
+  retirada:'Pronto p/ Retirada',
+  finalizado:'Finalizado'
+};
+const SC = {
+  atendimento:'tag-at',
+  corte:'tag-co',
+  separacao:'tag-se',
+  faturamento:'tag-fa',
+  retirada:'tag-do',
+  finalizado:'tag-do'
+};
+const SD = {
+  atendimento:'#5DCAA5',
+  corte:'#85B7EB',
+  separacao:'#FAC775',
+  faturamento:'#ED93B1',
+  retirada:'rgba(240,239,232,.3)'
+};
+const BC = {
+  atendimento:'#5DCAA5',
+  corte:'#85B7EB',
+  separacao:'#FAC775',
+  faturamento:'#ED93B1'
+};
+const ALERT_MS = 5 * 60 * 1000;
+
+let ME = null;
+let PEDIDOS = [];
+let MOVS = [];
+let _ti = null;
+let _notaTarget = null;
+let _ch = null;
+let _tvPub = [];
+let _tvPubStarted = false;
+
 const el = id => document.getElementById(id);
 const now = () => Date.now();
 const tsMs = ts => ts ? new Date(ts).getTime() : 0;
-function fmtT(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);if(h>0)return h+'h '+( m%60)+'m';if(m>0)return m+'m '+(s%60)+'s';return s+'s';}
-function fmtTs(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);if(h>0)return String(h).padStart(2,'0')+':'+String(m%60).padStart(2,'0')+'h';return String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
-function fmtClock(d){return d.toLocaleTimeString('pt-BR');}
-function toast(msg,type,dur){type=type||'ok';dur=dur||3500;var e=document.createElement('div');e.className='toast t-'+type;e.textContent=msg;el('tw').appendChild(e);requestAnimationFrame(function(){requestAnimationFrame(function(){e.classList.add('show');});});setTimeout(function(){e.classList.remove('show');setTimeout(function(){e.remove();},300);},dur);}
-function ov(show){el('ov').classList.toggle('h',!show);}
-function openM(id){el(id).classList.add('open');}
-function closeM(id){el(id).classList.remove('open');}
-function prioBadge(p){if(!p||p==='normal')return '';return '<span class="pb '+p+'">'+p.charAt(0).toUpperCase()+p.slice(1)+'</span>';}
+
+function fmtT(ms){
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const h = Math.floor(m / 60);
+  if(h > 0) return h + 'h ' + (m % 60) + 'm';
+  if(m > 0) return m + 'm ' + (s % 60) + 's';
+  return s + 's';
+}
+function fmtTs(ms){
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const h = Math.floor(m / 60);
+  if(h > 0) return String(h).padStart(2,'0') + ':' + String(m % 60).padStart(2,'0') + 'h';
+  return String(m).padStart(2,'0') + ':' + String(s % 60).padStart(2,'0');
+}
+function fmtClock(d){ return d.toLocaleTimeString('pt-BR'); }
+
+function toast(msg, type, dur){
+  type = type || 'ok';
+  dur = dur || 3500;
+  const tw = el('tw');
+  if(!tw) return;
+  const e = document.createElement('div');
+  e.className = 'toast t-' + type;
+  e.textContent = msg;
+  tw.appendChild(e);
+  requestAnimationFrame(() => requestAnimationFrame(() => e.classList.add('show')));
+  setTimeout(() => {
+    e.classList.remove('show');
+    setTimeout(() => e.remove(), 300);
+  }, dur);
+}
+
+function ov(show){
+  const o = el('ov');
+  if(o) o.classList.toggle('h', !show);
+}
+
+function openM(id){ const x = el(id); if(x) x.classList.add('open'); }
+function closeM(id){ const x = el(id); if(x) x.classList.remove('open'); }
+
+function prioBadge(p){
+  if(!p || p === 'normal') return '';
+  return '<span class="pb ' + p + '">' + p.charAt(0).toUpperCase() + p.slice(1) + '</span>';
+}
+
+function setPanelDate(){
+  const d = el('panel-date');
+  if(d){
+    d.textContent = new Date().toLocaleDateString('pt-BR', {
+      weekday:'short',
+      day:'2-digit',
+      month:'2-digit'
+    });
+  }
+}
+
+function handleSbError(res, fallback){
+  if(res && res.error) throw new Error(res.error.message || fallback || 'Erro no Supabase');
+  return res;
+}
+
 // ── VOZ ──
 var _vozNome = localStorage.getItem('pf_voz') || '';
-var _vozRate  = parseFloat(localStorage.getItem('pf_rate') || '0.95');
+var _vozRate = parseFloat(localStorage.getItem('pf_rate') || '0.95');
 var _vozPitch = parseFloat(localStorage.getItem('pf_pitch') || '1');
 
-function narrar(texto) {
+function narrar(texto){
   if(!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   var u = new SpeechSynthesisUtterance(texto);
-  u.lang   = 'pt-BR';
-  u.rate   = _vozRate;
-  u.pitch  = _vozPitch;
+  u.lang = 'pt-BR';
+  u.rate = _vozRate;
+  u.pitch = _vozPitch;
   u.volume = 1;
   var vozes = window.speechSynthesis.getVoices();
   var voz = null;
-  if(_vozNome) voz = vozes.find(function(v){return v.name===_vozNome;});
-  if(!voz) voz = vozes.find(function(v){return v.lang==='pt-BR'||v.lang.startsWith('pt');});
+  if(_vozNome) voz = vozes.find(v => v.name === _vozNome);
+  if(!voz) voz = vozes.find(v => v.lang === 'pt-BR' || v.lang.startsWith('pt'));
   if(voz) u.voice = voz;
   window.speechSynthesis.speak(u);
 }
 
-function carregarVozes() {
+function carregarVozes(){
   var sel = el('cfg-voz');
   if(!sel) return;
   var vozes = window.speechSynthesis.getVoices();
-  sel.innerHTML = vozes.map(function(v,i){
-    var sel2 = v.name===_vozNome ? ' selected' : '';
-    return '<option value="'+v.name+'"'+sel2+'>'+v.name+' ('+v.lang+')</option>';
+  sel.innerHTML = vozes.map(v => {
+    var sel2 = v.name === _vozNome ? ' selected' : '';
+    return '<option value="' + v.name + '"' + sel2 + '>' + v.name + ' (' + v.lang + ')</option>';
   }).join('');
   if(!sel.value && vozes.length) sel.value = vozes[0].name;
 }
 
-function previewVoz() { testarVoz(); }
+function previewVoz(){ testarVoz(); }
 
-function testarVoz() {
-  _vozNome  = el('cfg-voz') ? el('cfg-voz').value : _vozNome;
-  _vozRate  = el('cfg-rate') ? parseFloat(el('cfg-rate').value) : _vozRate;
+function testarVoz(){
+  _vozNome = el('cfg-voz') ? el('cfg-voz').value : _vozNome;
+  _vozRate = el('cfg-rate') ? parseFloat(el('cfg-rate').value) : _vozRate;
   _vozPitch = el('cfg-pitch') ? parseFloat(el('cfg-pitch').value) : _vozPitch;
   narrar('Pedido 59000, por favor dirija-se ao balcão para retirar sua mercadoria.');
 }
 
-function salvarConfig() {
-  _vozNome  = el('cfg-voz').value;
-  _vozRate  = parseFloat(el('cfg-rate').value);
+function salvarConfig(){
+  _vozNome = el('cfg-voz').value;
+  _vozRate = parseFloat(el('cfg-rate').value);
   _vozPitch = parseFloat(el('cfg-pitch').value);
-  localStorage.setItem('pf_voz',   _vozNome);
-  localStorage.setItem('pf_rate',  _vozRate);
+  localStorage.setItem('pf_voz', _vozNome);
+  localStorage.setItem('pf_rate', _vozRate);
   localStorage.setItem('pf_pitch', _vozPitch);
   el('cfg-msg').textContent = 'Configuração salva!';
-  setTimeout(function(){el('cfg-msg').textContent='';}, 2500);
-  toast('Voz configurada: '+_vozNome,'ok');
+  setTimeout(() => { if(el('cfg-msg')) el('cfg-msg').textContent = ''; }, 2500);
+  toast('Voz configurada: ' + _vozNome, 'ok');
 }
 
-if(window.speechSynthesis) {
-  window.speechSynthesis.onvoiceschanged = function(){ carregarVozes(); };
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged = () => carregarVozes();
   setTimeout(carregarVozes, 300);
 }
 
+function allHide(){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+}
+
+function currentScreenId(){
+  const a = document.querySelector('.screen.active');
+  return a ? a.id : '';
+}
+
 async function doLogin(){
-  var l=el('lu').value.trim(),p=el('lp').value;
-  el('lerr').textContent='';
-  if(!l||!p){el('lerr').textContent='Preencha usuário e senha.';return;}
+  var l = el('lu').value.trim();
+  var p = el('lp').value;
+  el('lerr').textContent = '';
+
+  if(!l || !p){
+    el('lerr').textContent = 'Preencha usuário e senha.';
+    return;
+  }
+
   ov(true);
   try{
-    var res=await sb.from('usuarios').select('*').eq('login',l).eq('senha',p).eq('ativo',true).single();
-    if(res.error||!res.data){el('lerr').textContent='Usuário ou senha inválidos.';return;}
-    ME=res.data;
-    el('nav-nome').textContent=ME.nome;
-    el('nav-role').textContent=ME.role;
-    if(ME.setor&&ME.setor!=='todos'){el('nav-setor').textContent=SL[ME.setor]||ME.setor;el('nav-setor').style.display='';}
-    el('main-nav').style.display='flex';
-    if(ME.role==='admin')document.querySelectorAll('.adm-only').forEach(function(e){e.style.display='';});
-    var podeNovo=ME.role==='admin'||ME.setor==='atendimento';
-    el('btn-novo').style.display=podeNovo?'flex':'none';
-    allHide();go('painel');startRealtime();startClock();
-  }catch(e){el('lerr').textContent=e.message;}
-  finally{ov(false);}
-}
-function logout(){
-  ME=null;PEDIDOS=[];MOVS=[];
-  if(_ch)sb.removeChannel(_ch);
-  if(_ti)clearInterval(_ti);
-  el('main-nav').style.display='none';
-  el('nav-setor').style.display='none';
-  document.querySelectorAll('.adm-only').forEach(function(e){e.style.display='none';});
-  allHide();el('screen-login').classList.add('active');
-  el('lp').value='';el('lu').value='';
-}
-function startRealtime(){
-  if(_ch)sb.removeChannel(_ch);
-  _ch=sb.channel('pedidos-rt').on('postgres_changes',{event:'*',schema:'public',table:'pedidos'},function(payload){
-    if(payload.eventType==='INSERT'){PEDIDOS.push(payload.new);}
-    else if(payload.eventType==='UPDATE'){
-      var idx=PEDIDOS.findIndex(function(p){return p.id===payload.new.id;});
-      var old=idx>=0?PEDIDOS[idx]:null;
-      if(idx>=0)PEDIDOS[idx]=payload.new;else PEDIDOS.push(payload.new);
-      if(payload.new.status==='aguardando'&&(!old||old.status!=='aguardando')){
-        var dest=payload.new.setor_pendente;
-        var _ms=ME?ME.setor:'';
-        var ehMeu=ME&&(ME.role==='admin'||_ms==='todos'||_ms===dest||_ms==='atendimento'||(_ms==='separacao'&&dest==='retirada'));
-        if(ehMeu)toast('Pedido #'+payload.new.numero+' aguardando confirmação em '+(SL[dest]||dest)+'!','warn',6000);
-      }
+    var res = await sb
+      .from('usuarios')
+      .select('*')
+      .eq('login', l)
+      .eq('senha', p)
+      .eq('ativo', true)
+      .single();
+
+    if(res.error || !res.data){
+      el('lerr').textContent = 'Usuário ou senha inválidos.';
+      return;
     }
-    else if(payload.eventType==='DELETE'){PEDIDOS=PEDIDOS.filter(function(p){return p.id!==payload.old.id;});}
-    var a=document.querySelector('.screen.active');
-    if(a&&a.id==='screen-painel')renderPainel();
-    if(a&&a.id==='screen-tv')renderTV();
-  }).subscribe();
+
+    ME = res.data;
+    el('nav-nome').textContent = ME.nome;
+    el('nav-role').textContent = ME.role;
+
+    if(ME.setor && ME.setor !== 'todos'){
+      el('nav-setor').textContent = SL[ME.setor] || ME.setor;
+      el('nav-setor').style.display = '';
+    }
+
+    el('main-nav').style.display = 'flex';
+
+    if(ME.role === 'admin'){
+      document.querySelectorAll('.adm-only').forEach(e => e.style.display = '');
+    }
+
+    var podeNovo = ME.role === 'admin' || ME.setor === 'atendimento';
+    el('btn-novo').style.display = podeNovo ? 'flex' : 'none';
+
+    allHide();
+    await go('painel');
+    startRealtime();
+    startClock();
+  }catch(e){
+    console.error(e);
+    el('lerr').textContent = e.message || 'Erro ao entrar.';
+  }finally{
+    ov(false);
+  }
 }
+
+function logout(){
+  ME = null;
+  PEDIDOS = [];
+  MOVS = [];
+  if(_ch) sb.removeChannel(_ch);
+  if(_ti) clearInterval(_ti);
+  el('main-nav').style.display = 'none';
+  el('nav-setor').style.display = 'none';
+  document.querySelectorAll('.adm-only').forEach(e => e.style.display = 'none');
+  allHide();
+  el('screen-login').classList.add('active');
+  el('lp').value = '';
+  el('lu').value = '';
+}
+
+function startRealtime(){
+  if(_ch) sb.removeChannel(_ch);
+
+  _ch = sb
+    .channel('pedidos-rt')
+    .on('postgres_changes', { event:'*', schema:'public', table:'pedidos' }, function(payload){
+      if(payload.eventType === 'INSERT'){
+        PEDIDOS.push(payload.new);
+      }else if(payload.eventType === 'UPDATE'){
+        var idx = PEDIDOS.findIndex(p => p.id === payload.new.id);
+        var old = idx >= 0 ? PEDIDOS[idx] : null;
+        if(idx >= 0) PEDIDOS[idx] = payload.new;
+        else PEDIDOS.push(payload.new);
+
+        if(payload.new.status === 'aguardando' && (!old || old.status !== 'aguardando')){
+          var dest = payload.new.setor_pendente;
+          var _ms = ME ? ME.setor : '';
+          var ehMeu = ME && (
+            ME.role === 'admin' ||
+            _ms === 'todos' ||
+            _ms === dest ||
+            _ms === 'atendimento' ||
+            (_ms === 'separacao' && dest === 'retirada')
+          );
+          if(ehMeu){
+            toast('Pedido #' + payload.new.numero + ' aguardando confirmação em ' + (SL[dest] || dest) + '!', 'warn', 6000);
+          }
+        }
+      }else if(payload.eventType === 'DELETE'){
+        PEDIDOS = PEDIDOS.filter(p => p.id !== payload.old.id);
+      }
+
+      const sid = currentScreenId();
+      if(sid === 'screen-painel') renderPainel();
+      if(sid === 'screen-tv') renderTV();
+    })
+    .subscribe();
+}
+
 async function fetchPedidos(){
-  var hoje=new Date();hoje.setHours(0,0,0,0);
-  var res=await sb.from('pedidos').select('*').or('entrada_at.gte.'+hoje.toISOString()+',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado').order('entrada_at',{ascending:false});
-  PEDIDOS=res.data||[];
+  var hoje = new Date();
+  hoje.setHours(0,0,0,0);
+
+  var res = await sb
+    .from('pedidos')
+    .select('*')
+    .or('entrada_at.gte.' + hoje.toISOString() + ',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado')
+    .order('entrada_at', { ascending:false });
+
+  if(res.error){
+    res = await sb
+      .from('pedidos')
+      .select('*')
+      .or('entrada_em.gte.' + hoje.toISOString() + ',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado')
+      .order('entrada_em', { ascending:false });
+  }
+
+  handleSbError(res, 'Erro ao carregar pedidos');
+  PEDIDOS = res.data || [];
+  return PEDIDOS;
 }
+
 async function fetchMovs(){
-  var hoje=new Date();hoje.setHours(0,0,0,0);
-  var res=await sb.from('movimentacoes').select('*').gte('saida_at',hoje.toISOString());
-  MOVS=res.data||[];
+  var hoje = new Date();
+  hoje.setHours(0,0,0,0);
+
+  var res = await sb
+    .from('movimentacoes')
+    .select('*')
+    .gte('saida_at', hoje.toISOString());
+
+  if(res.error){
+    res = await sb
+      .from('movimentacoes')
+      .select('*')
+      .gte('saida_em', hoje.toISOString());
+  }
+
+  handleSbError(res, 'Erro ao carregar movimentações');
+  MOVS = res.data || [];
+  return MOVS;
 }
-async function fetchUsuarios(){var res=await sb.from('usuarios').select('id,nome,login,role,setor,ativo').order('nome');return res.data||[];}
-function allHide(){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});}
+
+async function fetchUsuarios(){
+  var res = await sb
+    .from('usuarios')
+    .select('id,nome,login,role,setor,ativo')
+    .order('nome');
+  handleSbError(res, 'Erro ao carregar usuários');
+  return res.data || [];
+}
+
 async function go(name){
-  allHide();el('screen-'+name).classList.add('active');
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-  document.querySelectorAll('.tab').forEach(function(t){if((t.getAttribute('onclick')||'').indexOf("'"+name+"'")>=0)t.classList.add('active');});
-  if(name==='painel'){ov(true);await fetchPedidos();ov(false);renderPainel();}
-  if(name==='tv'){ov(true);await fetchPedidos();ov(false);renderTV();}
-  if(name==='relatorios'){ov(true);await Promise.all([fetchPedidos(),fetchMovs()]);ov(false);renderRelatorios();}
-  if(name==='usuarios'){ov(true);var u=await fetchUsuarios();ov(false);renderUsers(u);}
-  if(name==='config'){setTimeout(carregarVozes,100);}
+  allHide();
+  el('screen-' + name).classList.add('active');
+
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t){
+    if((t.getAttribute('onclick') || '').indexOf("'" + name + "'") >= 0){
+      t.classList.add('active');
+    }
+  });
+
+  try{
+    if(name === 'painel'){
+      ov(true);
+      await fetchPedidos();
+      renderPainel();
+    }
+    if(name === 'tv'){
+      ov(true);
+      await fetchPedidos();
+      renderTV();
+    }
+    if(name === 'relatorios'){
+      ov(true);
+      await Promise.all([fetchPedidos(), fetchMovs()]);
+      renderRelatorios();
+    }
+    if(name === 'usuarios'){
+      ov(true);
+      var u = await fetchUsuarios();
+      renderUsers(u);
+    }
+    if(name === 'config'){
+      setTimeout(carregarVozes, 100);
+    }
+  }catch(e){
+    console.error(e);
+    toast(e.message || 'Erro ao carregar tela.', 'err');
+  }finally{
+    ov(false);
+  }
 }
+
 function startClock(){
-  if(_ti)clearInterval(_ti);
-  _ti=setInterval(function(){
-    el('tv-clock').textContent=fmtClock(new Date());
-    // TV Pública
-var _tvPub=[];
-function iniciarTVPublica(){
-  setInterval(function(){if(el('tvp-clock'))el('tvp-clock').textContent=fmtClock(new Date());renderTVPub();},1000);
-  setInterval(async function(){
-    try{var hoje=new Date();hoje.setHours(0,0,0,0);var res=await sb.from('pedidos').select('*').or('entrada_at.gte.'+hoje.toISOString()+',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado').order('entrada_at',{ascending:false});_tvPub=res.data||[];renderTVPub();}catch(e){}
-  },3000);
-}
-function renderTVPub(){
-  var active=_tvPub.filter(function(o){return o.status!=='finalizado';});
-  if(!el('tvp-body'))return;
-  el('tvp-body').innerHTML=active.sort(function(a,b){return tsMs(b.entrada_at)-tsMs(a.entrada_at);}).map(function(o){
-    var totalMs=now()-tsMs(o.entrada_at),setorMs=o.status==='aguardando'?now()-tsMs(o.pendente_desde):now()-tsMs(o.setor_entrada_at);
-    var rC=totalMs>45*60000?'tv-row-danger':totalMs>25*60000?'tv-row-warn':'';
-    var tColor=totalMs>45*60000?'var(--danger)':totalMs>25*60000?'var(--warn)':'var(--text)';
-    var sl='<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span>';
-    return '<tr class="'+rC+'"><td><span class="tv-num">#'+o.numero+'</span></td><td style="font-size:13px">'+(o.nome_cliente||'—')+'</td><td>'+sl+'</td><td><span class="tv-tim">'+fmtTs(setorMs)+'</span></td><td><span class="tv-tim" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td><td><span style="font-size:12px;color:var(--muted)">'+(o.status==='faturado'?'✓ Faturado':o.status==='aguardando'?'Aguard. confirmação':'Em andamento')+'</span></td></tr>';
-  }).join('');
-  var done=_tvPub.filter(function(o){return o.status==='finalizado';});
-  var avgMs=done.length?done.reduce(function(s,o){return s+(tsMs(o.finalizado_at)-tsMs(o.entrada_at));},0)/done.length:0;
-  if(el('tvp-avg'))el('tvp-avg').textContent=done.length?fmtTs(avgMs):'--:--';
-  if(el('tvp-done'))el('tvp-done').textContent=done.length;
-  if(el('tvp-active'))el('tvp-active').textContent=active.length;
-}
-if(window.location.search.indexOf('tv=1')>=0){
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  el('screen-tv-pub').style.display='block';
-  iniciarTVPublica();
-}
+  if(_ti) clearInterval(_ti);
 
-el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
-    var a=document.querySelector('.screen.active');
-    if(a&&a.id==='screen-painel')renderPainel();
-    if(a&&a.id==='screen-tv')renderTV();
+  _ti = setInterval(function(){
+    if(el('tv-clock')) el('tv-clock').textContent = fmtClock(new Date());
+    setPanelDate();
+
+    const sid = currentScreenId();
+    if(sid === 'screen-painel') renderPainel();
+    if(sid === 'screen-tv') renderTV();
+
     PEDIDOS.forEach(function(o){
-      if(o.status!=='aguardando'||!o.pendente_desde)return;
-      var ms=now()-tsMs(o.pendente_desde);
-      var k='alr10_'+o.id;
-      if(ms>10*60000&&!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');toast('Pedido #'+o.numero+' aguarda confirmação há +10min!','err',7000);}
+      const pend = o.pendente_desde || o.cara_desde || o.aguarda_desde || null;
+      if(o.status !== 'aguardando' || !pend) return;
+      var ms = now() - tsMs(pend);
+      var k = 'alr10_' + o.id;
+      if(ms > 10 * 60000 && !sessionStorage.getItem(k)){
+        sessionStorage.setItem(k,'1');
+        toast('Pedido #' + o.numero + ' aguarda confirmação há +10min!', 'err', 7000);
+      }
     });
-  },1000);
+  }, 1000);
 }
+
+function campoEntrada(o){ return o.entrada_at || o.entrada_em || null; }
+function campoSetorEntrada(o){ return o.setor_entrada_at || o.setor_entrada_em || null; }
+function campoPendente(o){ return o.pendente_desde || o.cara_desde || o.aguardando_desde || null; }
+function campoFinalizado(o){ return o.finalizado_at || o.finalizado_em || null; }
+function campoTempoConfirmacao(m){ return m.tempo_confirmacao_ms || m.tempo_conf || 0; }
+
 function renderPainel(){
-  // TV Pública
-var _tvPub=[];
-function iniciarTVPublica(){
-  setInterval(function(){if(el('tvp-clock'))el('tvp-clock').textContent=fmtClock(new Date());renderTVPub();},1000);
-  setInterval(async function(){
-    try{var hoje=new Date();hoje.setHours(0,0,0,0);var res=await sb.from('pedidos').select('*').or('entrada_at.gte.'+hoje.toISOString()+',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado').order('entrada_at',{ascending:false});_tvPub=res.data||[];renderTVPub();}catch(e){}
-  },3000);
-}
-function renderTVPub(){
-  var active=_tvPub.filter(function(o){return o.status!=='finalizado';});
-  if(!el('tvp-body'))return;
-  el('tvp-body').innerHTML=active.sort(function(a,b){return tsMs(b.entrada_at)-tsMs(a.entrada_at);}).map(function(o){
-    var totalMs=now()-tsMs(o.entrada_at),setorMs=o.status==='aguardando'?now()-tsMs(o.pendente_desde):now()-tsMs(o.setor_entrada_at);
-    var rC=totalMs>45*60000?'tv-row-danger':totalMs>25*60000?'tv-row-warn':'';
-    var tColor=totalMs>45*60000?'var(--danger)':totalMs>25*60000?'var(--warn)':'var(--text)';
-    var sl='<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span>';
-    return '<tr class="'+rC+'"><td><span class="tv-num">#'+o.numero+'</span></td><td style="font-size:13px">'+(o.nome_cliente||'—')+'</td><td>'+sl+'</td><td><span class="tv-tim">'+fmtTs(setorMs)+'</span></td><td><span class="tv-tim" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td><td><span style="font-size:12px;color:var(--muted)">'+(o.status==='faturado'?'✓ Faturado':o.status==='aguardando'?'Aguard. confirmação':'Em andamento')+'</span></td></tr>';
+  setPanelDate();
+
+  if(ME && ME.setor && ME.setor !== 'todos'){
+    el('setor-badge').textContent = 'Seu setor: ' + (SL[ME.setor] || ME.setor);
+    el('setor-badge').style.display = '';
+  }else{
+    el('setor-badge').style.display = 'none';
+  }
+
+  var allCols = SETORES.concat(['retirada']);
+
+  el('kanban').innerHTML = allCols.map(function(setor){
+    var items = PEDIDOS.filter(o => o.setor === setor && o.status !== 'finalizado' && o.status !== 'aguardando');
+    var chegando = PEDIDOS.filter(o => o.status === 'aguardando' && o.setor_pendente === setor);
+
+    return '<div class="kc">' +
+      '<div class="ch">' +
+        '<div class="cdot" style="background:' + (SD[setor] || 'rgba(240,239,232,.3)') + '"></div>' +
+        '<span class="cn">' + SL[setor] + '</span>' +
+        '<span class="cc">' + (items.length + chegando.length) + (chegando.length ? ' (' + chegando.length + '⌛)' : '') + '</span>' +
+      '</div>' +
+      chegando.map(renderTransCard).join('') +
+      items.map(function(o){ return renderCard(o, setor); }).join('') +
+      '</div>';
   }).join('');
-  var done=_tvPub.filter(function(o){return o.status==='finalizado';});
-  var avgMs=done.length?done.reduce(function(s,o){return s+(tsMs(o.finalizado_at)-tsMs(o.entrada_at));},0)/done.length:0;
-  if(el('tvp-avg'))el('tvp-avg').textContent=done.length?fmtTs(avgMs):'--:--';
-  if(el('tvp-done'))el('tvp-done').textContent=done.length;
-  if(el('tvp-active'))el('tvp-active').textContent=active.length;
-}
-if(window.location.search.indexOf('tv=1')>=0){
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  el('screen-tv-pub').style.display='block';
-  iniciarTVPublica();
 }
 
-el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
-  if(ME&&ME.setor&&ME.setor!=='todos'){el('setor-badge').textContent='Seu setor: '+SL[ME.setor];el('setor-badge').style.display='';}
-  var allCols=SETORES.concat(['retirada']);
-  el('kanban').innerHTML=allCols.map(function(setor){
-    var items=PEDIDOS.filter(function(o){return o.setor===setor&&o.status!=='finalizado'&&o.status!=='aguardando';});
-    var chegando=PEDIDOS.filter(function(o){return o.status==='aguardando'&&o.setor_pendente===setor;});
-    return '<div class="kc"><div class="ch"><div class="cdot" style="background:'+(SD[setor]||'rgba(240,239,232,.3)')+'"></div><span class="cn">'+SL[setor]+'</span><span class="cc">'+(items.length+chegando.length)+(chegando.length?' ('+chegando.length+'⌛)':'')+'</span></div>'+chegando.map(renderTransCard).join('')+items.map(function(o){return renderCard(o,setor);}).join('')+'</div>';
-  }).join('');
-}
 function renderTransCard(o){
-  var elapsed=now()-tsMs(o.pendente_desde),alerta=elapsed>ALERT_MS;
-  var dest=o.setor_pendente||'',_ms=ME?ME.setor:'';
-  var canC=ME&&(ME.role==='admin'||_ms==='todos'||_ms===dest||(_ms==='separacao'&&dest==='retirada'));
-  var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
-  var sC=alerta?'cd':elapsed>3*60000?'cw':'';
-  return '<div class="card transito '+pC+' '+sC+'"><div class="tlbl"><span class="dp"></span>'+(alerta?'Aguardando há ':'Aguard. confirmação há ')+fmtT(elapsed)+'</div><div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>'+(o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'')+'<div class="card-meta">De: '+(SL[o.setor]||o.setor)+'</div><div class="ca">'+(canC?'<button class="bcon" onclick="confirmarRec(\''+o.id+'\')">✓ Confirmar Recebimento</button>':'<span style="font-size:11px;color:var(--muted)">Aguardando operador do setor</span>')+'</div></div>';
-}
-function renderCard(o,setor){
-  var totalMs=now()-tsMs(o.entrada_at),setorMs=now()-tsMs(o.setor_entrada_at);
-  var tC=totalMs>45*60000?'danger':totalMs>25*60000?'warn':'';
-  var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
-  var hora=tsMs(o.entrada_at)?new Date(tsMs(o.entrada_at)).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'--';
-  var idx=SETORES.indexOf(setor),_s=ME?ME.setor:'';
-  var canAct=ME&&(ME.role==='admin'||_s==='todos'||_s===setor);
-  var canFat=ME&&(ME.role==='admin'||_s==='todos'||_s==='faturamento'||_s==='atendimento');
-  var canRet=ME&&(ME.role==='admin'||_s==='todos'||_s==='separacao');
+  var pend = campoPendente(o);
+  var elapsed = now() - tsMs(pend);
+  var alerta = elapsed > ALERT_MS;
+  var dest = o.setor_pendente || '';
+  var _ms = ME ? ME.setor : '';
+  var canC = ME && (ME.role === 'admin' || _ms === 'todos' || _ms === dest || (_ms === 'separacao' && dest === 'retirada'));
+  var prio = o.prioridade || 'normal';
+  var pC = prio === 'idoso' ? 'prio-idoso' : prio === 'gestante' ? 'prio-gestante' : '';
+  var sC = alerta ? 'cd' : elapsed > 3 * 60000 ? 'cw' : '';
 
-  var actions='';
-  var btnRet='';
-
-  if(setor==='faturamento'&&canFat){
-    actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
-  } else if(setor==='retirada'&&canRet){
-    actions='<button class="bfin" onclick="finalizarPedido(\''+o.id+'\')">Retirado ✓</button>';
-  } else if(idx>=0&&idx<SETORES.length-1&&canAct){
-    actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
-  }
-
-  if(idx>0 && canAct){
-    btnRet='<button class="bret" onclick="retornarPedido(\''+o.id+'\')">← Retornar</button>';
-  }
-
-  return '<div class="card '+pC+'">' +
-    '<div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>' +
-    (o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'') +
-    '<div class="card-meta">Entrada: '+hora+' · Por: '+o.criado_por+'</div>' +
-    (o.num_nota?'<div class="card-nota">NF: '+o.num_nota+'</div>':'') +
-    '<div class="ct">' +
-      '<div class="ti"><span class="tl">Neste setor</span><span class="tv '+tC+'">'+fmtT(setorMs)+'</span></div>' +
-      '<div class="ti"><span class="tl">Total</span><span class="tv '+tC+'">'+fmtT(totalMs)+'</span></div>' +
+  return '<div class="card transito ' + pC + ' ' + sC + '">' +
+    '<div class="tlbl"><span class="dp"></span>' + (alerta ? 'Aguardando há ' : 'Aguard. confirmação há ') + fmtT(elapsed) + '</div>' +
+    '<div class="card-top"><span class="card-num">#' + o.numero + '</span>' + prioBadge(prio) + '</div>' +
+    (o.nome_cliente ? '<div class="card-cli">' + o.nome_cliente + '</div>' : '') +
+    '<div class="card-meta">De: ' + (SL[o.setor] || o.setor) + '</div>' +
+    '<div class="ca">' +
+      (canC
+        ? '<button class="bcon" onclick="confirmarRec(\'' + o.id + '\')">✓ Confirmar Recebimento</button>'
+        : '<span style="font-size:11px;color:var(--muted)">Aguardando operador do setor</span>'
+      ) +
     '</div>' +
-    ((actions || btnRet)?'<div class="ca">'+actions+btnRet+'</div>':'') +
   '</div>';
 }
-async function retornarPedido(id){
-  if(!confirm('Retornar este pedido ao setor anterior?')) return;
-  ov(true);
-  try{
-    var o=PEDIDOS.find(function(p){return p.id===id;});
-    if(!o)throw new Error('Pedido não encontrado');
-    var idx=SETORES.indexOf(o.setor);
-    if(idx<=0){toast('Este pedido já está no primeiro setor.','err');return;}
-    var setorAnterior=SETORES[idx-1];
-    var agora=new Date().toISOString();
-    var res=await sb.from('pedidos').update({setor:setorAnterior,setor_pendente:'',status:'em_andamento',setor_entrada_at:agora,pendente_desde:null}).eq('id',id);
-    if(res.error)throw res.error;
-    toast('Pedido retornado para '+SL[setorAnterior]+'.','warn');
-  }catch(e){toast(e.message,'err');}
-  finally{ov(false);}
+
+function renderCard(o, setor){
+  var totalMs = now() - tsMs(campoEntrada(o));
+  var setorMs = now() - tsMs(campoSetorEntrada(o));
+  var tC = totalMs > 45 * 60000 ? 'danger' : totalMs > 25 * 60000 ? 'warn' : '';
+  var prio = o.prioridade || 'normal';
+  var pC = prio === 'idoso' ? 'prio-idoso' : prio === 'gestante' ? 'prio-gestante' : '';
+  var hora = tsMs(campoEntrada(o))
+    ? new Date(tsMs(campoEntrada(o))).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+    : '--';
+
+  var idx = SETORES.indexOf(setor);
+  var _s = ME ? ME.setor : '';
+  var canAct = ME && (ME.role === 'admin' || _s === 'todos' || _s === setor);
+  var canFat = ME && (ME.role === 'admin' || _s === 'todos' || _s === 'faturamento' || _s === 'atendimento');
+  var canRet = ME && (ME.role === 'admin' || _s === 'todos' || _s === 'separacao');
+
+  var actions = '';
+  var btnRet = '';
+
+  if(setor === 'faturamento' && canFat){
+    actions = '<button class="bfin" onclick="openNota(\'' + o.id + '\')">Faturar →</button>';
+  }else if(setor === 'retirada' && canRet){
+    actions = '<button class="bfin" onclick="finalizarPedido(\'' + o.id + '\')">Retirado ✓</button>';
+  }else if(idx >= 0 && idx < SETORES.length - 1 && canAct){
+    actions = '<button class="bmv" onclick="enviar(\'' + o.id + '\',\'' + SETORES[idx+1] + '\')">→ ' + SL[SETORES[idx+1]] + '</button>';
+  }
+
+  if(idx > 0 && canAct){
+    btnRet = '<button class="bret" onclick="retornarPedido(\'' + o.id + '\')">← Retornar</button>';
+  }
+
+  return '<div class="card ' + pC + '">' +
+    '<div class="card-top"><span class="card-num">#' + o.numero + '</span>' + prioBadge(prio) + '</div>' +
+    (o.nome_cliente ? '<div class="card-cli">' + o.nome_cliente + '</div>' : '') +
+    '<div class="card-meta">Entrada: ' + hora + ' · Por: ' + (o.criado_por || '—') + '</div>' +
+    (o.num_nota ? '<div class="card-nota">NF: ' + o.num_nota + '</div>' : '') +
+    '<div class="ct">' +
+      '<div class="ti"><span class="tl">Neste setor</span><span class="tv ' + tC + '">' + fmtT(setorMs) + '</span></div>' +
+      '<div class="ti"><span class="tl">Total</span><span class="tv ' + tC + '">' + fmtT(totalMs) + '</span></div>' +
+    '</div>' +
+    ((actions || btnRet) ? '<div class="ca">' + actions + btnRet + '</div>' : '') +
+  '</div>';
 }
 
-async function enviar(id,destino){
+async function retornarPedido(id){
+  if(!confirm('Retornar este pedido ao setor anterior?')) return;
+
   ov(true);
   try{
-    var res=await sb.from('pedidos').update({setor_pendente:destino,status:'aguardando',pendente_desde:new Date().toISOString()}).eq('id',id);
-    if(res.error)throw res.error;
-    toast('Pedido enviado para '+(SL[destino]||destino)+'. Aguardando confirmação.','move');
-  }catch(e){toast(e.message,'err');}
-  finally{ov(false);}
+    var o = PEDIDOS.find(p => p.id === id);
+    if(!o) throw new Error('Pedido não encontrado');
+
+    var idx = SETORES.indexOf(o.setor);
+    if(idx <= 0){
+      toast('Este pedido já está no primeiro setor.', 'err');
+      return;
+    }
+
+    var setorAnterior = SETORES[idx - 1];
+    var agora = new Date().toISOString();
+
+    var payload = {
+      setor: setorAnterior,
+      setor_pendente: '',
+      status: 'em_andamento',
+      pendente_desde: null,
+      cara_desde: null
+    };
+    if('setor_entrada_at' in o) payload.setor_entrada_at = agora;
+    else payload.setor_entrada_em = agora;
+
+    var res = await sb.from('pedidos').update(payload).eq('id', id);
+    handleSbError(res, 'Erro ao retornar pedido');
+
+    toast('Pedido retornado para ' + SL[setorAnterior] + '.', 'warn');
+  }catch(e){
+    console.error(e);
+    toast(e.message, 'err');
+  }finally{
+    ov(false);
+  }
 }
+
+async function enviar(id, destino){
+  ov(true);
+  try{
+    var o = PEDIDOS.find(p => p.id === id);
+    var agora = new Date().toISOString();
+    var payload = {
+      setor_pendente: destino,
+      status: 'aguardando'
+    };
+    if(o && 'pendente_desde' in o) payload.pendente_desde = agora;
+    else payload.cara_desde = agora;
+
+    var res = await sb.from('pedidos').update(payload).eq('id', id);
+    handleSbError(res, 'Erro ao enviar pedido');
+
+    toast('Pedido enviado para ' + (SL[destino] || destino) + '. Aguardando confirmação.', 'move');
+  }catch(e){
+    console.error(e);
+    toast(e.message, 'err');
+  }finally{
+    ov(false);
+  }
+}
+
 async function confirmarRec(id){
   ov(true);
   try{
-    var o=PEDIDOS.find(function(p){return p.id===id;});
-    if(!o)throw new Error('Pedido não encontrado');
-    var agora=new Date().toISOString();
-    var tempoSetor=new Date(o.pendente_desde)-new Date(o.setor_entrada_at);
-    var tempoConf=new Date(agora)-new Date(o.pendente_desde);
-    var dest=o.setor_pendente;
-    var res=await sb.from('pedidos').update({setor:dest,setor_pendente:'',status:dest==='retirada'?'faturado':'em_andamento',setor_entrada_at:agora,pendente_desde:null}).eq('id',id);
-    if(res.error)throw res.error;
-    await sb.from('movimentacoes').insert({pedido_id:id,setor_origem:o.setor,setor_destino:dest,usuario:ME.login,entrada_at:o.setor_entrada_at,saida_at:agora,tempo_ms:tempoSetor,confirmado_por:ME.login,confirmado_at:agora,tempo_confirmacao_ms:tempoConf});
-    await sb.from('confirmacoes').insert({pedido_id:id,setor_origem:o.setor,setor_destino:dest,enviado_at:o.pendente_desde,confirmado_at:agora,tempo_confirmacao_ms:tempoConf,confirmado_por:ME.login});
-    toast('Recebimento confirmado em '+(SL[dest]||dest),'ok');
-    // Narração
-    if(dest==='retirada'){
-      narrar('Pedido '+o.numero+', por favor dirija-se ao balcão para retirar sua mercadoria.');
-    } else {
-      narrar('Pedido '+o.numero+' recebido pelo setor de '+(SL[dest]||dest)+'.');
+    var o = PEDIDOS.find(p => p.id === id);
+    if(!o) throw new Error('Pedido não encontrado');
+
+    var agora = new Date().toISOString();
+    var dtEntrada = campoSetorEntrada(o);
+    var dtPend = campoPendente(o);
+    var tempoSetor = tsMs(dtPend) - tsMs(dtEntrada);
+    var tempoConf = tsMs(agora) - tsMs(dtPend);
+    var dest = o.setor_pendente;
+
+    var payload = {
+      setor: dest,
+      setor_pendente: '',
+      status: dest === 'retirada' ? 'faturado' : 'em_andamento',
+      pendente_desde: null,
+      cara_desde: null
+    };
+    if('setor_entrada_at' in o) payload.setor_entrada_at = agora;
+    else payload.setor_entrada_em = agora;
+
+    var res = await sb.from('pedidos').update(payload).eq('id', id);
+    handleSbError(res, 'Erro ao confirmar recebimento');
+
+    const movPayload = {
+      pedido_id: id,
+      setor_origem: o.setor,
+      setor_destino: dest,
+      usuario: ME.login,
+      tempo_ms: tempoSetor,
+      confirmado_por: ME.login,
+      tempo_confirmacao_ms: tempoConf,
+      tempo_conf: tempoConf,
+      entrada_em: dtEntrada,
+      saida_em: agora,
+      confirmado_em: agora
+    };
+
+    await sb.from('movimentacoes').insert(movPayload);
+
+    await sb.from('confirmacoes').insert({
+      pedido_id:id,
+      setor_origem:o.setor,
+      setor_destino:dest,
+      enviado_at:dtPend,
+      confirmado_at:agora,
+      tempo_confirmacao_ms:tempoConf,
+      tempo_conf:tempoConf,
+      confirmado_por:ME.login
+    });
+
+    toast('Recebimento confirmado em ' + (SL[dest] || dest), 'ok');
+
+    if(dest === 'retirada'){
+      narrar('Pedido ' + o.numero + ', por favor dirija-se ao balcão para retirar sua mercadoria.');
+    }else{
+      narrar('Pedido ' + o.numero + ' recebido pelo setor de ' + (SL[dest] || dest) + '.');
     }
-  }catch(e){toast(e.message,'err');}
-  finally{ov(false);}
+  }catch(e){
+    console.error(e);
+    toast(e.message, 'err');
+  }finally{
+    ov(false);
+  }
 }
-function openNota(id){_notaTarget=id;el('nota-num').value='';openM('m-nota');}
+
+function openNota(id){
+  _notaTarget = id;
+  el('nota-num').value = '';
+  openM('m-nota');
+}
+
 async function confirmarNota(){
-  var nota=el('nota-num').value.trim();
-  if(!nota){toast('Informe o número da nota fiscal.','err');return;}
-  closeM('m-nota');ov(true);
+  var nota = el('nota-num').value.trim();
+  if(!nota){
+    toast('Informe o número da nota fiscal.', 'err');
+    return;
+  }
+
+  closeM('m-nota');
+  ov(true);
+
   try{
-    var res=await sb.from('pedidos').update({setor_pendente:'retirada',status:'aguardando',pendente_desde:new Date().toISOString(),num_nota:nota}).eq('id',_notaTarget);
-    if(res.error)throw res.error;
-    toast('Faturado! NF '+nota+'. Enviado para retirada.','move');
-  }catch(e){toast(e.message,'err');}
-  finally{ov(false);_notaTarget=null;}
+    var o = PEDIDOS.find(p => p.id === _notaTarget);
+    var agora = new Date().toISOString();
+    var payload = {
+      setor_pendente:'retirada',
+      status:'aguardando',
+      num_nota:nota
+    };
+    if(o && 'pendente_desde' in o) payload.pendente_desde = agora;
+    else payload.cara_desde = agora;
+
+    var res = await sb.from('pedidos').update(payload).eq('id', _notaTarget);
+    handleSbError(res, 'Erro ao faturar pedido');
+
+    toast('Faturado! NF ' + nota + '. Enviado para retirada.', 'move');
+  }catch(e){
+    console.error(e);
+    toast(e.message, 'err');
+  }finally{
+    ov(false);
+    _notaTarget = null;
+  }
 }
+
 async function finalizarPedido(id){
   ov(true);
   try{
-    var o=PEDIDOS.find(function(p){return p.id===id;});
-    if(!o)throw new Error('Pedido não encontrado');
-    var agora=new Date().toISOString();
-    var tempoMs=new Date(agora)-new Date(o.setor_entrada_at);
-    var res=await sb.from('pedidos').update({setor:'finalizado',status:'finalizado',finalizado_at:agora}).eq('id',id);
-    if(res.error)throw res.error;
-    await sb.from('movimentacoes').insert({pedido_id:id,setor_origem:o.setor,setor_destino:'finalizado',usuario:ME.login,entrada_at:o.setor_entrada_at,saida_at:agora,tempo_ms:tempoMs,confirmado_por:'',confirmado_at:null,tempo_confirmacao_ms:0});
-    toast('Pedido finalizado — material retirado!','ok');
-    narrar('Pedido '+o.numero+' finalizado. Obrigado!');
-  }catch(e){toast(e.message,'err');}
-  finally{ov(false);}
-}
-function openNewOrder(){el('no-num').value='';el('no-cli').value='';el('no-obs').value='';el('no-prio').value='normal';openM('m-new-order');}
-async function createOrder(){
-  var num=el('no-num').value.trim(),cli=el('no-cli').value.trim(),prio=el('no-prio').value;
-  if(!num){toast('Informe o número do pedido.','err');return;}
-  if(!cli){toast('Informe o nome do cliente.','err');return;}
-  closeM('m-new-order');ov(true);
-  try{
-    var dup=await sb.from('pedidos').select('id').eq('numero',num).neq('status','finalizado');
-    if(dup.data&&dup.data.length>0){toast('Já existe um pedido ativo com este número.','err');return;}
-    var agora=new Date().toISOString();
-    var res=await sb.from('pedidos').insert({numero:num,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,obs:el('no-obs').value,nome_cliente:cli,prioridade:prio,num_nota:''});
-    if(res.error)throw res.error;
-    toast('Pedido #'+num+' criado — '+cli,'ok');
-  }catch(e){toast(e.message,'err');}
-  finally{ov(false);}
-}
-function renderTV(){
-  var active=PEDIDOS.filter(function(o){return o.status!=='finalizado';});
-  el('tv-body').innerHTML=active.sort(function(a,b){return tsMs(b.entrada_at)-tsMs(a.entrada_at);}).map(function(o){
-    var totalMs=now()-tsMs(o.entrada_at);
-    var setorMs=o.status==='aguardando'?now()-tsMs(o.pendente_desde):now()-tsMs(o.setor_entrada_at);
-    var rC=totalMs>45*60000?'tv-row-danger':totalMs>25*60000?'tv-row-warn':'';
-    var tColor=totalMs>45*60000?'var(--danger)':totalMs>25*60000?'var(--warn)':'var(--text)';
-    var sl=o.status==='aguardando'?'<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span> <span style="font-size:11px;color:var(--corte)">→ '+(SL[o.setor_pendente]||o.setor_pendente||'')+'</span>':'<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span>';
-    return '<tr class="'+rC+'"><td><span class="tv-num">#'+o.numero+'</span></td><td style="font-size:13px">'+(o.nome_cliente||'—')+'</td><td>'+sl+'</td><td><span class="tv-tim">'+fmtTs(setorMs)+'</span></td><td><span class="tv-tim" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td><td><span style="font-size:12px;color:var(--muted)">'+(o.status==='faturado'?'✓ Faturado':o.status==='aguardando'?'Aguard. confirmação':'Em andamento')+'</span></td></tr>';
-  }).join('');
-  var done=PEDIDOS.filter(function(o){return o.status==='finalizado';});
-  var avgMs=done.length?done.reduce(function(s,o){return s+(tsMs(o.finalizado_at)-tsMs(o.entrada_at));},0)/done.length:0;
-  el('tv-avg').textContent=done.length?fmtTs(avgMs):'--:--';
-  el('tv-done').textContent=done.length;
-  el('tv-active').textContent=active.length;
-  el('tv-clock').textContent=fmtClock(new Date());
-}
-function renderRelatorios(){
-  var all=PEDIDOS,done=all.filter(function(o){return o.status==='finalizado';}),active=all.filter(function(o){return o.status!=='finalizado';});
-  var times=done.map(function(o){return tsMs(o.finalizado_at)-tsMs(o.entrada_at);}).filter(function(t){return t>0;});
-  var avg=times.length?times.reduce(function(a,b){return a+b;},0)/times.length:0;
-  var minT=times.length?Math.min.apply(null,times):0,maxT=times.length?Math.max.apply(null,times):0;
-  el('kpi-grid').innerHTML=[{l:'Total de pedidos',v:all.length,s:'hoje'},{l:'Finalizados',v:done.length,s:'hoje'},{l:'Em andamento',v:active.filter(function(o){return o.status==='em_andamento';}).length,s:'agora'},{l:'Aguard. confirmação',v:active.filter(function(o){return o.status==='aguardando';}).length,s:'agora'},{l:'Tempo médio',v:avg?fmtT(avg):'--',s:'por pedido'},{l:'Mais rápido',v:minT?fmtT(minT):'--',s:''},{l:'Mais lento',v:maxT?fmtT(maxT):'--',s:''}].map(function(k){return '<div class="kpi"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'</div><div class="ks">'+k.s+'</div></div>';}).join('');
-  var sA={},sC={};
-  MOVS.forEach(function(m){var ms=parseInt(m.tempo_ms)||0;if(ms<=0||SETORES.indexOf(m.setor_origem)<0)return;sA[m.setor_origem]=(sA[m.setor_origem]||0)+ms;sC[m.setor_origem]=(sC[m.setor_origem]||0)+1;});
-  var maxS=Math.max.apply(null,SETORES.map(function(s){return sC[s]?(sA[s]/sC[s]):0;}))||1;
-  el('bars-setor').innerHTML=SETORES.map(function(s){var a=sC[s]?Math.round(sA[s]/sC[s]):0;return '<div class="br"><span class="bn">'+(SL[s])+'</span><div class="bt"><div class="bf" style="width:'+Math.round(a/maxS*100)+'%;background:'+(BC[s])+'"></div></div><span class="bv">'+(a?fmtT(a):'--')+' <span style="color:var(--muted);font-size:10px">('+( sC[s]||0)+')</span></span></div>';}).join('');
-  if(ME&&ME.role==='admin'){
-    var cA={},cC={};
-    MOVS.forEach(function(m){var ms=parseInt(m.tempo_confirmacao_ms)||0;if(ms<=0||SETORES.indexOf(m.setor_destino)<0)return;cA[m.setor_destino]=(cA[m.setor_destino]||0)+ms;cC[m.setor_destino]=(cC[m.setor_destino]||0)+1;});
-    var maxC=Math.max.apply(null,SETORES.map(function(s){return cC[s]?(cA[s]/cC[s]):0;}))||1;
-    el('bars-conf').innerHTML=SETORES.map(function(s){var a=cC[s]?Math.round(cA[s]/cC[s]):0;return '<div class="br"><span class="bn">'+(SL[s])+'</span><div class="bt"><div class="bf" style="width:'+Math.round(a/maxC*100)+'%;background:'+(BC[s])+'"></div></div><span class="bv">'+(a?fmtT(a):'--')+' <span style="color:var(--muted);font-size:10px">('+( cC[s]||0)+')</span></span></div>';}).join('');
+    var o = PEDIDOS.find(p => p.id === id);
+    if(!o) throw new Error('Pedido não encontrado');
+
+    var agora = new Date().toISOString();
+    var tempoMs = tsMs(agora) - tsMs(campoSetorEntrada(o));
+
+    var payload = {
+      setor:'finalizado',
+      status:'finalizado'
+    };
+    if('finalizado_at' in o) payload.finalizado_at = agora;
+    else payload.finalizado_em = agora;
+
+    var res = await sb.from('pedidos').update(payload).eq('id', id);
+    handleSbError(res, 'Erro ao finalizar pedido');
+
+    const movPayload = {
+      pedido_id:id,
+      setor_origem:o.setor,
+      setor_destino:'finalizado',
+      usuario:ME.login,
+      tempo_ms:tempoMs,
+      confirmado_por:'',
+      tempo_confirmacao_ms:0,
+      tempo_conf:0,
+      entrada_em: campoSetorEntrada(o),
+      saida_em: agora,
+      confirmado_em: null
+    };
+
+    await sb.from('movimentacoes').insert(movPayload);
+
+    toast('Pedido finalizado — material retirado!', 'ok');
+    narrar('Pedido ' + o.numero + ' finalizado. Obrigado!');
+  }catch(e){
+    console.error(e);
+    toast(e.message, 'err');
+  }finally{
+    ov(false);
   }
-  var ranked=all.slice().sort(function(a,b){var ta=(tsMs(a.finalizado_at)||now())-tsMs(a.entrada_at),tb=(tsMs(b.finalizado_at)||now())-tsMs(b.entrada_at);return tb-ta;}).slice(0,10);
-  var sc={finalizado:'var(--atend)',faturado:'var(--fat)',em_andamento:'var(--muted)',aguardando:'var(--corte)'};
-  el('rank-body').innerHTML=ranked.map(function(o,i){var t=(tsMs(o.finalizado_at)||now())-tsMs(o.entrada_at);return '<tr><td style="color:var(--muted)">'+(i+1)+'</td><td style="font-family:var(--font-head);font-size:16px;font-weight:700">#'+o.numero+'</td><td>'+(o.nome_cliente||'—')+'</td><td><span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span></td><td>'+fmtT(t)+'</td><td style="color:'+(sc[o.status]||'var(--muted)')+';font-size:12px">'+o.status+'</td></tr>';}).join('');
-}
-var SETORlabel={todos:'Todos',atendimento:'Atendimento',corte:'Corte',separacao:'Separação',faturamento:'Faturamento'};
-function renderUsers(users){el('users-body').innerHTML=users.map(function(u){return '<tr><td>'+u.nome+'</td><td style="color:var(--muted)">'+u.login+'</td><td style="font-size:12px">'+(SETORlabel[u.setor]||u.setor)+'</td><td><span class="bar '+(u.role==='admin'?'bar-a':'bar-o')+'">'+u.role+'</span></td><td><span class="'+(u.ativo?'bon':'boff')+'">'+(u.ativo?'Ativo':'Inativo')+'</span></td><td><button class="bmv" onclick="toggleUser(\''+u.id+'\','+u.ativo+',\''+u.login+'\')">'+(u.ativo?'Desativar':'Ativar')+'</button></td></tr>';}).join('');}
-async function toggleUser(id,ativo,login){if(login==='admin'){toast('Não é possível desativar o admin principal.','err');return;}ov(true);try{await sb.from('usuarios').update({ativo:!ativo}).eq('id',id);var u=await fetchUsuarios();renderUsers(u);toast('Usuário atualizado.','ok');}catch(e){toast(e.message,'err');}finally{ov(false);}}
-async function createUser(){
-  var nome=el('nu-nome').value.trim(),login=el('nu-login').value.trim(),senha=el('nu-senha').value,role=el('nu-role').value,setor=el('nu-setor').value;
-  if(!nome||!login||!senha){toast('Preencha todos os campos.','err');return;}
-  closeM('m-new-user');ov(true);
-  try{var res=await sb.from('usuarios').insert({nome:nome,login:login,senha:senha,role:role,setor:setor,ativo:true});if(res.error)throw res.error;var u=await fetchUsuarios();renderUsers(u);toast('Usuário criado!','ok');}catch(e){toast(e.message,'err');}finally{ov(false);}
-}
-async function alterarSenha(){
-  var atual=el('s-atual').value,nova=el('s-nova').value,conf=el('s-conf').value;
-  el('s-err').textContent='';
-  if(!atual||!nova||!conf){el('s-err').textContent='Preencha todos os campos.';return;}
-  if(nova!==conf){el('s-err').textContent='Nova senha e confirmação não coincidem.';return;}
-  if(nova.length<4){el('s-err').textContent='Mínimo 4 caracteres.';return;}
-  ov(true);
-  try{var res=await sb.from('usuarios').select('id').eq('login',ME.login).eq('senha',atual).single();if(res.error||!res.data){el('s-err').textContent='Senha atual incorreta.';return;}await sb.from('usuarios').update({senha:nova}).eq('id',ME.id);toast('Senha alterada!','ok');['s-atual','s-nova','s-conf'].forEach(function(i){el(i).value='';});}catch(e){el('s-err').textContent=e.message;}finally{ov(false);}
-}
-// TV Pública
-var _tvPub=[];
-function iniciarTVPublica(){
-  setInterval(function(){if(el('tvp-clock'))el('tvp-clock').textContent=fmtClock(new Date());renderTVPub();},1000);
-  setInterval(async function(){
-    try{var hoje=new Date();hoje.setHours(0,0,0,0);var res=await sb.from('pedidos').select('*').or('entrada_at.gte.'+hoje.toISOString()+',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado').order('entrada_at',{ascending:false});_tvPub=res.data||[];renderTVPub();}catch(e){}
-  },3000);
-}
-function renderTVPub(){
-  var active=_tvPub.filter(function(o){return o.status!=='finalizado';});
-  if(!el('tvp-body'))return;
-  el('tvp-body').innerHTML=active.sort(function(a,b){return tsMs(b.entrada_at)-tsMs(a.entrada_at);}).map(function(o){
-    var totalMs=now()-tsMs(o.entrada_at),setorMs=o.status==='aguardando'?now()-tsMs(o.pendente_desde):now()-tsMs(o.setor_entrada_at);
-    var rC=totalMs>45*60000?'tv-row-danger':totalMs>25*60000?'tv-row-warn':'';
-    var tColor=totalMs>45*60000?'var(--danger)':totalMs>25*60000?'var(--warn)':'var(--text)';
-    var sl='<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span>';
-    return '<tr class="'+rC+'"><td><span class="tv-num">#'+o.numero+'</span></td><td style="font-size:13px">'+(o.nome_cliente||'—')+'</td><td>'+sl+'</td><td><span class="tv-tim">'+fmtTs(setorMs)+'</span></td><td><span class="tv-tim" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td><td><span style="font-size:12px;color:var(--muted)">'+(o.status==='faturado'?'✓ Faturado':o.status==='aguardando'?'Aguard. confirmação':'Em andamento')+'</span></td></tr>';
-  }).join('');
-  var done=_tvPub.filter(function(o){return o.status==='finalizado';});
-  var avgMs=done.length?done.reduce(function(s,o){return s+(tsMs(o.finalizado_at)-tsMs(o.entrada_at));},0)/done.length:0;
-  if(el('tvp-avg'))el('tvp-avg').textContent=done.length?fmtTs(avgMs):'--:--';
-  if(el('tvp-done'))el('tvp-done').textContent=done.length;
-  if(el('tvp-active'))el('tvp-active').textContent=active.length;
-}
-if(window.location.search.indexOf('tv=1')>=0){
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  el('screen-tv-pub').style.display='block';
-  iniciarTVPublica();
 }
 
-el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
-el('tv-clock').textContent=fmtClock(new Date());
+function openNewOrder(){
+  el('no-num').value = '';
+  el('no-cli').value = '';
+  el('no-obs').value = '';
+  el('no-prio').value = 'normal';
+  openM('m-new-order');
+}
+
+async function createOrder(){
+  var num = el('no-num').value.trim();
+  var cli = el('no-cli').value.trim();
+  var prio = el('no-prio').value;
+
+  if(!num){
+    toast('Informe o número do pedido.', 'err');
+    return;
+  }
+  if(!cli){
+    toast('Informe o nome do cliente.', 'err');
+    return;
+  }
+
+  closeM('m-new-order');
+  ov(true);
+
+  try{
+    var dup = await sb.from('pedidos').select('id').eq('numero', num).neq('status', 'finalizado');
+    handleSbError(dup, 'Erro ao validar duplicidade');
+
+    if(dup.data && dup.data.length > 0){
+      toast('Já existe um pedido ativo com este número.', 'err');
+      return;
+    }
+
+    var agora = new Date().toISOString();
+    var payload = {
+      numero:num,
+      setor:'atendimento',
+      setor_pendente:'',
+      status:'em_andamento',
+      criado_por:ME.login,
+      obs:el('no-obs').value,
+      nome_cliente:cli,
+      prioridade:prio,
+      num_nota:'',
+      entrada_em:agora,
+      setor_entrada_em:agora
+    };
+
+    var res = await sb.from('pedidos').insert(payload);
+    handleSbError(res, 'Erro ao criar pedido');
+    toast('Pedido #' + num + ' criado — ' + cli, 'ok');
+  }catch(e){
+    console.error(e);
+    toast(e.message, 'err');
+  }finally{
+    ov(false);
+  }
+}
+
+function renderTV(){
+  var active = PEDIDOS.filter(o => o.status !== 'finalizado');
+
+  el('tv-body').innerHTML = active
+    .sort((a,b) => tsMs(campoEntrada(b)) - tsMs(campoEntrada(a)))
+    .map(function(o){
+      var totalMs = now() - tsMs(campoEntrada(o));
+      var setorMs = o.status === 'aguardando'
+        ? now() - tsMs(campoPendente(o))
+        : now() - tsMs(campoSetorEntrada(o));
+
+      var rC = totalMs > 45 * 60000 ? 'tv-row-danger' : totalMs > 25 * 60000 ? 'tv-row-warn' : '';
+      var tColor = totalMs > 45 * 60000 ? 'var(--danger)' : totalMs > 25 * 60000 ? 'var(--warn)' : 'var(--text)';
+
+      var sl = o.status === 'aguardando'
+        ? '<span class="tv-set ' + (SC[o.setor] || 'tag-do') + '">' + (SL[o.setor] || o.setor) + '</span> <span style="font-size:11px;color:var(--corte)">→ ' + (SL[o.setor_pendente] || o.setor_pendente || '') + '</span>'
+        : '<span class="tv-set ' + (SC[o.setor] || 'tag-do') + '">' + (SL[o.setor] || o.setor) + '</span>';
+
+      return '<tr class="' + rC + '">' +
+        '<td><span class="tv-num">#' + o.numero + '</span></td>' +
+        '<td style="font-size:13px">' + (o.nome_cliente || '—') + '</td>' +
+        '<td>' + sl + '</td>' +
+        '<td><span class="tv-tim">' + fmtTs(setorMs) + '</span></td>' +
+        '<td><span class="tv-tim" style="color:' + tColor + '">' + fmtTs(totalMs) + '</span></td>' +
+        '<td><span style="font-size:12px;color:var(--muted)">' + (o.status === 'faturado' ? '✓ Faturado' : o.status === 'aguardando' ? 'Aguard. confirmação' : 'Em andamento') + '</span></td>' +
+      '</tr>';
+    }).join('');
+
+  var done = PEDIDOS.filter(o => o.status === 'finalizado');
+  var avgMs = done.length
+    ? done.reduce((s,o) => s + (tsMs(campoFinalizado(o)) - tsMs(campoEntrada(o))), 0) / done.length
+    : 0;
+
+  el('tv-avg').textContent = done.length ? fmtTs(avgMs) : '--:--';
+  el('tv-done').textContent = done.length;
+  el('tv-active').textContent = active.length;
+  if(el('tv-clock')) el('tv-clock').textContent = fmtClock(new Date());
+}
+
+function renderRelatorios(){
+  var all = PEDIDOS;
+  var done = all.filter(o => o.status === 'finalizado');
+  var active = all.filter(o => o.status !== 'finalizado');
+  var times = done
+    .map(o => tsMs(campoFinalizado(o)) - tsMs(campoEntrada(o)))
+    .filter(t => t > 0);
+
+  var avg = times.length ? times.reduce((a,b) => a+b, 0) / times.length : 0;
+  var minT = times.length ? Math.min.apply(null, times) : 0;
+  var maxT = times.length ? Math.max.apply(null, times) : 0;
+
+  el('kpi-grid').innerHTML = [
+    {l:'Total de pedidos',v:all.length,s:'hoje'},
+    {l:'Finalizados',v:done.length,s:'hoje'},
+    {l:'Em andamento',v:active.filter(o => o.status === 'em_andamento').length,s:'agora'},
+    {l:'Aguard. confirmação',v:active.filter(o => o.status === 'aguardando').length,s:'agora'},
+    {l:'Tempo médio',v:avg ? fmtT(avg) : '--',s:'por pedido'},
+    {l:'Mais rápido',v:minT ? fmtT(minT) : '--',s:''},
+    {l:'Mais lento',v:maxT ? fmtT(maxT) : '--',s:''}
+  ].map(k => '<div class="kpi"><div class="kl">' + k.l + '</div><div class="kv">' + k.v + '</div><div class="ks">' + k.s + '</div></div>').join('');
+
+  var sA = {}, sC = {};
+  MOVS.forEach(function(m){
+    var ms = parseInt(m.tempo_ms) || 0;
+    if(ms <= 0 || SETORES.indexOf(m.setor_origem) < 0) return;
+    sA[m.setor_origem] = (sA[m.setor_origem] || 0) + ms;
+    sC[m.setor_origem] = (sC[m.setor_origem] || 0) + 1;
+  });
+
+  var maxS = Math.max.apply(null, SETORES.map(s => sC[s] ? (sA[s] / sC[s]) : 0)) || 1;
+
+  el('bars-setor').innerHTML = SETORES.map(function(s){
+    var a = sC[s] ? Math.round(sA[s] / sC[s]) : 0;
+    return '<div class="br"><span class="bn">' + SL[s] + '</span><div class="bt"><div class="bf" style="width:' + Math.round(a / maxS * 100) + '%;background:' + BC[s] + '"></div></div><span class="bv">' + (a ? fmtT(a) : '--') + ' <span style="color:var(--muted);font-size:10px">(' + (sC[s] || 0) + ')</span></span></div>';
+  }).join('');
+
+  if(ME && ME.role === 'admin'){
+    var cA = {}, cC = {};
+    MOVS.forEach(function(m){
+      var ms = parseInt(campoTempoConfirmacao(m)) || 0;
+      if(ms <= 0 || SETORES.indexOf(m.setor_destino) < 0) return;
+      cA[m.setor_destino] = (cA[m.setor_destino] || 0) + ms;
+      cC[m.setor_destino] = (cC[m.setor_destino] || 0) + 1;
+    });
+
+    var maxC = Math.max.apply(null, SETORES.map(s => cC[s] ? (cA[s] / cC[s]) : 0)) || 1;
+
+    el('bars-conf').innerHTML = SETORES.map(function(s){
+      var a = cC[s] ? Math.round(cA[s] / cC[s]) : 0;
+      return '<div class="br"><span class="bn">' + SL[s] + '</span><div class="bt"><div class="bf" style="width:' + Math.round(a / maxC * 100) + '%;background:' + BC[s] + '"></div></div><span class="bv">' + (a ? fmtT(a) : '--') + ' <span style="color:var(--muted);font-size:10px">(' + (cC[s] || 0) + ')</span></span></div>';
+    }).join('');
+
+    document.querySelectorAll('#bars-conf, .st.adm-only').forEach(x => x.style.display = '');
+  }
+
+  var ranked = all
+    .slice()
+    .sort(function(a,b){
+      var ta = (tsMs(campoFinalizado(a)) || now()) - tsMs(campoEntrada(a));
+      var tb = (tsMs(campoFinalizado(b)) || now()) - tsMs(campoEntrada(b));
+      return tb - ta;
+    })
+    .slice(0, 10);
+
+  var sc = {
+    finalizado:'var(--atend)',
+    faturado:'var(--fat)',
+    em_andamento:'var(--muted)',
+    aguardando:'var(--corte)'
+  };
+
+  el('rank-body').innerHTML = ranked.map(function(o,i){
+    var t = (tsMs(campoFinalizado(o)) || now()) - tsMs(campoEntrada(o));
+    return '<tr>' +
+      '<td style="color:var(--muted)">' + (i+1) + '</td>' +
+      '<td style="font-family:var(--font-head);font-size:16px;font-weight:700">#' + o.numero + '</td>' +
+      '<td>' + (o.nome_cliente || '—') + '</td>' +
+      '<td><span class="tv-set ' + (SC[o.setor] || 'tag-do') + '">' + (SL[o.setor] || o.setor) + '</span></td>' +
+      '<td>' + fmtT(t) + '</td>' +
+      '<td style="color:' + (sc[o.status] || 'var(--muted)') + ';font-size:12px">' + o.status + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+var SETORlabel = {
+  todos:'Todos',
+  atendimento:'Atendimento',
+  corte:'Corte',
+  separacao:'Separação',
+  faturamento:'Faturamento'
+};
+
+function renderUsers(users){
+  el('users-body').innerHTML = users.map(function(u){
+    return '<tr>' +
+      '<td>' + u.nome + '</td>' +
+      '<td style="color:var(--muted)">' + u.login + '</td>' +
+      '<td style="font-size:12px">' + (SETORlabel[u.setor] || u.setor) + '</td>' +
+      '<td><span class="bar ' + (u.role === 'admin' ? 'bar-a' : 'bar-o') + '">' + u.role + '</span></td>' +
+      '<td><span class="' + (u.ativo ? 'bon' : 'boff') + '">' + (u.ativo ? 'Ativo' : 'Inativo') + '</span></td>' +
+      '<td><button class="bmv" onclick="toggleUser(\'' + u.id + '\',' + u.ativo + ',\'' + u.login + '\')">' + (u.ativo ? 'Desativar' : 'Ativar') + '</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+async function toggleUser(id, ativo, login){
+  if(login === 'admin'){
+    toast('Não é possível desativar o admin principal.', 'err');
+    return;
+  }
+
+  ov(true);
+  try{
+    var res = await sb.from('usuarios').update({ativo:!ativo}).eq('id', id);
+    handleSbError(res, 'Erro ao atualizar usuário');
+    var u = await fetchUsuarios();
+    renderUsers(u);
+    toast('Usuário atualizado.', 'ok');
+  }catch(e){
+    console.error(e);
+    toast(e.message, 'err');
+  }finally{
+    ov(false);
+  }
+}
+
+async function createUser(){
+  var nome = el('nu-nome').value.trim();
+  var login = el('nu-login').value.trim();
+  var senha = el('nu-senha').value;
+  var role = el('nu-role').value;
+  var setor = el('nu-setor').value;
+
+  if(!nome || !login || !senha){
+    toast('Preencha todos os campos.', 'err');
+    return;
+  }
+
+  closeM('m-new-user');
+  ov(true);
+
+  try{
+    var res = await sb.from('usuarios').insert({
+      nome:nome,
+      login:login,
+      senha:senha,
+      role:role,
+      setor:setor,
+      ativo:true
+    });
+    handleSbError(res, 'Erro ao criar usuário');
+
+    var u = await fetchUsuarios();
+    renderUsers(u);
+    toast('Usuário criado!', 'ok');
+  }catch(e){
+    console.error(e);
+    toast(e.message, 'err');
+  }finally{
+    ov(false);
+  }
+}
+
+async function alterarSenha(){
+  var atual = el('s-atual').value;
+  var nova = el('s-nova').value;
+  var conf = el('s-conf').value;
+  el('s-err').textContent = '';
+
+  if(!atual || !nova || !conf){
+    el('s-err').textContent = 'Preencha todos os campos.';
+    return;
+  }
+  if(nova !== conf){
+    el('s-err').textContent = 'Nova senha e confirmação não coincidem.';
+    return;
+  }
+  if(nova.length < 4){
+    el('s-err').textContent = 'Mínimo 4 caracteres.';
+    return;
+  }
+
+  ov(true);
+  try{
+    var res = await sb.from('usuarios').select('id').eq('login', ME.login).eq('senha', atual).single();
+    if(res.error || !res.data){
+      el('s-err').textContent = 'Senha atual incorreta.';
+      return;
+    }
+
+    var upd = await sb.from('usuarios').update({senha:nova}).eq('id', ME.id);
+    handleSbError(upd, 'Erro ao alterar senha');
+
+    toast('Senha alterada!', 'ok');
+    ['s-atual','s-nova','s-conf'].forEach(i => el(i).value = '');
+  }catch(e){
+    console.error(e);
+    el('s-err').textContent = e.message;
+  }finally{
+    ov(false);
+  }
+}
+
+// ── TV PÚBLICA ──
+async function fetchPedidosTVPublica(){
+  try{
+    var hoje = new Date();
+    hoje.setHours(0,0,0,0);
+
+    var res = await sb
+      .from('pedidos')
+      .select('*')
+      .or('entrada_at.gte.' + hoje.toISOString() + ',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado')
+      .order('entrada_at', {ascending:false});
+
+    if(res.error){
+      res = await sb
+        .from('pedidos')
+        .select('*')
+        .or('entrada_em.gte.' + hoje.toISOString() + ',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado')
+        .order('entrada_em', {ascending:false});
+    }
+
+    if(!res.error) _tvPub = res.data || [];
+  }catch(e){
+    console.error(e);
+  }
+}
+
+function renderTVPub(){
+  var active = _tvPub.filter(o => o.status !== 'finalizado');
+  if(!el('tvp-body')) return;
+
+  el('tvp-body').innerHTML = active
+    .sort((a,b) => tsMs(campoEntrada(b)) - tsMs(campoEntrada(a)))
+    .map(function(o){
+      var totalMs = now() - tsMs(campoEntrada(o));
+      var setorMs = o.status === 'aguardando'
+        ? now() - tsMs(campoPendente(o))
+        : now() - tsMs(campoSetorEntrada(o));
+
+      var rC = totalMs > 45 * 60000 ? 'tv-row-danger' : totalMs > 25 * 60000 ? 'tv-row-warn' : '';
+      var tColor = totalMs > 45 * 60000 ? 'var(--danger)' : totalMs > 25 * 60000 ? 'var(--warn)' : 'var(--text)';
+      var sl = '<span class="tv-set ' + (SC[o.setor] || 'tag-do') + '">' + (SL[o.setor] || o.setor) + '</span>';
+
+      return '<tr class="' + rC + '">' +
+        '<td><span class="tv-num">#' + o.numero + '</span></td>' +
+        '<td style="font-size:13px">' + (o.nome_cliente || '—') + '</td>' +
+        '<td>' + sl + '</td>' +
+        '<td><span class="tv-tim">' + fmtTs(setorMs) + '</span></td>' +
+        '<td><span class="tv-tim" style="color:' + tColor + '">' + fmtTs(totalMs) + '</span></td>' +
+        '<td><span style="font-size:12px;color:var(--muted)">' + (o.status === 'faturado' ? '✓ Faturado' : o.status === 'aguardando' ? 'Aguard. confirmação' : 'Em andamento') + '</span></td>' +
+      '</tr>';
+    }).join('');
+
+  var done = _tvPub.filter(o => o.status === 'finalizado');
+  var avgMs = done.length
+    ? done.reduce((s,o) => s + (tsMs(campoFinalizado(o)) - tsMs(campoEntrada(o))), 0) / done.length
+    : 0;
+
+  if(el('tvp-avg')) el('tvp-avg').textContent = done.length ? fmtTs(avgMs) : '--:--';
+  if(el('tvp-done')) el('tvp-done').textContent = done.length;
+  if(el('tvp-active')) el('tvp-active').textContent = active.length;
+}
+
+function iniciarTVPublica(){
+  if(_tvPubStarted) return;
+  _tvPubStarted = true;
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  el('screen-tv-pub').style.display = 'block';
+
+  setInterval(function(){
+    if(el('tvp-clock')) el('tvp-clock').textContent = fmtClock(new Date());
+    renderTVPub();
+  }, 1000);
+
+  fetchPedidosTVPublica().then(renderTVPub);
+  setInterval(async function(){
+    await fetchPedidosTVPublica();
+    renderTVPub();
+  }, 3000);
+}
+
+setPanelDate();
+if(el('tv-clock')) el('tv-clock').textContent = fmtClock(new Date());
+
+if(window.location.search.indexOf('tv=1') >= 0){
+  iniciarTVPublica();
+}
 </script>
-</body>
-</html>
