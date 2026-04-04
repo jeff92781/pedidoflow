@@ -8,6 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAnUlEQVR4nO3WwQ2AIAyFYcbg4N2pnM2Ty7iMK3gzsUhfX6EkJBpOpvwfiR5IqXhyXtyrrPXpYqlvXRoR9ZcxOWCZ286jtrDRUrcYGgDTFoYGlPccYNlvmfkG4M5rX5+lT2JAr/cHRB2ehgPKehMAz67Pg7+otgQjpFaAStMAm+YAR5oAfGkr4E7T3+AHooD5bxUjgPCr44jLb9z1/QZ6ue7lOijDnAAAAABJRU5ErkJggg==">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAEUklEQVR4nO3dy62iRxCAUcKYhfcTlWPzysk4Gacwlq6EEdMvbsFf/TitL4DuqoPEAonb7fLz48cf+lDXb/ODJ32aupdtYfikT0rdso1UTvpc9FLZXh5O+iz07dDRG0JHb4geRUNHb4geRaNH0ehRNHoUjR5Fo0fR6FE0gBSKHkWjR9EAUih6FA0ghaJH0QD6vz//+Tte+isu7nQ9b0FzOKbjAH0UzYGYTtGT4uYQSZsDSkezPaM9AaUrOUfSboDSWZzGaB896RSOZbQDoHQBJxtaG1D64jFaFVD6sjFaGFD6jhlaGFD6dhlaFVD6UjFaGFD6LhmqAkq/BD1rG0q/AT1LG5oaUPrm5il9F+sBSt/ZbKVvZCVA6duas/S9rAEofU8zl76d2QGlb2j+0nc0L6D03axS+qZmBJS+ldqq0u8ws6FZAC26jEWvDdB0C1j9/msD2mnuO71lDUBbjnvLR80IaO8p7/26UwDlPnD7N2YC2nuyh7x0W0DpaA55bxqgLad54KtzAO03x2PfvhugdB+nPT8B0E7jM4R9AKWbOHMOVwPaY2qmcW8HQOkOTh7I8oDSBRw+k0sBLT0pkykG0BStO5nrAK07I/NptCqg9H0b0VcADfXvXz/vGdFjFwFacTSPXQNoxUEBNBRAtdYDdM2Fn7oM0HKzAmgogGpdAWitiRS7EtBaEwOo36MegJ4CqB9AjVYCdMFVi12sZ62hfRzQQh+mWksD+vTcAOoHUKNlAF22uaeu/wK01ugA6gRQO4A6AdQOoE4AtQOoE0DtAGqVqGeV0QHUCqBuALUCqBtArQDqNu9voi/eVrFcQEtMD6BWAHUDqNqTHoCKAVQNoJEAqjaPnpmnB1A1gEYCqBpAIwFUbqovQDNPD6ByAA0GUDmABgOoHECD5f9f2JzNBmjaAOpEUjuAOgHUDqBOALUDqBM97QDqBFA7gDoB1A6gVvR0A6gVQN0AagVQN4Ba0dMNoFYAdQOoFUDdAKpGz0gAVQNoJICqATQSQNXoGQmgagCNBFA1gEYCqBw9gwFUDqDBACoH0GAAlaNnMIDKATQYQOUAGgygQvSMB1AhgMYDqBBA4wFUiJ7xACoE0HgAFQJoPICeo+elAHoOoJcC6DmAXgoghQJIoQBSKIAUCiCFAkihAFIogBQKIIUCSKEAUiiAFAoghQJIoQBSKIAUCiCFAkihAFIogBQKIIUCSKFu/530S2jRbl8n/R5aNIAUCiCFAkihAFIogBQKIIW63U/6VbRct8eTfhstF0AKBZBC3Z5O+oW0UM96ANJLFQAxpMHKegDSYFVADKlbSw9A6tYBxJAa9fUApEZDgBhSsVE9DOn3XtMDkJ56GRBDuvcdPQzpq+/rYUhRPQyd3Hv0MHRm79TD0Gm9Xw9D5/QpPRht38fpMLRx1+nBaLMS6GC0R8l0Hk/6LPRS2V4qJ30u6pZtZPikT0r3si289aRPc+Ou3+YvsFviKHQ70LYAAAAASUVORK5CYII=">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ2FsbCBPcmRlciIsInNob3J0X25hbWUiOiJDYWxsIE9yZGVyIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBTUFBQUFEQUNBSUFBQURkdnZ0UUFBQUVVa2xFUVZSNG5PM2R5NjJpUnhDQVVjS1loZmNUbFdQenlzazRHYWN3bHE2RUVkTXZic0ZmL1RpdEw0RHVxb1BFQW9uYjdmTHo0OGNmK2xEWGIvT0RKMzJhdXBkdFlmaWtUMHJkc28xVVR2cGM5RkxaWGg1TytpejA3ZERSRzBKSGI0Z2VSVU5IYjRnZVJhTkgwZWhSTkhvVWpSNUZvMGZSNkZFMGdCU0tIa1dqUjlFQVVpaDZGQTBnaGFKSDBRRDZ2ei8vK1R0ZStpc3U3blE5YjBGek9LYmpBSDBVellHWVR0R1Q0dVlRU1pzRFNrZXpQYU05QWFVck9VZlNib0RTV1p6R2FCODk2UlNPWmJRRG9IUUJKeHRhRzFENjRqRmFGVkQ2c2pGYUdGRDZqaGxhR0ZENmRobGFGVkQ2VWpGYUdGRDZMaG1xQWtxL0JEMXJHMHEvQVQxTEc1b2FVUHJtNWlsOUYrc0JTdC9aYktWdlpDVkE2ZHVhcy9TOXJBRW9mVTh6bDc2ZDJRR2xiMmorMG5jMEw2RDAzYXhTK3FabUJKUytsZHFxMHU4d3M2RlpBQzI2akVXdkRkQjBDMWo5L21zRDJtbnVPNzFsRFVCYmpudkxSODBJYU84cDcvMjZVd0RsUG5EN04yWUMybnV5aDd4MFcwRHBhQTU1YnhxZ0xhZDU0S3R6QU8wM3gyUGZ2aHVnZEIrblBUOEIwRTdqTTRSOUFLV2JPSE1PVndQYVkycW1jVzhIUU9rT1RoN0k4b0RTQlJ3K2swc0JMVDBwa3lrRzBCU3RPNW5yQUswN0kvTnB0Q3FnOUgwYjBWY0FEZlh2WHovdkdkRmpGd0ZhY1RTUFhRTm94VUVCTkJSQXRkWURkTTJGbjdvTTBIS3pBbWdvZ0dwZEFXaXRpUlM3RXRCYUV3T28zNk1lZ0o0Q3FCOUFqVllDZE1GVmkxMnNaNjJoZlJ6UVFoK21Xa3NEK3ZUY0FPb0hVS05sQUYyMnVhZXUvd0swMXVnQTZnUlFPNEE2QWRRT29FNEF0UU9vRTBEdEFHcVZxR2VWMFFIVUNxQnVBTFVDcUJ0QXJRRHFOdTl2b2kvZVZyRmNRRXRNRDZCV0FIVURxTnFUSG9DS0FWUU5vSkVBcWphUG5wbW5CMUExZ0VZQ3FCcEFJd0ZVYnFvdlFETlBENkJ5QUEwR1VEbUFCZ09vSEVDRDVmOWYySnpOQm1qYUFPcEVVanVBT2dIVURxQk9BTFVEcUJNOTdRRHFCRkE3Z0RvQjFBNmdWdlIwQTZnVlFOMEFhZ1ZRTjRCYTBkTU5vRllBZFFPb0ZVRGRBS3BHejBnQVZRTm9KSUNxQVRRU1FOWG9HUW1nYWdDTkJGQTFnRVlDcUJ3OWd3RlVEcURCQUNvSDBHQUFsYU5uTUlES0FUUVlRT1VBR2d5Z1F2U01CMUFoZ01ZRHFCQkE0d0ZVaUo3eEFDb0UwSGdBRlFKb1BJQ2VvK2VsQUhvT29KY0M2RG1BWGdvZ2hRSklvUUJTS0lBVUNpQ0ZBa2loQUZJb2dCUUtJSVVDU0tFQVVpaUFGQW9naFFKSW9RQlNLSUFVQ2lDRkFraWhBRklvZ0JRS0lJVUNTS0Z1LzUzMFMyalJibDhuL1I1YU5JQVVDaUNGQWtpaEFGSW9nQlFLSUlXNjNVLzZWYlJjdDhlVGZoc3RGMEFLQlpCQzNaNU8rb1cwVU05NkFOSkxGUUF4cE1IS2VnRFNZRlZBREtsYlN3OUE2dFlCeEpBYTlmVUFwRVpEZ0JoU3NWRTlET24zWHRNRGtKNTZHUkJEdXZjZFBRenBxKy9yWVVoUlBReWQzSHYwTUhSbTc5VEQwR205WHc5RDUvUXBQUmh0MzhmcE1MUngxK25CYUxNUzZHQzBSOGwwSGsvNkxQUlMyVjRxSjMwdTZwWnRaUGlrVDByM3NpMjg5YVJQYytPdTMrWXZzRnZpS0hRNzBMWUFBQUFBU1VWT1JLNUNZSUk9Iiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9XSwidGhlbWVfY29sb3IiOiIjMGYwZjExIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwZjBmMTEiLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSJ9">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -452,7 +455,7 @@ async function doLogin(){
     var res=await sb.from('usuarios').select('*').eq('login',l).eq('senha',p).eq('ativo',true).single();
     if(res.error||!res.data){el('lerr').textContent='Usuário ou senha inválidos.';return;}
     ME=res.data;
-    ME.role=ME.role||'operador';
+    ME.role=ME.papel||ME.role||'operador';
     el('nav-nome').textContent=ME.nome;
     el('nav-role').textContent=ME.role;
     if(ME.setor&&ME.setor!=='todos'){el('nav-setor').textContent=SL[ME.setor]||ME.setor;el('nav-setor').style.display='';}
@@ -505,7 +508,7 @@ async function fetchMovs(){
   var res=await sb.from('movimentacoes').select('*').gte('saida_at',hoje.toISOString());
   MOVS=res.data||[];
 }
-async function fetchUsuarios(){var res=await sb.from('usuarios').select('id,nome,login,role,setor,ativo').order('nome');return res.data||[];}
+async function fetchUsuarios(){var res=await sb.from('usuarios').select('id,nome,login,papel,setor,ativo').order('nome');return res.data||[];}
 function allHide(){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});}
 async function go(name){
   allHide();el('screen-'+name).classList.add('active');
@@ -572,8 +575,8 @@ function cfgTab(tab){
 }
 
 async function carregarUsuariosPermissao(){
-  var res = await sb.from('usuarios').select('id,nome,login,role,setor').order('nome');
-  _permUsers = (res.data||[]).filter(function(u){return u.role!=='admin';});
+  var res = await sb.from('usuarios').select('id,nome,login,papel,setor').order('nome');
+  _permUsers = (res.data||[]).filter(function(u){return (u.papel||u.role||'')!=='administrador'&&(u.papel||u.role||'')!=='admin';});
   var sel = el('perm-user-sel');
   sel.innerHTML = _permUsers.map(function(u){
     return '<option value="'+u.id+'">'+u.nome+' ('+u.login+')</option>';
