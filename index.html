@@ -707,11 +707,11 @@ function renderCard(o,setor){
   var canRetB   = canDo('se_retirada') && setor==='retirada';
   var canEnviar = canEnvAt||canEnvCo||canEnvSe;
   var actions='';
-  if(setor==='faturamento'&&canFat) actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
-  else if(setor==='retirada'&&canRetB) actions='<button class="bfin" onclick="finalizarPedido(\''+o.id+'\')">Retirado ✓</button>';
-  else if(idx>=0&&idx<SETORES.length-1&&canEnviar) actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
+  if(setor==='faturamento'&&canFat) actions='<button class="bfin" onclick="openNota("'+o.id+'")">Faturar →</button>';
+  else if(setor==='retirada'&&canRetB) actions='<button class="bfin" onclick="finalizarPedido("'+o.id+'")">Retirado ✓</button>';
+  else if(idx>=0&&idx<SETORES.length-1&&canEnviar) actions='<button class="bmv" onclick="enviar("'+o.id+'","'+SETORES[idx+1]+'")">→ '+SL[SETORES[idx+1]]+'</button>';
   var canVolta=(ME&&ME.role==='admin')||canEnviar;
-  var btnRet=(canVolta&&idx>0&&o.status==='em_andamento')?'<button class="bret" onclick="retornarPedido(\''+o.id+'\')">↩ Retornar</button>':'';
+  var btnRet=(canVolta&&idx>0&&o.status==='em_andamento')?'<button class="bret" onclick="retornarPedido("'+o.id+'")">↩ Retornar</button>':'';
   var allActions=actions+btnRet;
   return '<div class="card '+pC+'">'+
     '<div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>'+
