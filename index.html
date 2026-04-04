@@ -722,11 +722,15 @@ async function retornarPedido(id){
       status:'em_andamento',
       setor_entrada_at:agora,
       pendente_desde:null
-    }).eq('id',id);
+    }).eq('id', id);
     if(res.error)throw res.error;
-    toast('Pedido #'+o.numero+' retornado para '+SL[setorAnterior]+'.','warn');
-  }catch(e){toast(e.message,'err');}
-  finally{ov(false);}
+    toast('Pedido #'+ o.numero +' retornado para '+ setorAnterior +'.','warn');
+  }catch(e) {
+    console.error(e);
+    toast(e.message,'err');}
+  } finally{
+     ov(false);
+  }
 }
 
 async function enviar(id,destino){
