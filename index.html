@@ -8,10 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAnUlEQVR4nO3WwQ2AIAyFYcbg4N2pnM2Ty7iMK3gzsUhfX6EkJBpOpvwfiR5IqXhyXtyrrPXpYqlvXRoR9ZcxOWCZ286jtrDRUrcYGgDTFoYGlPccYNlvmfkG4M5rX5+lT2JAr/cHRB2ehgPKehMAz67Pg7+otgQjpFaAStMAm+YAR5oAfGkr4E7T3+AHooD5bxUjgPCr44jLb9z1/QZ6ue7lOijDnAAAAABJRU5ErkJggg==">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAEUklEQVR4nO3dy62iRxCAUcKYhfcTlWPzysk4Gacwlq6EEdMvbsFf/TitL4DuqoPEAonb7fLz48cf+lDXb/ODJ32aupdtYfikT0rdso1UTvpc9FLZXh5O+iz07dDRG0JHb4geRUNHb4geRaNH0ehRNHoUjR5Fo0fR6FE0gBSKHkWjR9EAUih6FA0ghaJH0QD6vz//+Tte+isu7nQ9b0FzOKbjAH0UzYGYTtGT4uYQSZsDSkezPaM9AaUrOUfSboDSWZzGaB896RSOZbQDoHQBJxtaG1D64jFaFVD6sjFaGFD6jhlaGFD6dhlaFVD6UjFaGFD6LhmqAkq/BD1rG0q/AT1LG5oaUPrm5il9F+sBSt/ZbKVvZCVA6duas/S9rAEofU8zl76d2QGlb2j+0nc0L6D03axS+qZmBJS+ldqq0u8ws6FZAC26jEWvDdB0C1j9/msD2mnuO71lDUBbjnvLR80IaO8p7/26UwDlPnD7N2YC2nuyh7x0W0DpaA55bxqgLad54KtzAO03x2PfvhugdB+nPT8B0E7jM4R9AKWbOHMOVwPaY2qmcW8HQOkOTh7I8oDSBRw+k0sBLT0pkykG0BStO5nrAK07I/NptCqg9H0b0VcADfXvXz/vGdFjFwFacTSPXQNoxUEBNBRAtdYDdM2Fn7oM0HKzAmgogGpdAWitiRS7EtBaEwOo36MegJ4CqB9AjVYCdMFVi12sZ62hfRzQQh+mWksD+vTcAOoHUKNlAF22uaeu/wK01ugA6gRQO4A6AdQOoE4AtQOoE0DtAGqVqGeV0QHUCqBuALUCqBtArQDqNu9voi/eVrFcQEtMD6BWAHUDqNqTHoCKAVQNoJEAqjaPnpmnB1A1gEYCqBpAIwFUbqovQDNPD6ByAA0GUDmABgOoHECD5f9f2JzNBmjaAOpEUjuAOgHUDqBOALUDqBM97QDqBFA7gDoB1A6gVvR0A6gVQN0AagVQN4Ba0dMNoFYAdQOoFUDdAKpGz0gAVQNoJICqATQSQNXoGQmgagCNBFA1gEYCqBw9gwFUDqDBACoH0GAAlaNnMIDKATQYQOUAGgygQvSMB1AhgMYDqBBA4wFUiJ7xACoE0HgAFQJoPICeo+elAHoOoJcC6DmAXgoghQJIoQBSKIAUCiCFAkihAFIogBQKIIUCSKEAUiiAFAoghQJIoQBSKIAUCiCFAkihAFIogBQKIIUCSKFu/530S2jRbl8n/R5aNIAUCiCFAkihAFIogBQKIIW63U/6VbRct8eTfhstF0AKBZBC3Z5O+oW0UM96ANJLFQAxpMHKegDSYFVADKlbSw9A6tYBxJAa9fUApEZDgBhSsVE9DOn3XtMDkJ56GRBDuvcdPQzpq+/rYUhRPQyd3Hv0MHRm79TD0Gm9Xw9D5/QpPRht38fpMLRx1+nBaLMS6GC0R8l0Hk/6LPRS2V4qJ30u6pZtZPikT0r3si289aRPc+Ou3+YvsFviKHQ70LYAAAAASUVORK5CYII=">
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ2FsbCBPcmRlciIsInNob3J0X25hbWUiOiJDYWxsIE9yZGVyIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBTUFBQUFEQUNBSUFBQURkdnZ0UUFBQUVVa2xFUVZSNG5PM2R5NjJpUnhDQVVjS1loZmNUbFdQenlzazRHYWN3bHE2RUVkTXZic0ZmL1RpdEw0RHVxb1BFQW9uYjdmTHo0OGNmK2xEWGIvT0RKMzJhdXBkdFlmaWtUMHJkc28xVVR2cGM5RkxaWGg1TytpejA3ZERSRzBKSGI0Z2VSVU5IYjRnZVJhTkgwZWhSTkhvVWpSNUZvMGZSNkZFMGdCU0tIa1dqUjlFQVVpaDZGQTBnaGFKSDBRRDZ2ei8vK1R0ZStpc3U3blE5YjBGek9LYmpBSDBVellHWVR0R1Q0dVlRU1pzRFNrZXpQYU05QWFVck9VZlNib0RTV1p6R2FCODk2UlNPWmJRRG9IUUJKeHRhRzFENjRqRmFGVkQ2c2pGYUdGRDZqaGxhR0ZENmRobGFGVkQ2VWpGYUdGRDZMaG1xQWtxL0JEMXJHMHEvQVQxTEc1b2FVUHJtNWlsOUYrc0JTdC9aYktWdlpDVkE2ZHVhcy9TOXJBRW9mVTh6bDc2ZDJRR2xiMmorMG5jMEw2RDAzYXhTK3FabUJKUytsZHFxMHU4d3M2RlpBQzI2akVXdkRkQjBDMWo5L21zRDJtbnVPNzFsRFVCYmpudkxSODBJYU84cDcvMjZVd0RsUG5EN04yWUMybnV5aDd4MFcwRHBhQTU1YnhxZ0xhZDU0S3R6QU8wM3gyUGZ2aHVnZEIrblBUOEIwRTdqTTRSOUFLV2JPSE1PVndQYVkycW1jVzhIUU9rT1RoN0k4b0RTQlJ3K2swc0JMVDBwa3lrRzBCU3RPNW5yQUswN0kvTnB0Q3FnOUgwYjBWY0FEZlh2WHovdkdkRmpGd0ZhY1RTUFhRTm94VUVCTkJSQXRkWURkTTJGbjdvTTBIS3pBbWdvZ0dwZEFXaXRpUlM3RXRCYUV3T28zNk1lZ0o0Q3FCOUFqVllDZE1GVmkxMnNaNjJoZlJ6UVFoK21Xa3NEK3ZUY0FPb0hVS05sQUYyMnVhZXUvd0swMXVnQTZnUlFPNEE2QWRRT29FNEF0UU9vRTBEdEFHcVZxR2VWMFFIVUNxQnVBTFVDcUJ0QXJRRHFOdTl2b2kvZVZyRmNRRXRNRDZCV0FIVURxTnFUSG9DS0FWUU5vSkVBcWphUG5wbW5CMUExZ0VZQ3FCcEFJd0ZVYnFvdlFETlBENkJ5QUEwR1VEbUFCZ09vSEVDRDVmOWYySnpOQm1qYUFPcEVVanVBT2dIVURxQk9BTFVEcUJNOTdRRHFCRkE3Z0RvQjFBNmdWdlIwQTZnVlFOMEFhZ1ZRTjRCYTBkTU5vRllBZFFPb0ZVRGRBS3BHejBnQVZRTm9KSUNxQVRRU1FOWG9HUW1nYWdDTkJGQTFnRVlDcUJ3OWd3RlVEcURCQUNvSDBHQUFsYU5uTUlES0FUUVlRT1VBR2d5Z1F2U01CMUFoZ01ZRHFCQkE0d0ZVaUo3eEFDb0UwSGdBRlFKb1BJQ2VvK2VsQUhvT29KY0M2RG1BWGdvZ2hRSklvUUJTS0lBVUNpQ0ZBa2loQUZJb2dCUUtJSVVDU0tFQVVpaUFGQW9naFFKSW9RQlNLSUFVQ2lDRkFraWhBRklvZ0JRS0lJVUNTS0Z1LzUzMFMyalJibDhuL1I1YU5JQVVDaUNGQWtpaEFGSW9nQlFLSUlXNjNVLzZWYlJjdDhlVGZoc3RGMEFLQlpCQzNaNU8rb1cwVU05NkFOSkxGUUF4cE1IS2VnRFNZRlZBREtsYlN3OUE2dFlCeEpBYTlmVUFwRVpEZ0JoU3NWRTlET24zWHRNRGtKNTZHUkJEdXZjZFBRenBxKy9yWVVoUlBReWQzSHYwTUhSbTc5VEQwR205WHc5RDUvUXBQUmh0MzhmcE1MUngxK25CYUxNUzZHQzBSOGwwSGsvNkxQUlMyVjRxSjMwdTZwWnRaUGlrVDByM3NpMjg5YVJQYytPdTMrWXZzRnZpS0hRNzBMWUFBQUFBU1VWT1JLNUNZSUk9Iiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9XSwidGhlbWVfY29sb3IiOiIjMGYwZjExIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwZjBmMTEiLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSJ9">
-<meta name="theme-color" content="#0f0f11">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -101,6 +97,8 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
 .tv.warn{color:var(--warn)}.tv.danger{color:var(--danger)}
 .ca{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .bmv{padding:4px 10px;background:none;border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--font-mono);font-size:11px;cursor:pointer}
+.bret{padding:4px 10px;background:none;border:1px solid rgba(226,75,74,.35);border-radius:4px;color:var(--danger);font-family:var(--font-mono);font-size:11px;cursor:pointer;opacity:0.7}
+.bret:hover{background:rgba(226,75,74,.1);opacity:1}
 .bmv:hover{background:rgba(255,255,255,.05)}
 .bfin{padding:4px 9px;background:none;border:1px solid rgba(93,202,165,.4);border-radius:4px;color:var(--atend);font-family:var(--font-mono);font-size:11px;cursor:pointer}
 .bfin:hover{background:var(--atend-dim)}
@@ -165,7 +163,7 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
 <div id="ov" class="h">Carregando...</div>
 <div id="tw"></div>
 <nav id="main-nav" style="display:none">
-  <span class="logo">Call<span> Order</span></span>
+  <span class="logo">Call <span>Order</span></span>
   <div class="nav-tabs">
     <button class="tab active" onclick="go('painel')">Painel</button>
     <button class="tab" onclick="go('tv')">Tela TV</button>
@@ -183,7 +181,7 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
 </nav>
 <div class="screen active" id="screen-login">
   <div class="lw"><div class="lc">
-    <div class="ll">Call<span> Order</span></div>
+    <div class="ll">Call <span>Order</span></div>
     <div class="ls">Sistema interno de acompanhamento de pedidos</div>
     <div class="f"><label class="fl">Usuário</label><input id="lu" type="text" autocomplete="username"/></div>
     <div class="f"><label class="fl">Senha</label><input id="lp" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
@@ -262,31 +260,47 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
 <div class="screen" id="screen-config">
   <main>
     <div class="rt">Configurações do Sistema</div>
-    <div class="sc" style="max-width:520px">
-      <div style="font-family:var(--font-head);font-size:15px;font-weight:600;margin-bottom:16px;color:var(--muted)">Voz da narração</div>
-      <div class="f">
-        <label class="fl">Selecione a voz</label>
-        <select id="cfg-voz" onchange="previewVoz()" style="width:100%"></select>
-      </div>
-      <div class="f">
-        <label class="fl">Velocidade</label>
-        <div style="display:flex;align-items:center;gap:12px">
-          <input type="range" id="cfg-rate" min="0.5" max="1.5" step="0.05" value="0.95" oninput="el('cfg-rate-val').textContent=parseFloat(this.value).toFixed(2)" style="flex:1"/>
-          <span id="cfg-rate-val" style="font-size:12px;width:36px">0.95</span>
+    <div style="display:flex;gap:8px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:12px">
+      <button class="tab active" id="cfg-tab-voz" onclick="cfgTab('voz')">Narração</button>
+      <button class="tab" id="cfg-tab-perm" onclick="cfgTab('perm')">Permissões de Acesso</button>
+    </div>
+
+    <!-- ABA VOZ -->
+    <div id="cfg-voz-panel">
+      <div class="sc" style="max-width:520px">
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:600;margin-bottom:16px;color:var(--muted)">Voz da narração</div>
+        <div class="f"><label class="fl">Selecione a voz</label><select id="cfg-voz" onchange="previewVoz()" style="width:100%"></select></div>
+        <div class="f"><label class="fl">Velocidade</label>
+          <div style="display:flex;align-items:center;gap:12px">
+            <input type="range" id="cfg-rate" min="0.5" max="1.5" step="0.05" value="0.95" oninput="el('cfg-rate-val').textContent=parseFloat(this.value).toFixed(2)" style="flex:1"/>
+            <span id="cfg-rate-val" style="font-size:12px;width:36px">0.95</span>
+          </div>
         </div>
-      </div>
-      <div class="f">
-        <label class="fl">Tom</label>
-        <div style="display:flex;align-items:center;gap:12px">
-          <input type="range" id="cfg-pitch" min="0.5" max="2" step="0.05" value="1" oninput="el('cfg-pitch-val').textContent=parseFloat(this.value).toFixed(2)" style="flex:1"/>
-          <span id="cfg-pitch-val" style="font-size:12px;width:36px">1.00</span>
+        <div class="f"><label class="fl">Tom</label>
+          <div style="display:flex;align-items:center;gap:12px">
+            <input type="range" id="cfg-pitch" min="0.5" max="2" step="0.05" value="1" oninput="el('cfg-pitch-val').textContent=parseFloat(this.value).toFixed(2)" style="flex:1"/>
+            <span id="cfg-pitch-val" style="font-size:12px;width:36px">1.00</span>
+          </div>
         </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <button class="bok" onclick="testarVoz()">▶ Testar voz</button>
+          <button class="bok" style="background:var(--bg3);color:var(--text);border:1px solid var(--border2)" onclick="salvarConfig()">Salvar configuração</button>
+        </div>
+        <div id="cfg-msg" style="margin-top:12px;font-size:12px;color:var(--atend);min-height:16px"></div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-        <button class="bok" onclick="testarVoz()">▶ Testar voz</button>
-        <button class="bok" style="background:var(--bg3);color:var(--text);border:1px solid var(--border2)" onclick="salvarConfig()">Salvar configuração</button>
+    </div>
+
+    <!-- ABA PERMISSÕES -->
+    <div id="cfg-perm-panel" style="display:none">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+        <div class="f" style="margin:0;flex:1;min-width:200px">
+          <label class="fl">Selecione o usuário</label>
+          <select id="perm-user-sel" onchange="carregarPermissoes()" style="width:100%"></select>
+        </div>
+        <button class="bok" style="margin-top:16px" onclick="salvarPermissoes()">Salvar permissões</button>
       </div>
-      <div id="cfg-msg" style="margin-top:12px;font-size:12px;color:var(--atend);min-height:16px"></div>
+      <div id="perm-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px"></div>
+      <div id="perm-msg" style="margin-top:12px;font-size:12px;color:var(--atend);min-height:16px"></div>
     </div>
   </main>
 </div>
@@ -332,6 +346,23 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
     <div class="ma"><button class="bcan" onclick="closeM('m-new-user')">Cancelar</button><button class="bok" onclick="createUser()">Criar</button></div>
   </div>
 </div>
+<div id="screen-tv-pub" style="display:none;background:#07070a;min-height:100vh;padding:24px;font-family:var(--font-mono)">
+  <div style="display:flex;align-items:center;margin-bottom:24px;gap:16px">
+    <span style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--atend)">Call Order</span>
+    <span style="color:var(--muted);font-size:13px">Acompanhamento em tempo real</span>
+    <div style="font-size:18px;font-weight:500;margin-left:auto" id="tvp-clock">--:--:--</div>
+  </div>
+  <table class="tv-tbl">
+    <thead><tr><th>Pedido</th><th>Cliente</th><th>Setor</th><th>Tempo no Setor</th><th>Tempo Total</th><th>Status</th></tr></thead>
+    <tbody id="tvp-body"></tbody>
+  </table>
+  <div class="tv-foot" style="margin-top:28px">
+    <div><div class="tv-fl">Tempo médio do dia</div><div class="tv-fv" id="tvp-avg">--:--</div></div>
+    <div><div class="tv-fl">Finalizados hoje</div><div class="tv-fv" id="tvp-done">0</div></div>
+    <div><div class="tv-fl">Em andamento</div><div class="tv-fv" id="tvp-active">0</div></div>
+  </div>
+</div>
+
 <script>
 const SUPA_URL = 'https://egshgwnnaxfvtxwvgnnh.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnc2hnd25uYXhmdnR4d3Znbm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNTQ2MjIsImV4cCI6MjA5MDgzMDYyMn0.udgUHpDU4wldbwsnl46AuzyljIRxNPtY00n6YrOtje4';
@@ -426,7 +457,7 @@ async function doLogin(){
     if(ME.setor&&ME.setor!=='todos'){el('nav-setor').textContent=SL[ME.setor]||ME.setor;el('nav-setor').style.display='';}
     el('main-nav').style.display='flex';
     if(ME.role==='admin')document.querySelectorAll('.adm-only').forEach(function(e){e.style.display='';});
-    var podeNovo=ME.role==='admin'||ME.setor==='atendimento';
+    var podeNovo=ME.role==='admin'||canDo('criar_pedido');
     el('btn-novo').style.display=podeNovo?'flex':'none';
     allHide();go('painel');startRealtime();startClock();
   }catch(e){el('lerr').textContent=e.message;}
@@ -489,7 +520,146 @@ function startClock(){
   if(_ti)clearInterval(_ti);
   _ti=setInterval(function(){
     el('tv-clock').textContent=fmtClock(new Date());
-    el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
+    // ── PERMISSÕES GRANULARES ──
+var PERMS_DEF = [
+  {grupo:'Geral', perms:[
+    {key:'criar_pedido',    label:'Inserir novo pedido'},
+    {key:'ver_relatorios',  label:'Acessar relatórios'},
+  ]},
+  {grupo:'Atendimento', perms:[
+    {key:'at_receber',  label:'Receber pedidos'},
+    {key:'at_enviar',   label:'Enviar para Corte'},
+  ]},
+  {grupo:'Corte', perms:[
+    {key:'co_receber',  label:'Confirmar recebimento'},
+    {key:'co_enviar',   label:'Enviar para Separação'},
+  ]},
+  {grupo:'Separação', perms:[
+    {key:'se_receber',  label:'Confirmar recebimento'},
+    {key:'se_enviar',   label:'Enviar para Faturamento'},
+    {key:'se_retirada', label:'Confirmar retirada no balcão'},
+  ]},
+  {grupo:'Faturamento', perms:[
+    {key:'fa_receber',  label:'Confirmar recebimento'},
+    {key:'fa_faturar',  label:'Faturar (emitir NF e enviar para retirada)'},
+  ]},
+];
+var _permsCache = {}; // {userId: {key: bool}}
+var _permUsers  = [];
+
+function carregaPermStorage(){
+  try{ _permsCache = JSON.parse(localStorage.getItem('co_perms')||'{}'); }catch(e){ _permsCache={}; }
+}
+function salvaPermStorage(){
+  localStorage.setItem('co_perms', JSON.stringify(_permsCache));
+}
+carregaPermStorage();
+
+function temPerm(userId, key){
+  if(!userId) return false;
+  var up = _permsCache[userId];
+  if(!up) return false;
+  return !!up[key];
+}
+
+function cfgTab(tab){
+  el('cfg-voz-panel').style.display  = tab==='voz'  ? '' : 'none';
+  el('cfg-perm-panel').style.display = tab==='perm' ? '' : 'none';
+  el('cfg-tab-voz').classList.toggle('active',  tab==='voz');
+  el('cfg-tab-perm').classList.toggle('active', tab==='perm');
+  if(tab==='perm') carregarUsuariosPermissao();
+}
+
+async function carregarUsuariosPermissao(){
+  var res = await sb.from('usuarios').select('id,nome,login,role').order('nome');
+  _permUsers = (res.data||[]).filter(function(u){return u.role!=='admin';});
+  var sel = el('perm-user-sel');
+  sel.innerHTML = _permUsers.map(function(u){
+    return '<option value="'+u.id+'">'+u.nome+' ('+u.login+')</option>';
+  }).join('');
+  carregarPermissoes();
+}
+
+function carregarPermissoes(){
+  var uid = el('perm-user-sel').value;
+  if(!uid){ el('perm-grid').innerHTML=''; return; }
+  var up = _permsCache[uid] || {};
+  el('perm-grid').innerHTML = PERMS_DEF.map(function(g){
+    var rows = g.perms.map(function(p){
+      var checked = up[p.key] ? 'checked' : '';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">'+
+        '<span style="font-size:12px">'+p.label+'</span>'+
+        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer">'+
+          '<input type="checkbox" id="perm_'+uid+'_'+p.key+'" '+checked+' style="width:16px;height:16px;accent-color:var(--atend)"/>'+
+          '<span style="font-size:11px;color:var(--muted)">Permitir</span>'+
+        '</label>'+
+      '</div>';
+    }).join('');
+    return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px">'+
+      '<div style="font-family:var(--font-head);font-size:13px;font-weight:600;color:var(--atend);margin-bottom:12px">'+g.grupo+'</div>'+
+      rows+'</div>';
+  }).join('');
+}
+
+function salvarPermissoes(){
+  var uid = el('perm-user-sel').value;
+  if(!uid) return;
+  if(!_permsCache[uid]) _permsCache[uid]={};
+  PERMS_DEF.forEach(function(g){
+    g.perms.forEach(function(p){
+      var cb = el('perm_'+uid+'_'+p.key);
+      if(cb) _permsCache[uid][p.key] = cb.checked;
+    });
+  });
+  salvaPermStorage();
+  el('perm-msg').textContent='Permissões salvas!';
+  setTimeout(function(){el('perm-msg').textContent='';},2500);
+  toast('Permissões atualizadas!','ok');
+}
+
+// ── CHECAGEM DE PERMISSÃO NAS AÇÕES ──
+function canDo(key){
+  if(!ME) return false;
+  if(ME.role==='admin') return true;
+  return temPerm(ME.id, key);
+}
+
+var _tvPub=[];
+function iniciarTVPublica(){
+  setInterval(function(){
+    var d=new Date();
+    if(el('tvp-clock'))el('tvp-clock').textContent=fmtClock(d);
+    renderTVPub();
+  },1000);
+  setInterval(async function(){
+    try{
+      var hoje=new Date();hoje.setHours(0,0,0,0);
+      var res=await sb.from('pedidos').select('*').or('entrada_at.gte.'+hoje.toISOString()+',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado').order('entrada_at',{ascending:false});
+      _tvPub=res.data||[];
+      renderTVPub();
+    }catch(e){}
+  },3000);
+}
+function renderTVPub(){
+  var PEDIDOS2=_tvPub;
+  var active=PEDIDOS2.filter(function(o){return o.status!=='finalizado';});
+  if(!el('tvp-body'))return;
+  el('tvp-body').innerHTML=active.sort(function(a,b){return tsMs(b.entrada_at)-tsMs(a.entrada_at);}).map(function(o){
+    var totalMs=now()-tsMs(o.entrada_at);
+    var setorMs=o.status==='aguardando'?now()-tsMs(o.pendente_desde):now()-tsMs(o.setor_entrada_at);
+    var rC=totalMs>45*60000?'tv-row-danger':totalMs>25*60000?'tv-row-warn':'';
+    var tColor=totalMs>45*60000?'var(--danger)':totalMs>25*60000?'var(--warn)':'var(--text)';
+    var sl=o.status==='aguardando'?'<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span> <span style="font-size:11px;color:var(--corte)">→ '+(SL[o.setor_pendente]||'')+'</span>':'<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span>';
+    return '<tr class="'+rC+'"><td><span class="tv-num">#'+o.numero+'</span></td><td style="font-size:13px">'+(o.nome_cliente||'—')+'</td><td>'+sl+'</td><td><span class="tv-tim">'+fmtTs(setorMs)+'</span></td><td><span class="tv-tim" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td><td><span style="font-size:12px;color:var(--muted)">'+(o.status==='faturado'?'✓ Faturado':o.status==='aguardando'?'Aguard. confirmação':'Em andamento')+'</span></td></tr>';
+  }).join('');
+  var done=PEDIDOS2.filter(function(o){return o.status==='finalizado';});
+  var avgMs=done.length?done.reduce(function(s,o){return s+(tsMs(o.finalizado_at)-tsMs(o.entrada_at));},0)/done.length:0;
+  if(el('tvp-avg'))el('tvp-avg').textContent=done.length?fmtTs(avgMs):'--:--';
+  if(el('tvp-done'))el('tvp-done').textContent=done.length;
+  if(el('tvp-active'))el('tvp-active').textContent=active.length;
+}
+
+el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
     var a=document.querySelector('.screen.active');
     if(a&&a.id==='screen-painel')renderPainel();
     if(a&&a.id==='screen-tv')renderTV();
@@ -514,7 +684,8 @@ function renderPainel(){
 function renderTransCard(o){
   var elapsed=now()-tsMs(o.pendente_desde),alerta=elapsed>ALERT_MS;
   var dest=o.setor_pendente||'',_ms=ME?ME.setor:'';
-  var canC=ME&&(ME.role==='admin'||_ms==='todos'||_ms===dest||(_ms==='separacao'&&dest==='retirada'));
+  var _recKey={corte:'co_receber',separacao:'se_receber',faturamento:'fa_receber',retirada:'se_retirada'};
+  var canC=canDo(_recKey[dest]||'');
   var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
   var sC=alerta?'cd':elapsed>3*60000?'cw':'';
   return '<div class="card transito '+pC+' '+sC+'"><div class="tlbl"><span class="dp"></span>'+(alerta?'Aguardando há ':'Aguard. confirmação há ')+fmtT(elapsed)+'</div><div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>'+(o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'')+'<div class="card-meta">De: '+(SL[o.setor]||o.setor)+'</div><div class="ca">'+(canC?'<button class="bcon" onclick="confirmarRec(\''+o.id+'\')">✓ Confirmar Recebimento</button>':'<span style="font-size:11px;color:var(--muted)">Aguardando operador do setor</span>')+'</div></div>';
@@ -525,15 +696,43 @@ function renderCard(o,setor){
   var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
   var hora=tsMs(o.entrada_at)?new Date(tsMs(o.entrada_at)).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'--';
   var idx=SETORES.indexOf(setor),_s=ME?ME.setor:'';
-  var canAct=ME&&(ME.role==='admin'||_s==='todos'||_s===setor);
-  var canFat=ME&&(ME.role==='admin'||_s==='todos'||_s==='faturamento'||_s==='atendimento');
-  var canRet=ME&&(ME.role==='admin'||_s==='todos'||_s==='separacao');
+  // Permissões granulares
+  var canEnvAt  = canDo('at_enviar')  && setor==='atendimento';
+  var canEnvCo  = canDo('co_enviar')  && setor==='corte';
+  var canEnvSe  = canDo('se_enviar')  && setor==='separacao';
+  var canFat    = canDo('fa_faturar') && setor==='faturamento';
+  var canRet    = canDo('se_retirada')&& setor==='retirada';
+  var canEnviar = canEnvAt||canEnvCo||canEnvSe;
   var actions='';
   if(setor==='faturamento'&&canFat)actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
   else if(setor==='retirada'&&canRet)actions='<button class="bfin" onclick="finalizarPedido(\''+o.id+'\')">Retirado ✓</button>';
-  else if(idx>=0&&idx<SETORES.length-1&&canAct)actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
-  return '<div class="card '+pC+'"><div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>'+(o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'')+'<div class="card-meta">Entrada: '+hora+' · Por: '+o.criado_por+'</div>'+(o.num_nota?'<div class="card-nota">NF: '+o.num_nota+'</div>':'')+'<div class="ct"><div class="ti"><span class="tl">Neste setor</span><span class="tv '+tC+'">'+fmtT(setorMs)+'</span></div><div class="ti"><span class="tl">Total</span><span class="tv '+tC+'">'+fmtT(totalMs)+'</span></div></div>'+(actions?'<div class="ca">'+actions+'</div>':'')+'</div>';
+  else if(idx>=0&&idx<SETORES.length-1&&canEnviar)actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
+  return '<div class="card '+pC+'"><div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>'+(o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'')+'<div class="card-meta">Entrada: '+hora+' · Por: '+o.criado_por+'</div>'+(o.num_nota?'<div class="card-nota">NF: '+o.num_nota+'</div>':'')+'<div class="ct"><div class="ti"><span class="tl">Neste setor</span><span class="tv '+tC+'">'+fmtT(setorMs)+'</span></div><div class="ti"><span class="tl">Total</span><span class="tv '+tC+'">'+fmtT(totalMs)+'</span></div></div>'+(actions||btnRet?'<div class="ca">'+actions+btnRet+'</div>':'')+'</div>';
 }
+async function retornarPedido(id){
+  if(!confirm('Retornar este pedido ao setor anterior?')) return;
+  ov(true);
+  try{
+    var o=PEDIDOS.find(function(p){return p.id===id;});
+    if(!o)throw new Error('Pedido não encontrado');
+    var idx=SETORES.indexOf(o.setor);
+    if(idx<=0){toast('Este pedido já está no primeiro setor.','err');return;}
+    var setorAnterior=SETORES[idx-1];
+    var agora=new Date().toISOString();
+    // Retorna ao setor anterior e reseta o timer do setor
+    var res=await sb.from('pedidos').update({
+      setor:setorAnterior,
+      setor_pendente:'',
+      status:'em_andamento',
+      setor_entrada_at:agora,
+      pendente_desde:null
+    }).eq('id',id);
+    if(res.error)throw res.error;
+    toast('Pedido #'+o.numero+' retornado para '+SL[setorAnterior]+'.','warn');
+  }catch(e){toast(e.message,'err');}
+  finally{ov(false);}
+}
+
 async function enviar(id,destino){
   ov(true);
   try{
@@ -666,6 +865,13 @@ async function alterarSenha(){
 }
 el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
 el('tv-clock').textContent=fmtClock(new Date());
+// Modo TV público: ?tv=1 — sem login
+if(window.location.search.indexOf('tv=1')>=0){
+  el('main-nav').style.display='none';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  el('screen-tv-pub').style.display='block';
+  iniciarTVPublica();
+}
 </script>
 </body>
 </html>
