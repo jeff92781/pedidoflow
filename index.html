@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -587,12 +586,58 @@ el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'sho
   }).join('');
 }
 function renderTransCard(o){
-  var elapsed=now()-tsMs(o.pendente_desde),alerta=elapsed>ALERT_MS;
-  var dest=o.setor_pendente||'',_ms=ME?ME.setor:'';
-  var canC=ME&&(ME.role==='admin'||_ms==='todos'||_ms===dest||(_ms==='separacao'&&dest==='retirada'));
-  var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
-  var sC=alerta?'cd':elapsed>3*60000?'cw':'';
-  return '<div class="card transito '+pC+' '+sC+'"><div class="tlbl"><span class="dp"></span>'+(alerta?'Aguardando há ':'Aguard. confirmação há ')+fmtT(elapsed)+'</div><div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>'+(o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'')+'<div class="card-meta">De: '+(SL[o.setor]||o.setor)+'</div><div class="ca">'+(canC?'<button class="bcon" onclick="confirmarRec(\''+o.id+'\')">✓ Confirmar Recebimento</button>':'<span style="font-size:11px;color:var(--muted)">Aguardando operador do setor</span>')+'</div></div>';
+  var elapsed = now() - tsMs(o.pendente_desde),
+      alerta  = elapsed > ALERT_MS;
+
+  var dest   = o.setor_pendente || '';
+  var origem = o.setor || '';
+  var _ms    = ME ? ME.setor : '';
+
+  var canC = ME && (
+    ME.role === 'admin' ||
+    _ms === 'todos' ||
+    _ms === dest ||
+    (_ms === 'separacao' && dest === 'retirada')
+  );
+
+  // somente admin, todos, ou o SETOR ANTERIOR pode retornar
+  var canR = ME && (
+    ME.role === 'admin' ||
+    _ms === 'todos' ||
+    _ms === origem
+  );
+
+  var prio = o.prioridade || 'normal',
+      pC   = prio === 'idoso' ? 'prio-idoso' : prio === 'gestante' ? 'prio-gestante' : '';
+
+  var sC = alerta ? 'cd' : elapsed > 3 * 60000 ? 'cw' : '';
+
+  var acoes = '';
+
+  if (canC) {
+    acoes += '<button class="bcon" onclick="confirmarRec(\''+o.id+'\')">✓ Confirmar Recebimento</button>';
+  } else {
+    acoes += '<span style="font-size:11px;color:var(--muted)">Aguardando operador do setor</span>';
+  }
+
+  if (canR) {
+    acoes += '<button class="bret" onclick="retornarPedido(\''+o.id+'\')">← Retornar</button>';
+  }
+
+  return '' +
+    '<div class="card transito '+pC+' '+sC+'">' +
+      '<div class="tlbl">' +
+        '<span class="dp"></span>' +
+        (alerta ? 'Aguardando há ' : 'Aguard. confirmação há ') + fmtT(elapsed) +
+      '</div>' +
+      '<div class="card-top">' +
+        '<span class="card-num">#'+o.numero+'</span>' +
+        prioBadge(prio) +
+      '</div>' +
+      (o.nome_cliente ? '<div class="card-cli">'+o.nome_cliente+'</div>' : '') +
+      '<div class="card-meta">De: '+(SL[origem]||origem)+' → '+(SL[dest]||dest)+'</div>' +
+      '<div class="ca">'+acoes+'</div>' +
+    '</div>';
 }
 function renderCard(o,setor){
   var totalMs=now()-tsMs(o.entrada_at),setorMs=now()-tsMs(o.setor_entrada_at);
@@ -605,7 +650,6 @@ function renderCard(o,setor){
   var canRet=ME&&(ME.role==='admin'||_s==='todos'||_s==='separacao');
 
   var actions='';
-  var btnRet='';
 
   if(setor==='faturamento'&&canFat){
     actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
@@ -613,10 +657,6 @@ function renderCard(o,setor){
     actions='<button class="bfin" onclick="finalizarPedido(\''+o.id+'\')">Retirado ✓</button>';
   } else if(idx>=0&&idx<SETORES.length-1&&canAct){
     actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
-  }
-
-  if(idx>0 && canAct){
-    btnRet='<button class="bret" onclick="retornarPedido(\''+o.id+'\')">← Retornar</button>';
   }
 
   return '<div class="card '+pC+'">' +
@@ -628,24 +668,52 @@ function renderCard(o,setor){
       '<div class="ti"><span class="tl">Neste setor</span><span class="tv '+tC+'">'+fmtT(setorMs)+'</span></div>' +
       '<div class="ti"><span class="tl">Total</span><span class="tv '+tC+'">'+fmtT(totalMs)+'</span></div>' +
     '</div>' +
-    ((actions || btnRet)?'<div class="ca">'+actions+btnRet+'</div>':'') +
+    (actions?'<div class="ca">'+actions+'</div>':'') +
   '</div>';
 }
 async function retornarPedido(id){
-  if(!confirm('Retornar este pedido ao setor anterior?')) return;
+  if(!confirm('Cancelar o envio e devolver o pedido para o setor anterior?')) return;
+
   ov(true);
   try{
-    var o=PEDIDOS.find(function(p){return p.id===id;});
-    if(!o)throw new Error('Pedido não encontrado');
-    var idx=SETORES.indexOf(o.setor);
-    if(idx<=0){toast('Este pedido já está no primeiro setor.','err');return;}
-    var setorAnterior=SETORES[idx-1];
-    var agora=new Date().toISOString();
-    var res=await sb.from('pedidos').update({setor:setorAnterior,setor_pendente:'',status:'em_andamento',setor_entrada_at:agora,pendente_desde:null}).eq('id',id);
-    if(res.error)throw res.error;
-    toast('Pedido retornado para '+SL[setorAnterior]+'.','warn');
-  }catch(e){toast(e.message,'err');}
-  finally{ov(false);}
+    var o = PEDIDOS.find(function(p){ return p.id === id; });
+    if(!o) throw new Error('Pedido não encontrado');
+
+    // só pode retornar se ainda estiver aguardando confirmação
+    if(o.status !== 'aguardando' || !o.setor_pendente){
+      toast('O retorno só pode ser feito antes da confirmação do próximo setor.','err');
+      return;
+    }
+
+    var _ms = ME ? ME.setor : '';
+    var podeRetornar = ME && (
+      ME.role === 'admin' ||
+      _ms === 'todos' ||
+      _ms === o.setor
+    );
+
+    if(!podeRetornar){
+      toast('Somente o setor anterior pode retornar este pedido.','err');
+      return;
+    }
+
+    var res = await sb
+      .from('pedidos')
+      .update({
+        status: 'em_andamento',
+        setor_pendente: '',
+        pendente_desde: null
+      })
+      .eq('id', id);
+
+    if(res.error) throw res.error;
+
+    toast('Envio cancelado. Pedido voltou para '+(SL[o.setor]||o.setor)+'.','warn');
+  }catch(e){
+    toast(e.message,'err');
+  }finally{
+    ov(false);
+  }
 }
 
 async function enviar(id,destino){
