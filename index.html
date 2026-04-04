@@ -358,7 +358,8 @@ const BC = {atendimento:'#5DCAA5',corte:'#85B7EB',separacao:'#FAC775',faturament
 const ALERT_MS = 5*60*1000;
 let ME=null, PEDIDOS=[], MOVS=[], _ti=null, _notaTarget=null, _ch=null;
 let _tvPub=[], _tvAudioReady=false, _tvLastSnapshot='';
-let _tvSpeakQueue=[], _tvSpeaking=false;
+let _tvSpeakQueue=[], _tvSpeaking=false, _tvCurrentTimer=null;
+let _tvQueuedKeys={};
 const el = id => document.getElementById(id);
 const now = () => Date.now();
 const tsMs = ts => ts ? new Date(ts).getTime() : 0;
@@ -743,15 +744,15 @@ function unlockTVAudio() {
   _tvAudioReady = true;
 
   try {
-    var u = new SpeechSynthesisUtterance('Áudio ativado');
-    u.volume = 0;
-    window.speechSynthesis.speak(u);
-    window.speechSynthesis.cancel();
+    if (window.speechSynthesis && window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
   } catch(e) {}
 
   var btn = document.getElementById('tv-audio-unlock');
   if (btn) btn.remove();
 
+  anunciarTVPublica(_tvPub);
   processarFilaTV();
 }
 
@@ -783,45 +784,68 @@ function criarUtterance(texto) {
   return u;
 }
 
+function estimarTempoFala(texto) {
+  var palavras = (texto || '').trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(3500, palavras * 520);
+}
+
+function finalizarFalaTV() {
+  if (_tvCurrentTimer) {
+    clearTimeout(_tvCurrentTimer);
+    _tvCurrentTimer = null;
+  }
+  _tvSpeaking = false;
+  setTimeout(processarFilaTV, 200);
+}
+
 function processarFilaTV() {
   if (!_tvAudioReady || !window.speechSynthesis || _tvSpeaking || !_tvSpeakQueue.length) return;
 
   _tvSpeaking = true;
-  var texto = _tvSpeakQueue.shift();
-  var u = criarUtterance(texto);
+  var item = _tvSpeakQueue.shift();
+  delete _tvQueuedKeys[item.key];
+  sessionStorage.setItem(item.key, '1');
 
-  u.onend = function(){
-    _tvSpeaking = false;
-    setTimeout(processarFilaTV, 250);
-  };
+  var u = criarUtterance(item.texto);
+  var encerrado = false;
 
-  u.onerror = function(){
-    _tvSpeaking = false;
-    setTimeout(processarFilaTV, 250);
-  };
+  function concluir() {
+    if (encerrado) return;
+    encerrado = true;
+    finalizarFalaTV();
+  }
 
-  window.speechSynthesis.speak(u);
+  u.onend = concluir;
+  u.onerror = concluir;
+
+  _tvCurrentTimer = setTimeout(concluir, estimarTempoFala(item.texto));
+
+  try {
+    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+    window.speechSynthesis.speak(u);
+  } catch(e) {
+    concluir();
+  }
 }
 
-function enfileirarChamadaTV(texto) {
-  _tvSpeakQueue.push(texto);
+function enfileirarChamadaTV(key, texto) {
+  if (_tvQueuedKeys[key]) return;
+  _tvQueuedKeys[key] = true;
+  _tvSpeakQueue.push({ key:key, texto:texto });
   processarFilaTV();
 }
 
 function anunciarTVPublica(listaAtual) {
   if (!_tvAudioReady || !window.speechSynthesis) return;
 
-  listaAtual.forEach(function(o) {
-    var prontoRetirada = (o.setor === 'retirada' && o.status === 'faturado');
-    if (!prontoRetirada) return;
-
-    var chave = [o.id,o.status||'',o.setor||'',o.setor_pendente||''].join('|');
-    var memoria = 'tv_call_' + chave;
-    if (sessionStorage.getItem(memoria)) return;
-    sessionStorage.setItem(memoria, '1');
-
-    enfileirarChamadaTV('Pedido ' + o.numero + ', por favor dirija-se ao balcão para retirar sua mercadoria.');
-  });
+  listaAtual
+    .filter(function(o){ return o.setor === 'retirada' && o.status === 'faturado'; })
+    .sort(function(a,b){ return tsMs(a.setor_entrada_at) - tsMs(b.setor_entrada_at); })
+    .forEach(function(o) {
+      var key = 'tv_call_' + o.id + '_' + tsMs(o.setor_entrada_at);
+      if (sessionStorage.getItem(key)) return;
+      enfileirarChamadaTV(key, 'Pedido ' + o.numero + ', por favor dirija-se ao balcão para retirar sua mercadoria.');
+    });
 }
 
 async function iniciarTVPublica(){
