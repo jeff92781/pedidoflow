@@ -18,9 +18,11 @@
   --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
   --text:#f0efe8;--muted:rgba(240,239,232,0.45);
   --atend:#5DCAA5;--atend-dim:rgba(93,202,165,0.12);
+  --estoque:#7AD3C2;--estoque-dim:rgba(122,211,194,0.12);
   --corte:#85B7EB;--corte-dim:rgba(133,183,235,0.12);
   --sep:#FAC775;--sep-dim:rgba(250,199,117,0.12);
   --fat:#ED93B1;--fat-dim:rgba(237,147,177,0.12);
+  --ready:#63D471;--ready-dim:rgba(99,212,113,0.12);
   --done-dim:rgba(240,239,232,0.05);
   --warn:#EF9F27;--danger:#E24B4A;
   --radius:10px;
@@ -56,8 +58,9 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
 .ls{color:var(--muted);margin-bottom:32px;font-size:12px}
 .f{margin-bottom:16px}
 .fl{color:var(--muted);font-size:11px;margin-bottom:6px;display:block}
-.f input,.f select{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:13px;outline:none;transition:border .15s}
-.f input:focus,.f select:focus{border-color:var(--atend)}
+.f input,.f select,.f textarea{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:13px;outline:none;transition:border .15s}
+.f textarea{min-height:110px;resize:vertical}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--atend)}
 .f select option{background:var(--bg3)}
 .btnp{width:100%;padding:11px;background:var(--atend);color:#04342C;border:none;border-radius:6px;font-family:var(--font-mono);font-size:13px;font-weight:600;cursor:pointer}
 .btnp:hover{opacity:.85}
@@ -101,12 +104,23 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
 .ca{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .bmv{padding:4px 10px;background:none;border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--font-mono);font-size:11px;cursor:pointer}
 .bmv:hover{background:rgba(255,255,255,.05)}
-.bret{padding:4px 10px;background:none;border:1px solid rgba(226,75,74,.35);border-radius:4px;color:var(--danger);font-family:var(--font-mono);font-size:11px;cursor:pointer;opacity:0.7}
+.bret{padding:4px 10px;background:none;border:1px solid rgba(226,75,74,.35);border-radius:4px;color:var(--danger);font-family:var(--font-mono);font-size:11px;cursor:pointer;opacity:0.85}
 .bret:hover{background:rgba(226,75,74,.1);opacity:1}
 .bfin{padding:4px 9px;background:none;border:1px solid rgba(93,202,165,.4);border-radius:4px;color:var(--atend);font-family:var(--font-mono);font-size:11px;cursor:pointer}
 .bfin:hover{background:var(--atend-dim)}
 .bcon{padding:5px 10px;background:rgba(133,183,235,.15);border:1px solid rgba(133,183,235,.5);border-radius:4px;color:var(--corte);font-family:var(--font-mono);font-size:11px;cursor:pointer;font-weight:600}
 .bcon:hover{background:rgba(133,183,235,.25)}
+.boc{padding:4px 9px;background:none;border:1px solid rgba(250,199,117,.35);border-radius:4px;color:var(--sep);font-family:var(--font-mono);font-size:11px;cursor:pointer}
+.boc:hover{background:rgba(250,199,117,.12)}
+.bexc{padding:4px 9px;background:none;border:1px solid rgba(226,75,74,.35);border-radius:4px;color:var(--danger);font-family:var(--font-mono);font-size:11px;cursor:pointer}
+.bexc:hover{background:rgba(226,75,74,.14)}
+.bcall{padding:5px 10px;background:rgba(99,212,113,.18);border:1px solid rgba(99,212,113,.6);border-radius:4px;color:var(--ready);font-family:var(--font-mono);font-size:11px;cursor:pointer;font-weight:700;animation:blinkCall 1s infinite}
+.bcall:hover{background:rgba(99,212,113,.24)}
+.card.balcao-ready{background:rgba(99,212,113,.08);border-color:rgba(99,212,113,.45)}
+.card.balcao-ready .card-nota{color:var(--ready)}
+.ready-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:20px;background:rgba(99,212,113,.14);border:1px solid rgba(99,212,113,.35);color:var(--ready);font-size:10px;margin-bottom:6px}
+.ready-dot{width:6px;height:6px;border-radius:50%;background:var(--ready);animation:blinkCall 1s infinite}
+@keyframes blinkCall{0%,100%{opacity:1}50%{opacity:.28}}
 .tv-wrap{background:#07070a;min-height:100vh;padding:24px}
 .tv-head{display:flex;align-items:center;margin-bottom:20px;gap:16px}
 .tv-logo{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--atend)}
@@ -156,9 +170,11 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
 .bcan{padding:8px 16px;background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;cursor:pointer}
 .bok{padding:8px 16px;background:var(--atend);color:#04342C;border:none;border-radius:6px;font-family:var(--font-mono);font-size:12px;font-weight:600;cursor:pointer}
 .tag-at{background:var(--atend-dim);color:var(--atend)}
+.tag-es{background:var(--estoque-dim);color:var(--estoque)}
 .tag-co{background:var(--corte-dim);color:var(--corte)}
 .tag-se{background:var(--sep-dim);color:var(--sep)}
 .tag-fa{background:var(--fat-dim);color:var(--fat)}
+.tag-rd{background:var(--ready-dim);color:var(--ready)}
 .tag-do{background:var(--done-dim);color:rgba(240,239,232,.6)}
 </style>
 </head>
@@ -216,7 +232,7 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
     </table>
     <div class="tv-foot">
       <div><div class="tv-fl">Tempo médio do dia</div><div class="tv-fv" id="tv-avg">--:--</div></div>
-      <div><div class="tv-fl">Finalizados hoje</div><div class="tv-fv" id="tv-done">0</div></div>
+      <div><div class="tv-fl">Concluídos hoje</div><div class="tv-fv" id="tv-done">0</div></div>
       <div><div class="tv-fl">Em andamento</div><div class="tv-fv" id="tv-active">0</div></div>
     </div>
   </div>
@@ -317,7 +333,7 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
   <table class="tv-tbl"><thead><tr><th>Pedido</th><th>Cliente</th><th>Setor</th><th>Tempo no Setor</th><th>Tempo Total</th><th>Status</th></tr></thead><tbody id="tvp-body"></tbody></table>
   <div class="tv-foot" style="margin-top:28px">
     <div><div class="tv-fl">Tempo médio do dia</div><div class="tv-fv" id="tvp-avg">--:--</div></div>
-    <div><div class="tv-fl">Finalizados hoje</div><div class="tv-fv" id="tvp-done">0</div></div>
+    <div><div class="tv-fl">Concluídos hoje</div><div class="tv-fv" id="tvp-done">0</div></div>
     <div><div class="tv-fl">Em andamento</div><div class="tv-fv" id="tvp-active">0</div></div>
   </div>
 </div>
@@ -336,7 +352,7 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
 <div class="mb" id="m-nota">
   <div class="mo">
     <div class="mt">Faturamento — Nota Fiscal</div>
-    <p style="color:var(--muted);font-size:12px;margin-bottom:16px">Informe o número da NF antes de liberar para retirada.</p>
+    <p style="color:var(--muted);font-size:12px;margin-bottom:16px">Informe o número da NF. Após faturar, o pedido volta para a Separação com o botão de chamar balcão.</p>
     <div class="f"><label class="fl">Número da Nota Fiscal *</label><input type="text" id="nota-num" placeholder="000123"/></div>
     <div class="ma"><button class="bcan" onclick="closeM('m-nota')">Cancelar</button><button class="bok" onclick="confirmarNota()">Faturar e Enviar</button></div>
   </div>
@@ -354,6 +370,7 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
       <select id="nu-setor">
         <option value="todos">Todos os setores</option>
         <option value="atendimento">Atendimento</option>
+        <option value="estoque">Estoque</option>
         <option value="corte">Corte</option>
         <option value="separacao">Separação</option>
         <option value="faturamento">Faturamento</option>
@@ -362,20 +379,40 @@ main{padding:20px;max-width:1500px;margin:0 auto;width:100%}
     <div class="ma"><button class="bcan" onclick="closeM('m-new-user')">Cancelar</button><button class="bok" onclick="createUser()">Criar</button></div>
   </div>
 </div>
+
+<div class="mb" id="m-ocorrencia">
+  <div class="mo">
+    <div class="mt" id="occ-title">Registrar ocorrência</div>
+    <p id="occ-desc" style="color:var(--muted);font-size:12px;margin-bottom:16px">Descreva o ocorrido.</p>
+    <div class="f">
+      <label class="fl">Motivo *</label>
+      <textarea id="occ-text" style="width:100%;min-height:120px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:13px;outline:none;resize:vertical"></textarea>
+    </div>
+    <div class="ma">
+      <button class="bcan" onclick="closeOccurrenceModal()">Cancelar</button>
+      <button class="bok" onclick="submitOccurrenceModal()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SUPA_URL = 'https://egshgwnnaxfvtxwvgnnh.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnc2hnd25uYXhmdnR4d3Znbm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNTQ2MjIsImV4cCI6MjA5MDgzMDYyMn0.udgUHpDU4wldbwsnl46AuzyljIRxNPtY00n6YrOtje4';
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
-const SETORES = ['atendimento','corte','separacao','faturamento'];
-const SL = {atendimento:'Atendimento',corte:'Corte',separacao:'Separação',faturamento:'Faturamento',retirada:'Pronto p/ Retirada',finalizado:'Finalizado'};
-const SC = {atendimento:'tag-at',corte:'tag-co',separacao:'tag-se',faturamento:'tag-fa',retirada:'tag-do',finalizado:'tag-do'};
-const SD = {atendimento:'#5DCAA5',corte:'#85B7EB',separacao:'#FAC775',faturamento:'#ED93B1',retirada:'rgba(240,239,232,.3)'};
-const BC = {atendimento:'#5DCAA5',corte:'#85B7EB',separacao:'#FAC775',faturamento:'#ED93B1'};
+const SETORES = ['atendimento','estoque','corte','separacao','faturamento'];
+const PROXIMO_SETOR = {atendimento:'estoque',estoque:'corte',corte:'separacao',separacao:'faturamento'};
+const RETORNO_PADRAO = {estoque:'atendimento',corte:'estoque',separacao:'corte',faturamento:'separacao'};
+const SL = {atendimento:'Atendimento',estoque:'Estoque',corte:'Corte',separacao:'Separação',faturamento:'Faturamento',finalizado:'Finalizado',cancelado:'Excluído'};
+const SC = {atendimento:'tag-at',estoque:'tag-es',corte:'tag-co',separacao:'tag-se',faturamento:'tag-fa',pronto_balcao:'tag-rd',balcao_chamado:'tag-rd',finalizado:'tag-do'};
+const SD = {atendimento:'#5DCAA5',estoque:'#7AD3C2',corte:'#85B7EB',separacao:'#FAC775',faturamento:'#ED93B1'};
+const BC = {atendimento:'#5DCAA5',estoque:'#7AD3C2',corte:'#85B7EB',separacao:'#FAC775',faturamento:'#ED93B1'};
 const ALERT_MS = 5*60*1000;
+const JANELA_NARRACAO_BALCAO_MS = 90*1000;
 let ME=null, PEDIDOS=[], MOVS=[], _ti=null, _notaTarget=null, _ch=null;
 let REPORT_DATE_START='', REPORT_DATE_END='', REPORT_PEDIDOS_EXPORT=[];
 let _tvPub=[], _tvAudioReady=false, _tvLastSnapshot='';
 let _tvSpeakQueue=[], _tvSpeaking=false;
+let _occCtx=null, _audioCtx=null;
 const el = id => document.getElementById(id);
 const now = () => Date.now();
 const tsMs = ts => ts ? new Date(ts).getTime() : 0;
@@ -399,21 +436,12 @@ function escapeCsv(v){
 function meuSetor(){return ME&&ME.setor?ME.setor:'';}
 function isAdmin(){return !!(ME&&ME.role==='admin');}
 function isSetorGlobal(){return meuSetor()==='todos';}
+function ehAtendimentoComFaturamento(setor){return meuSetor()==='atendimento' && setor==='faturamento';}
 function podeAtuarNoSetor(setor){
   var s=meuSetor();
-  return !!ME && (
-    isAdmin() ||
-    s==='todos' ||
-    s===setor ||
-    (s==='separacao' && setor==='retirada') ||
-    (s==='atendimento' && setor==='faturamento')
-  );
+  return !!ME && (isAdmin() || s==='todos' || s===setor || ehAtendimentoComFaturamento(setor));
 }
 function podeConfirmarDestino(destino){return podeAtuarNoSetor(destino);}
-function podeRetornarOrigem(origem){
-  var s=meuSetor();
-  return !!ME && (isAdmin() || s==='todos' || s===origem);
-}
 function podeCriarPedido(){
   var s=meuSetor();
   return !!ME && (isAdmin() || s==='atendimento');
@@ -422,9 +450,15 @@ function podeFaturar(){
   var s=meuSetor();
   return !!ME && (isAdmin() || s==='todos' || s==='faturamento' || s==='atendimento');
 }
-function podeFinalizarRetirada(){
+function podeExcluirPedido(){
   var s=meuSetor();
-  return !!ME && (isAdmin() || s==='todos' || s==='separacao');
+  return !!ME && (isAdmin() || s==='atendimento');
+}
+function podeRegistrarOcorrenciaNoSetor(setor){
+  return !!ME && (isAdmin() || isSetorGlobal() || meuSetor()===setor || ehAtendimentoComFaturamento(setor));
+}
+function podeRegistrarOcorrenciaTransito(origem,destino){
+  return !!ME && (isAdmin() || isSetorGlobal() || meuSetor()===origem || meuSetor()===destino || (meuSetor()==='atendimento' && (origem==='faturamento' || destino==='faturamento')));
 }
 function temSetorRestrito(){return !!ME && meuSetor() && meuSetor()!=='todos';}
 function telaAtiva(){
@@ -436,10 +470,269 @@ function atualizarTelasAtivas(){
   if(ativa==='screen-painel')renderPainel();
   if(ativa==='screen-tv')renderTV();
 }
-function toast(msg,type,dur){type=type||'ok';dur=dur||3500;var e=document.createElement('div');e.className='toast t-'+type;e.textContent=msg;el('tw').appendChild(e);requestAnimationFrame(function(){requestAnimationFrame(function(){e.classList.add('show');});});setTimeout(function(){e.classList.remove('show');setTimeout(function(){e.remove();},300);},dur);}
+function playNotificationBeep(){
+  try{
+    var AudioCtx=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtx)return;
+    if(!_audioCtx)_audioCtx=new AudioCtx();
+    if(_audioCtx.state==='suspended')_audioCtx.resume();
+    var osc=_audioCtx.createOscillator();
+    var gain=_audioCtx.createGain();
+    osc.type='sine';
+    osc.frequency.value=880;
+    gain.gain.setValueAtTime(0.0001,_audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.045,_audioCtx.currentTime+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001,_audioCtx.currentTime+0.12);
+    osc.connect(gain);gain.connect(_audioCtx.destination);
+    osc.start();
+    osc.stop(_audioCtx.currentTime+0.13);
+  }catch(e){}
+}
+function toast(msg,type,dur){
+  type=type||'ok';dur=dur||3500;
+  playNotificationBeep();
+  var e=document.createElement('div');
+  e.className='toast t-'+type;
+  e.textContent=msg;
+  el('tw').appendChild(e);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){e.classList.add('show');});});
+  setTimeout(function(){e.classList.remove('show');setTimeout(function(){e.remove();},300);},dur);
+}
 function ov(show){el('ov').classList.toggle('h',!show);}
-function openM(id){el(id).classList.add('open');}
-function closeM(id){el(id).classList.remove('open');}
+function openM(id){var n=el(id);if(n)n.classList.add('open');}
+function closeM(id){var n=el(id);if(n)n.classList.remove('open');}
+function closeOccurrenceModal(){
+  el('occ-text').value='';
+  _occCtx=null;
+  closeM('m-ocorrencia');
+}
+function buildOccurrenceLine(tipo,setor,texto){
+  var stamp=new Date().toLocaleString('pt-BR');
+  return '['+stamp+'] '+tipo+' · '+setor+' · '+(ME?ME.nome:ME&&ME.login||'')+' — '+texto;
+}
+function getPedidoById(id){return PEDIDOS.find(function(p){return p.id===id;});}
+async function appendObsPedido(id,linha){
+  var pedido=getPedidoById(id);
+  var atual=pedido&&pedido.obs?String(pedido.obs):'';
+  var novo=(atual?atual+'\\n':'')+linha;
+  var res=await sb.from('pedidos').update({obs:novo}).eq('id',id);
+  if(res.error)throw res.error;
+  if(pedido)pedido.obs=novo;
+}
+
+const SESSION_KEY = 'callorder_user';
+let _refreshTimer=null, _pollTi=null;
+
+function saveSession(user){
+  try{ localStorage.setItem(SESSION_KEY, JSON.stringify(user)); }catch(e){}
+}
+function clearSession(){
+  try{ localStorage.removeItem(SESSION_KEY); }catch(e){}
+}
+function applyLoggedUser(user){
+  ME=user;
+  el('nav-nome').textContent=ME.nome||'—';
+  el('nav-role').textContent=ME.role||'—';
+
+  if(temSetorRestrito()){
+    el('nav-setor').textContent=meuSetor()==='atendimento'?'Atendimento + Faturamento':(SL[meuSetor()]||meuSetor());
+    el('nav-setor').style.display='';
+  }else{
+    el('nav-setor').style.display='none';
+  }
+
+  el('main-nav').style.display='flex';
+  document.querySelectorAll('.adm-only').forEach(function(e){e.style.display = isAdmin() ? '' : 'none';});
+  el('btn-novo').style.display = podeCriarPedido() ? 'flex' : 'none';
+}
+function upsertPedidoLocal(partial){
+  if(!partial || !partial.id)return;
+  var idx=PEDIDOS.findIndex(function(p){return p.id===partial.id;});
+  if(idx>=0){
+    PEDIDOS[idx]=Object.assign({}, PEDIDOS[idx], partial);
+  }
+}
+async function refreshUI(){
+  try{
+    await fetchPedidos();
+    atualizarTelasAtivas();
+  }catch(e){}
+}
+function refreshPedidosSoon(ms){
+  ms = typeof ms === 'number' ? ms : 250;
+  if(_refreshTimer)clearTimeout(_refreshTimer);
+  _refreshTimer=setTimeout(function(){ refreshUI(); }, ms);
+}
+function startPolling(){
+  if(_pollTi)clearInterval(_pollTi);
+  _pollTi=setInterval(function(){
+    if(!ME)return;
+    refreshUI();
+  },3000);
+}
+function stopPolling(){
+  if(_pollTi){clearInterval(_pollTi);_pollTi=null;}
+  if(_refreshTimer){clearTimeout(_refreshTimer);_refreshTimer=null;}
+}
+async function restoreSession(){
+  try{
+    var raw=localStorage.getItem(SESSION_KEY);
+    if(!raw)return;
+    var saved=JSON.parse(raw);
+    if(!saved || !saved.login || !saved.senha)return;
+
+    ov(true);
+    var res=await sb.from('usuarios').select('*')
+      .eq('login', saved.login)
+      .eq('senha', saved.senha)
+      .eq('ativo', true)
+      .single();
+    if(res.error || !res.data){
+      clearSession();
+      return;
+    }
+
+    applyLoggedUser(res.data);
+    allHide();
+    el('screen-painel').classList.add('active');
+    await fetchPedidos();
+    renderPainel();
+    startRealtime();
+    startClock();
+    startPolling();
+  }catch(e){
+    clearSession();
+  }finally{
+    ov(false);
+  }
+}
+async function obterSetorAnterior(pedido){
+  try{
+    var res=await sb.from('movimentacoes').select('setor_origem,setor_destino,saida_at').eq('pedido_id',pedido.id).order('saida_at',{ascending:false}).limit(1);
+    var mov=(res.data||[])[0];
+    if(mov && mov.setor_destino===pedido.setor && mov.setor_origem)return mov.setor_origem;
+  }catch(e){}
+  return RETORNO_PADRAO[pedido.setor]||'';
+}
+function openOccurrence(id,setorLabel){
+  _occCtx={modo:'ocorrencia',id:id,setorLabel:setorLabel};
+  el('occ-title').textContent='Registrar ocorrência';
+  el('occ-desc').textContent='Descreva o ocorrido neste pedido.';
+  el('occ-text').value='';
+  openM('m-ocorrencia');
+}
+function openDeletePedido(id){
+  _occCtx={modo:'exclusao',id:id,setorLabel:'Exclusão'};
+  el('occ-title').textContent='Excluir pedido da tela';
+  el('occ-desc').textContent='Informe o motivo da exclusão. Apenas o Atendimento pode executar essa ação.';
+  el('occ-text').value='';
+  openM('m-ocorrencia');
+}
+async function openReturnTransit(id){
+  var pedido=getPedidoById(id);
+  if(!pedido)return;
+  _occCtx={modo:'retorno_transito',id:id,setorDestino:pedido.setor,setorLabel:(SL[pedido.setor]||pedido.setor)};
+  el('occ-title').textContent='Retornar pedido';
+  el('occ-desc').textContent='Informe o motivo do retorno para '+(SL[pedido.setor]||pedido.setor)+'.';
+  el('occ-text').value='';
+  openM('m-ocorrencia');
+}
+async function openReturnActive(id){
+  var pedido=getPedidoById(id);
+  if(!pedido)return;
+  ov(true);
+  try{
+    var anterior=await obterSetorAnterior(pedido);
+    if(!anterior){
+      toast('Não foi possível identificar o setor anterior deste pedido.','err');
+      return;
+    }
+    _occCtx={modo:'retorno_ativo',id:id,setorDestino:anterior,setorLabel:(SL[anterior]||anterior)};
+    el('occ-title').textContent='Retornar pedido';
+    el('occ-desc').textContent='Informe o motivo do retorno para '+(SL[anterior]||anterior)+'.';
+    el('occ-text').value='';
+    openM('m-ocorrencia');
+  }catch(e){toast(e.message,'err');}
+  finally{ov(false);}
+}
+async function submitOccurrenceModal(){
+  var texto=(el('occ-text').value||'').trim();
+  if(!_occCtx){closeOccurrenceModal();return;}
+  if(texto.length<5){toast('Descreva o motivo com mais detalhes.','warn');return;}
+  closeM('m-ocorrencia');
+  ov(true);
+  try{
+    var pedido=getPedidoById(_occCtx.id);
+    if(!pedido)throw new Error('Pedido não encontrado.');
+    var linha=buildOccurrenceLine(
+      _occCtx.modo==='ocorrencia'?'OCORRÊNCIA':_occCtx.modo==='exclusao'?'EXCLUSÃO':'RETORNO',
+      _occCtx.setorLabel||pedido.setor,
+      texto
+    );
+    await appendObsPedido(_occCtx.id,linha);
+
+    if(_occCtx.modo==='ocorrencia'){
+      toast('Ocorrência registrada no pedido #'+pedido.numero+'.','ok');
+    }
+
+    if(_occCtx.modo==='retorno_transito'){
+      var res1=await sb.from('pedidos').update({
+        status:'em_andamento',
+        setor_pendente:'',
+        pendente_desde:null
+      }).eq('id',_occCtx.id);
+      if(res1.error)throw res1.error;
+      upsertPedidoLocal({id:_occCtx.id,status:'em_andamento',setor_pendente:'',pendente_desde:null});
+      toast('Envio cancelado. Pedido voltou para '+(_occCtx.setorLabel||'o setor anterior')+'.','warn');
+    }
+
+    if(_occCtx.modo==='retorno_ativo'){
+      var agora=new Date().toISOString();
+      var tempoSetor=Math.max(0,new Date(agora)-new Date(pedido.setor_entrada_at));
+      var res2=await sb.from('pedidos').update({
+        setor:_occCtx.setorDestino,
+        status:'em_andamento',
+        setor_pendente:'',
+        pendente_desde:null,
+        setor_entrada_at:agora
+      }).eq('id',_occCtx.id);
+      if(res2.error)throw res2.error;
+      upsertPedidoLocal({id:_occCtx.id,setor:_occCtx.setorDestino,status:'em_andamento',setor_pendente:'',pendente_desde:null,setor_entrada_at:agora});
+      await sb.from('movimentacoes').insert({
+        pedido_id:_occCtx.id,
+        setor_origem:pedido.setor,
+        setor_destino:_occCtx.setorDestino,
+        usuario:ME.login,
+        entrada_at:pedido.setor_entrada_at,
+        saida_at:agora,
+        tempo_ms:tempoSetor,
+        confirmado_por:ME.login,
+        confirmado_at:agora,
+        tempo_confirmacao_ms:0
+      });
+      toast('Pedido retornado para '+(_occCtx.setorLabel||_occCtx.setorDestino)+'.','warn');
+    }
+
+    if(_occCtx.modo==='exclusao'){
+      var res3=await sb.from('pedidos').update({
+        status:'cancelado',
+        setor_pendente:'',
+        pendente_desde:null
+      }).eq('id',_occCtx.id);
+      if(res3.error)throw res3.error;
+      upsertPedidoLocal({id:_occCtx.id,status:'cancelado',setor_pendente:'',pendente_desde:null});
+      toast('Pedido #'+pedido.numero+' removido da tela.','warn');
+    }
+
+    atualizarTelasAtivas();
+    await refreshUI();
+  }catch(e){toast(e.message,'err');}
+  finally{
+    _occCtx=null;
+    el('occ-text').value='';
+    ov(false);
+  }
+}
 function prioBadge(p){if(!p||p==='normal')return '';return '<span class="pb '+p+'">'+p.charAt(0).toUpperCase()+p.slice(1)+'</span>';}
 // ── VOZ ──
 var _vozNome = localStorage.getItem('pf_voz') || '';
@@ -479,7 +772,7 @@ function testarVoz() {
   _vozNome  = el('cfg-voz') ? el('cfg-voz').value : _vozNome;
   _vozRate  = el('cfg-rate') ? parseFloat(el('cfg-rate').value) : _vozRate;
   _vozPitch = el('cfg-pitch') ? parseFloat(el('cfg-pitch').value) : _vozPitch;
-  narrar('Pedido 59000, por favor dirija-se ao balcão para retirar sua mercadoria.');
+  narrar('Por favor, cliente teste, dirija-se ao balcão para retirada do seu pedido 59000.');
 }
 
 function salvarConfig() {
@@ -507,20 +800,24 @@ async function doLogin(){
   try{
     var res=await sb.from('usuarios').select('*').eq('login',l).eq('senha',p).eq('ativo',true).single();
     if(res.error||!res.data){el('lerr').textContent='Usuário ou senha inválidos.';return;}
-    ME=res.data;
-    el('nav-nome').textContent=ME.nome;
-    el('nav-role').textContent=ME.role;
-    if(temSetorRestrito()){el('nav-setor').textContent=SL[meuSetor()]||meuSetor();el('nav-setor').style.display='';}
-    el('main-nav').style.display='flex';
-    if(isAdmin())document.querySelectorAll('.adm-only').forEach(function(e){e.style.display='';});
-    var podeNovo=podeCriarPedido();
-    el('btn-novo').style.display=podeNovo?'flex':'none';
-    allHide();go('painel');startRealtime();startClock();
-  }catch(e){el('lerr').textContent=e.message;}
-  finally{ov(false);}
+    applyLoggedUser(res.data);
+    saveSession(res.data);
+    allHide();
+    el('screen-painel').classList.add('active');
+    await fetchPedidos();
+    renderPainel();
+    startRealtime();
+    startClock();
+    startPolling();
+  }catch(e){
+    el('lerr').textContent=e.message;
+  }finally{
+    ov(false);
+  }
 }
 function logout(){
-  ME=null;PEDIDOS=[];MOVS=[];
+  ME=null;PEDIDOS=[];MOVS=[];clearSession();
+  stopPolling();
   if(_ch)sb.removeChannel(_ch);
   if(_ti)clearInterval(_ti);
   el('main-nav').style.display='none';
@@ -548,7 +845,7 @@ function startRealtime(){
 }
 async function fetchPedidos(){
   var hoje=new Date();hoje.setHours(0,0,0,0);
-  var res=await sb.from('pedidos').select('*').or('entrada_at.gte.'+hoje.toISOString()+',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado').order('entrada_at',{ascending:false});
+  var res=await sb.from('pedidos').select('*').or('entrada_at.gte.'+hoje.toISOString()+',status.eq.em_andamento,status.eq.aguardando,status.eq.pronto_balcao,status.eq.balcao_chamado').order('entrada_at',{ascending:false});
   PEDIDOS=res.data||[];
 }
 async function fetchMovs(){
@@ -612,6 +909,7 @@ function exportarPedidosExcel(){
 async function fetchUsuarios(){var res=await sb.from('usuarios').select('id,nome,login,role,setor,ativo').order('nome');return res.data||[];}
 function allHide(){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});}
 async function go(name){
+  if(ME)startPolling();
   allHide();el('screen-'+name).classList.add('active');
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.querySelectorAll('.tab').forEach(function(t){if((t.getAttribute('onclick')||'').indexOf("'"+name+"'")>=0)t.classList.add('active');});
@@ -643,12 +941,39 @@ function startClock(){
     });
   },1000);
 }
+function isOperacionalVisivel(o){
+  return o.status!=='finalizado' && o.status!=='cancelado' && o.status!=='balcao_chamado';
+}
+function isTVVisivel(o){
+  if(o.status==='cancelado' || o.status==='finalizado' || o.status==='balcao_chamado')return false; 
+  return true;
+}
+function getTempoTotalPedido(o){
+  var congelar=o.finalizado_at && (o.status==='pronto_balcao' || o.status==='balcao_chamado' || o.status==='finalizado');
+  var fim=congelar?tsMs(o.finalizado_at):now();
+    return Math.max(0,fim-tsMs(o.entrada_at));
+}
+function getStatusTextoTV(o){
+  if(o.status==='aguardando')return 'Aguard. confirmação';
+  if(o.status==='pronto_balcao')return 'Pronto p/ balcão';
+  if(o.status==='balcao_chamado')return 'Chamado no balcão';
+  return 'Em andamento';
+}
+function getSetorClassTV(o){
+  if(o.status==='pronto_balcao' || o.status==='balcao_chamado')return 'tag-rd';
+  return SC[o.setor]||'tag-do';
+}
 function renderPainel(){
   el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
-  if(temSetorRestrito()){el('setor-badge').textContent='Seu setor: '+SL[meuSetor()];el('setor-badge').style.display='';}
-  var allCols=SETORES.concat(['retirada']);
-  el('kanban').innerHTML=allCols.map(function(setor){
-    var items=PEDIDOS.filter(function(o){return o.setor===setor&&o.status!=='finalizado'&&o.status!=='aguardando';});
+  if(temSetorRestrito()){
+    var label=meuSetor()==='atendimento'?'Atendimento + Faturamento':(SL[meuSetor()]||meuSetor());
+    el('setor-badge').textContent='Seu setor: '+label;
+    el('setor-badge').style.display='';
+  }else{
+    el('setor-badge').style.display='none';
+  }
+  el('kanban').innerHTML=SETORES.map(function(setor){
+    var items=PEDIDOS.filter(function(o){return o.setor===setor && isOperacionalVisivel(o) && o.status!=='aguardando';});
     var chegando=PEDIDOS.filter(function(o){return o.status==='aguardando'&&o.setor_pendente===setor;});
     return '<div class="kc"><div class="ch"><div class="cdot" style="background:'+(SD[setor]||'rgba(240,239,232,.3)')+'"></div><span class="cn">'+SL[setor]+'</span><span class="cc">'+(items.length+chegando.length)+(chegando.length?' ('+chegando.length+'⌛)':'')+'</span></div>'+chegando.map(renderTransCard).join('')+items.map(function(o){return renderCard(o,setor);}).join('')+'</div>';
   }).join('');
@@ -657,8 +982,8 @@ function renderTransCard(o){
   var elapsed=now()-tsMs(o.pendente_desde),alerta=elapsed>ALERT_MS;
   var dest=o.setor_pendente||'',origem=o.setor||'';
   var canC=podeConfirmarDestino(dest);
-  var canR=podeRetornarOrigem(origem);
-  var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';  
+  var canR=podeAtuarNoSetor(origem);
+  var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
   var sC=alerta?'cd':elapsed>3*60000?'cw':'';
   var acoes='';
   if(canC){
@@ -667,78 +992,72 @@ function renderTransCard(o){
     acoes+='<span style="font-size:11px;color:var(--muted)">Aguardando operador do setor</span>';
   }
   if(canR){
-    acoes+='<button class="bret" onclick="retornarPedido(\''+o.id+'\')">← Retornar</button>';
+    acoes+='<button class="bret" onclick="openReturnTransit(\''+o.id+'\')">← Retornar</button>';
+  }
+   if(podeExcluirPedido()){
+    acoes+='<button class="bexc" onclick="openDeletePedido(\''+o.id+'\')">Excluir</button>';
   }
   return '<div class="card transito '+pC+' '+sC+'"><div class="tlbl"><span class="dp"></span>'+(alerta?'Aguardando há ':'Aguard. confirmação há ')+fmtT(elapsed)+'</div><div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>'+(o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'')+'<div class="card-meta">De: '+(SL[origem]||origem)+' → '+(SL[dest]||dest)+'</div><div class="ca">'+acoes+'</div></div>';
 }
 function renderCard(o,setor){
-  var totalMs=now()-tsMs(o.entrada_at),setorMs=now()-tsMs(o.setor_entrada_at);
+  var totalMs=getTempoTotalPedido(o);
+  var congelarTempo=o.finalizado_at && (o.status==='pronto_balcao' || o.status==='balcao_chamado' || o.status==='finalizado');
+  var setorMs=congelarTempo?Math.max(0,tsMs(o.finalizado_at)-tsMs(o.setor_entrada_at)):Math.max(0,now()-tsMs(o.setor_entrada_at));
   var tC=totalMs>45*60000?'danger':totalMs>25*60000?'warn':'';
   var prio=o.prioridade||'normal',pC=prio==='idoso'?'prio-idoso':prio==='gestante'?'prio-gestante':'';
   var hora=tsMs(o.entrada_at)?new Date(tsMs(o.entrada_at)).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'--';
-  var idx=SETORES.indexOf(setor);
   var canAct=podeAtuarNoSetor(setor);
-  var canFat=podeFaturar();
-  var canRet=podeFinalizarRetirada();
+  var acoes=[];
 
-  var actions='';
-
-  if(setor==='faturamento'&&canFat){
-    actions='<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar →</button>';
-  } else if(setor==='retirada'&&canRet){
-    actions='<button class="bfin" onclick="finalizarPedido(\''+o.id+'\')">Retirado ✓</button>';
-  } else if(idx>=0&&idx<SETORES.length-1&&canAct){
-    actions='<button class="bmv" onclick="enviar(\''+o.id+'\',\''+SETORES[idx+1]+'\')">→ '+SL[SETORES[idx+1]]+'</button>';
+  if(o.status==='pronto_balcao' && setor==='separacao'){
+    if(canAct)acoes.push('<button class="bcall" onclick="chamarBalcao(\''+o.id+'\')">Chamar balcão</button>');
+  }else if(setor==='faturamento' && podeFaturar()){
+    acoes.push('<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar</button>');
+  }else if(setor==='estoque' && canAct){
+    acoes.push('<button class="bmv" onclick="enviar(\''+o.id+'\',\'corte\')">→ Corte</button>');
+    acoes.push('<button class="bcon" onclick="enviar(\''+o.id+'\',\'separacao\')">↠ Separação</button>');
+  }else if(setor==='atendimento' && canAct){
+    acoes.push('<button class="bmv" onclick="enviar(\''+o.id+'\',\'estoque\')">→ Estoque</button>');
+  }else if(setor==='corte' && canAct){
+    acoes.push('<button class="bmv" onclick="enviar(\''+o.id+'\',\'separacao\')">→ Separação</button>');
+  }else if(setor==='separacao' && canAct){
+    acoes.push('<button class="bmv" onclick="enviar(\''+o.id+'\',\'faturamento\')">→ Faturamento</button>');
   }
 
-  return '<div class="card '+pC+'">' +
+  var etapaPosFaturamento=(o.status==='pronto_balcao' || o.status==='balcao_chamado');
+  if(canAct && setor!=='atendimento' && !etapaPosFaturamento){
+    acoes.push('<button class="bret" onclick="openReturnActive(\''+o.id+'\')">← Retornar</button>');
+  }
+     if(podeExcluirPedido() && !etapaPosFaturamento){
+    acoes.push('<button class="bexc" onclick="openDeletePedido(\''+o.id+'\')">Excluir</button>');
+  }
+
+  var prontoHtml=o.status==='pronto_balcao'
+    ? '<div class="ready-chip"><span class="ready-dot"></span>Pronto para chamar no balcão</div>'
+    : '';
+
+  return '<div class="card '+pC+' '+(o.status==='pronto_balcao'?'balcao-ready':'')+'">' +
     '<div class="card-top"><span class="card-num">#'+o.numero+'</span>'+prioBadge(prio)+'</div>' +
     (o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'') +
     '<div class="card-meta">Entrada: '+hora+' · Por: '+o.criado_por+'</div>' +
+    prontoHtml +
     (o.num_nota?'<div class="card-nota">NF: '+o.num_nota+'</div>':'') +
     '<div class="ct">' +
       '<div class="ti"><span class="tl">Neste setor</span><span class="tv '+tC+'">'+fmtT(setorMs)+'</span></div>' +
       '<div class="ti"><span class="tl">Total</span><span class="tv '+tC+'">'+fmtT(totalMs)+'</span></div>' +
     '</div>' +
-    (actions?'<div class="ca">'+actions+'</div>':'') +
+    (acoes.length?'<div class="ca">'+acoes.join('')+'</div>':'') +
   '</div>';
 }
-async function retornarPedido(id){
-  if(!confirm('Cancelar o envio e devolver o pedido para o setor anterior?')) return;
-  ov(true);
-  try{
-    var o=PEDIDOS.find(function(p){return p.id===id;});
-    if(!o)throw new Error('Pedido não encontrado');
-
-    if(o.status!=='aguardando'||!o.setor_pendente){
-      toast('O retorno só pode ser feito antes da confirmação do próximo setor.','err');
-      return;
-    }
-
-    var podeRetornar=podeRetornarOrigem(o.setor);
-
-    if(!podeRetornar){
-      toast('Somente o setor anterior pode retornar este pedido.','err');
-      return;
-    }
-
-    var res=await sb.from('pedidos').update({
-      status:'em_andamento',
-      setor_pendente:'',
-      pendente_desde:null
-    }).eq('id',id);
-
-    if(res.error)throw res.error;
-    toast('Envio cancelado. Pedido voltou para '+(SL[o.setor]||o.setor)+'.','warn');
-  }catch(e){toast(e.message,'err');}
-  finally{ov(false);}
-}
-
 async function enviar(id,destino){
   ov(true);
   try{
-    var res=await sb.from('pedidos').update({setor_pendente:destino,status:'aguardando',pendente_desde:new Date().toISOString()}).eq('id',id);
+    var agora=new Date().toISOString();
+    var res=await sb.from('pedidos').update({setor_pendente:destino,status:'aguardando',pendente_desde:agora}).eq('id',id);
     if(res.error)throw res.error;
+    upsertPedidoLocal({id:id,setor_pendente:destino,status:'aguardando',pendente_desde:agora});
+    atualizarTelasAtivas();
+    await refreshUI();
     toast('Pedido enviado para '+(SL[destino]||destino)+'. Aguardando confirmação.','move');
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
@@ -749,20 +1068,17 @@ async function confirmarRec(id){
     var o=PEDIDOS.find(function(p){return p.id===id;});
     if(!o)throw new Error('Pedido não encontrado');
     var agora=new Date().toISOString();
-    var tempoSetor=new Date(o.pendente_desde)-new Date(o.setor_entrada_at);
-    var tempoConf=new Date(agora)-new Date(o.pendente_desde);
+    var tempoSetor=Math.max(0,new Date(o.pendente_desde)-new Date(o.setor_entrada_at));
+    var tempoConf=Math.max(0,new Date(agora)-new Date(o.pendente_desde));
     var dest=o.setor_pendente;
-    var res=await sb.from('pedidos').update({setor:dest,setor_pendente:'',status:dest==='retirada'?'faturado':'em_andamento',setor_entrada_at:agora,pendente_desde:null}).eq('id',id);
+    var res=await sb.from('pedidos').update({setor:dest,setor_pendente:'',status:'em_andamento',setor_entrada_at:agora,pendente_desde:null}).eq('id',id);
     if(res.error)throw res.error;
+    upsertPedidoLocal({id:id,setor:dest,setor_pendente:'',status:'em_andamento',setor_entrada_at:agora,pendente_desde:null});
+    atualizarTelasAtivas();
+    await refreshUI();
     await sb.from('movimentacoes').insert({pedido_id:id,setor_origem:o.setor,setor_destino:dest,usuario:ME.login,entrada_at:o.setor_entrada_at,saida_at:agora,tempo_ms:tempoSetor,confirmado_por:ME.login,confirmado_at:agora,tempo_confirmacao_ms:tempoConf});
     await sb.from('confirmacoes').insert({pedido_id:id,setor_origem:o.setor,setor_destino:dest,enviado_at:o.pendente_desde,confirmado_at:agora,tempo_confirmacao_ms:tempoConf,confirmado_por:ME.login});
     toast('Recebimento confirmado em '+(SL[dest]||dest),'ok');
-    // Narração
-    if(dest==='retirada'){
-      narrar('Pedido '+o.numero+', por favor dirija-se ao balcão para retirar sua mercadoria.');
-    } else {
-      narrar('Pedido '+o.numero+' recebido pelo setor de '+(SL[dest]||dest)+'.');
-    }
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
@@ -772,24 +1088,54 @@ async function confirmarNota(){
   if(!nota){toast('Informe o número da nota fiscal.','err');return;}
   closeM('m-nota');ov(true);
   try{
-    var res=await sb.from('pedidos').update({setor_pendente:'retirada',status:'aguardando',pendente_desde:new Date().toISOString(),num_nota:nota}).eq('id',_notaTarget);
+    var o=PEDIDOS.find(function(p){return p.id===_notaTarget;});
+    if(!o)throw new Error('Pedido não encontrado');
+    var agora=new Date().toISOString();
+    var tempoSetor=Math.max(0,new Date(agora)-new Date(o.setor_entrada_at));
+    var res=await sb.from('pedidos').update({
+      setor:'separacao',
+      status:'pronto_balcao',
+      setor_pendente:'',
+      pendente_desde:null,
+      setor_entrada_at:agora,
+      finalizado_at:agora,
+      num_nota:nota
+    }).eq('id',_notaTarget);
     if(res.error)throw res.error;
-    toast('Faturado! NF '+nota+'. Enviado para retirada.','move');
+    upsertPedidoLocal({id:_notaTarget,setor:'separacao',status:'pronto_balcao',setor_pendente:'',pendente_desde:null,setor_entrada_at:agora,finalizado_at:agora,num_nota:nota});
+    atualizarTelasAtivas();
+    await refreshUI();
+    await sb.from('movimentacoes').insert({
+      pedido_id:_notaTarget,
+      setor_origem:o.setor,
+      setor_destino:'separacao',
+      usuario:ME.login,
+      entrada_at:o.setor_entrada_at,
+      saida_at:agora,
+      tempo_ms:tempoSetor,
+      confirmado_por:ME.login,
+      confirmado_at:agora,
+      tempo_confirmacao_ms:0
+    });
+    toast('Faturado! Pedido voltou para a Separação para chamar balcão.','move');
   }catch(e){toast(e.message,'err');}
   finally{ov(false);_notaTarget=null;}
 }
-async function finalizarPedido(id){
+async function chamarBalcao(id){
   ov(true);
   try{
-    var o=PEDIDOS.find(function(p){return p.id===id;});
-    if(!o)throw new Error('Pedido não encontrado');
+    var pedido=getPedidoById(id);
+    if(!pedido)throw new Error('Pedido não encontrado.');
     var agora=new Date().toISOString();
-    var tempoMs=new Date(agora)-new Date(o.setor_entrada_at);
-    var res=await sb.from('pedidos').update({setor:'finalizado',status:'finalizado',finalizado_at:agora}).eq('id',id);
+    var res=await sb.from('pedidos').update({
+      status:'balcao_chamado',
+      pendente_desde:agora
+    }).eq('id',id);
     if(res.error)throw res.error;
-    await sb.from('movimentacoes').insert({pedido_id:id,setor_origem:o.setor,setor_destino:'finalizado',usuario:ME.login,entrada_at:o.setor_entrada_at,saida_at:agora,tempo_ms:tempoMs,confirmado_por:'',confirmado_at:null,tempo_confirmacao_ms:0});
-    toast('Pedido finalizado — material retirado!','ok');
-    narrar('Pedido '+o.numero+' finalizado. Obrigado!');
+    upsertPedidoLocal({id:id,status:'balcao_chamado',pendente_desde:agora});
+    atualizarTelasAtivas();
+    await refreshUI();
+    toast('Pedido #'+pedido.numero+' chamado para o balcão.','ok');
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
@@ -805,21 +1151,24 @@ async function createOrder(){
     var agora=new Date().toISOString();
     var res=await sb.from('pedidos').insert({numero:num,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,obs:el('no-obs').value,nome_cliente:cli,prioridade:prio,num_nota:''});
     if(res.error)throw res.error;
+    await refreshUI();
     toast('Pedido #'+num+' criado — '+cli,'ok');
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
 function renderTV(){
-  var active=PEDIDOS.filter(function(o){return o.status!=='finalizado';});
+  var active=PEDIDOS.filter(isTVVisivel);
   el('tv-body').innerHTML=active.sort(function(a,b){return tsMs(b.entrada_at)-tsMs(a.entrada_at);}).map(function(o){
-    var totalMs=now()-tsMs(o.entrada_at);
-    var setorMs=o.status==='aguardando'?now()-tsMs(o.pendente_desde):now()-tsMs(o.setor_entrada_at);
+    var totalMs=getTempoTotalPedido(o);
+     var setorMs=o.status==='aguardando' ? Math.max(0,now()-tsMs(o.pendente_desde)) : (o.finalizado_at && (o.status==='pronto_balcao' || o.status==='balcao_chamado' || o.status==='finalizado') ? Math.max(0,tsMs(o.finalizado_at)-tsMs(o.setor_entrada_at)) : Math.max(0,now()-tsMs(o.setor_entrada_at)));
     var rC=totalMs>45*60000?'tv-row-danger':totalMs>25*60000?'tv-row-warn':'';
     var tColor=totalMs>45*60000?'var(--danger)':totalMs>25*60000?'var(--warn)':'var(--text)';
-    var sl=o.status==='aguardando'?'<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span> <span style="font-size:11px;color:var(--corte)">→ '+(SL[o.setor_pendente]||o.setor_pendente||'')+'</span>':'<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span>';
-    return '<tr class="'+rC+'"><td><span class="tv-num">#'+o.numero+'</span></td><td style="font-size:13px">'+(o.nome_cliente||'—')+'</td><td>'+sl+'</td><td><span class="tv-tim">'+fmtTs(setorMs)+'</span></td><td><span class="tv-tim" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td><td><span style="font-size:12px;color:var(--muted)">'+(o.status==='faturado'?'✓ Faturado':o.status==='aguardando'?'Aguard. confirmação':'Em andamento')+'</span></td></tr>';
+    var sl=o.status==='aguardando'
+      ? '<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span> <span style="font-size:11px;color:var(--corte)">→ '+(SL[o.setor_pendente]||o.setor_pendente||'')+'</span>'
+      : '<span class="tv-set '+getSetorClassTV(o)+'">'+(o.status==='pronto_balcao' || o.status==='balcao_chamado' ? 'Balcão' : (SL[o.setor]||o.setor))+'</span>';
+    return '<tr class="'+rC+'"><td><span class="tv-num">#'+o.numero+'</span></td><td style="font-size:13px">'+(o.nome_cliente||'—')+'</td><td>'+sl+'</td><td><span class="tv-tim">'+fmtTs(setorMs)+'</span></td><td><span class="tv-tim" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td><td><span style="font-size:12px;color:var(--muted)">'+getStatusTextoTV(o)+'</span></td></tr>';
   }).join('');
-  var done=PEDIDOS.filter(function(o){return o.status==='finalizado';});
+  var done=PEDIDOS.filter(function(o){return o.status!=='cancelado' && !!o.finalizado_at;});
   var avgMs=done.length?done.reduce(function(s,o){return s+(tsMs(o.finalizado_at)-tsMs(o.entrada_at));},0)/done.length:0;
   el('tv-avg').textContent=done.length?fmtTs(avgMs):'--:--';
   el('tv-done').textContent=done.length;
@@ -827,9 +1176,9 @@ function renderTV(){
   el('tv-clock').textContent=fmtClock(new Date());
 }
 function renderRelatorios(){
-  var all=PEDIDOS||[];
-  var done=all.filter(function(o){return o.status==='finalizado';});
-  var active=all.filter(function(o){return o.status!=='finalizado';});
+  var all=(PEDIDOS||[]).filter(function(o){return o.status!=='cancelado';});
+  var done=all.filter(function(o){return !!o.finalizado_at;});
+  var active=all.filter(function(o){return !o.finalizado_at && o.status!=='cancelado';});
   var times=done.map(function(o){return tsMs(o.finalizado_at)-tsMs(o.entrada_at);}).filter(function(t){return t>0;});
   var avg=times.length?times.reduce(function(a,b){return a+b;},0)/times.length:0;
   var minT=times.length?Math.min.apply(null,times):0,maxT=times.length?Math.max.apply(null,times):0;
@@ -839,10 +1188,11 @@ function renderRelatorios(){
 
   el('kpi-grid').innerHTML=[
     {l:'Total de pedidos',v:all.length,s:'no período'},
-    {l:'Finalizados',v:done.length,s:'no período'},
+    {l:'Concluídos no faturamento',v:done.length,s:'no período'},
     {l:'Em andamento',v:active.filter(function(o){return o.status==='em_andamento';}).length,s:'agora'},
     {l:'Aguard. confirmação',v:active.filter(function(o){return o.status==='aguardando';}).length,s:'agora'},
-    {l:'Tempo médio',v:avg?fmtT(avg):'--',s:'por pedido'},
+    {l:'Prontos p/ balcão',v:active.filter(function(o){return o.status==='pronto_balcao' || o.status==='balcao_chamado';}).length,s:'após faturar'},
+    {l:'Tempo médio',v:avg?fmtT(avg):'--',s:'até o faturamento'},
     {l:'Mais rápido',v:minT?fmtT(minT):'--',s:''},
     {l:'Mais lento',v:maxT?fmtT(maxT):'--',s:''}
   ].map(function(k){return '<div class="kpi"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'</div><div class="ks">'+k.s+'</div></div>';}).join('');
@@ -878,11 +1228,11 @@ function renderRelatorios(){
   REPORT_PEDIDOS_EXPORT=all.slice();
 
   el('pedidos-dia-body').innerHTML=all.length?all.map(function(o){
-    var t=(tsMs(o.finalizado_at)||now())-tsMs(o.entrada_at);
+    var t=(o.finalizado_at?tsMs(o.finalizado_at):now())-tsMs(o.entrada_at);
     return '<tr><td>'+(o.entrada_at?new Date(o.entrada_at).toLocaleString('pt-BR'):'—')+'</td><td style="font-family:var(--font-head);font-size:16px;font-weight:700">#'+o.numero+'</td><td>'+(o.nome_cliente||'—')+'</td><td>'+(o.num_nota||'—')+'</td><td>'+fmtT(Math.max(0,t))+'</td></tr>';
   }).join(''):'<tr><td colspan="5" style="color:var(--muted);text-align:center">Nenhum pedido registrado no período selecionado.</td></tr>';
 }
-var SETORlabel={todos:'Todos',atendimento:'Atendimento',corte:'Corte',separacao:'Separação',faturamento:'Faturamento'};
+var SETORlabel={todos:'Todos',atendimento:'Atendimento',estoque:'Estoque',corte:'Corte',separacao:'Separação',faturamento:'Faturamento'};
 function renderUsers(users){el('users-body').innerHTML=users.map(function(u){return '<tr><td>'+u.nome+'</td><td style="color:var(--muted)">'+u.login+'</td><td style="font-size:12px">'+(SETORlabel[u.setor]||u.setor)+'</td><td><span class="bar '+(u.role==='admin'?'bar-a':'bar-o')+'">'+u.role+'</span></td><td><span class="'+(u.ativo?'bon':'boff')+'">'+(u.ativo?'Ativo':'Inativo')+'</span></td><td><button class="bmv" onclick="toggleUser(\''+u.id+'\','+u.ativo+',\''+u.login+'\')">'+(u.ativo?'Desativar':'Ativar')+'</button></td></tr>';}).join('');}
 async function toggleUser(id,ativo,login){if(login==='admin'){toast('Não é possível desativar o admin principal.','err');return;}ov(true);try{await sb.from('usuarios').update({ativo:!ativo}).eq('id',id);var u=await fetchUsuarios();renderUsers(u);toast('Usuário atualizado.','ok');}catch(e){toast(e.message,'err');}finally{ov(false);}}
 async function createUser(){
@@ -970,19 +1320,39 @@ function enfileirarChamadaTV(texto) {
   processarFilaTV();
 }
 
+function tocarAlertaTV() {
+  try {
+    if (!window.AudioContext && !window.webkitAudioContext) return;
+    var Ctx = window.AudioContext || window.webkitAudioContext;
+    var ctx = new Ctx();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    gain.gain.setValueAtTime(0.001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.36);
+    setTimeout(function(){ctx.close();}, 450);
+  } catch(e) {}
+}
+
 function anunciarTVPublica(listaAtual) {
-  if (!_tvAudioReady || !window.speechSynthesis) return;
-
   listaAtual.forEach(function(o) {
-    var prontoRetirada = (o.setor === 'retirada' && o.status === 'faturado');
-    if (!prontoRetirada) return;
+    if (o.status !== 'balcao_chamado') return;
+    if (!o.pendente_desde) return;
+     if (now()-tsMs(o.pendente_desde) > JANELA_NARRACAO_BALCAO_MS) return;
 
-    var chave = [o.id,o.status||'',o.setor||'',o.setor_pendente||''].join('|');
-    var memoria = 'tv_call_' + chave;
+    var memoria = 'tv_call_' + o.id + '_' + (o.pendente_desde || '');
     if (sessionStorage.getItem(memoria)) return;
     sessionStorage.setItem(memoria, '1');
-
-    enfileirarChamadaTV('Pedido ' + o.numero + ', por favor dirija-se ao balcão para retirar sua mercadoria.');
+    
+    toast('🔔 Chamada no balcão: '+(o.nome_cliente || 'cliente')+' · Pedido #'+o.numero,'ok',8500);
+    tocarAlertaTV();
+    enfileirarChamadaTV('Por favor, ' + (o.nome_cliente || 'cliente') + ', dirija-se ao balcão para retirada do seu pedido ' + o.numero + '.');
   });
 }
 
@@ -997,7 +1367,7 @@ async function iniciarTVPublica(){
   async function carregarTVPublica(){
     try{
       var hoje=new Date();hoje.setHours(0,0,0,0);
-      var res=await sb.from('pedidos').select('*').or('entrada_at.gte.'+hoje.toISOString()+',status.eq.em_andamento,status.eq.aguardando,status.eq.faturado').order('entrada_at',{ascending:false});
+      var res=await sb.from('pedidos').select('*').or('entrada_at.gte.'+hoje.toISOString()+',status.eq.em_andamento,status.eq.aguardando,status.eq.pronto_balcao,status.eq.balcao_chamado').order('entrada_at',{ascending:false});
       _tvPub=res.data||[];
       renderTVPub();
       anunciarTVPublica(_tvPub);
@@ -1008,16 +1378,19 @@ async function iniciarTVPublica(){
   setInterval(carregarTVPublica,3000);
 }
 function renderTVPub(){
-  var active=_tvPub.filter(function(o){return o.status!=='finalizado';});
+  var active=_tvPub.filter(isTVVisivel);
   if(!el('tvp-body'))return;
   el('tvp-body').innerHTML=active.sort(function(a,b){return tsMs(b.entrada_at)-tsMs(a.entrada_at);}).map(function(o){
-    var totalMs=now()-tsMs(o.entrada_at),setorMs=o.status==='aguardando'?now()-tsMs(o.pendente_desde):now()-tsMs(o.setor_entrada_at);
+    var totalMs=getTempoTotalPedido(o);
+   var setorMs=o.status==='aguardando' ? Math.max(0,now()-tsMs(o.pendente_desde)) : (o.finalizado_at && (o.status==='pronto_balcao' || o.status==='balcao_chamado' || o.status==='finalizado') ? Math.max(0,tsMs(o.finalizado_at)-tsMs(o.setor_entrada_at)) : Math.max(0,now()-tsMs(o.setor_entrada_at)));
     var rC=totalMs>45*60000?'tv-row-danger':totalMs>25*60000?'tv-row-warn':'';
     var tColor=totalMs>45*60000?'var(--danger)':totalMs>25*60000?'var(--warn)':'var(--text)';
-    var sl='<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span>';
-    return '<tr class="'+rC+'"><td><span class="tv-num">#'+o.numero+'</span></td><td style="font-size:13px">'+(o.nome_cliente||'—')+'</td><td>'+sl+'</td><td><span class="tv-tim">'+fmtTs(setorMs)+'</span></td><td><span class="tv-tim" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td><td><span style="font-size:12px;color:var(--muted)">'+(o.status==='faturado'?'✓ Faturado':o.status==='aguardando'?'Aguard. confirmação':'Em andamento')+'</span></td></tr>';
+    var sl=o.status==='aguardando'
+      ? '<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span> <span style="font-size:11px;color:var(--corte)">→ '+(SL[o.setor_pendente]||o.setor_pendente||'')+'</span>'
+      : '<span class="tv-set '+getSetorClassTV(o)+'">'+(o.status==='pronto_balcao' || o.status==='balcao_chamado' ? 'Balcão' : (SL[o.setor]||o.setor))+'</span>';
+    return '<tr class="'+rC+'"><td><span class="tv-num">#'+o.numero+'</span></td><td style="font-size:13px">'+(o.nome_cliente||'—')+'</td><td>'+sl+'</td><td><span class="tv-tim">'+fmtTs(setorMs)+'</span></td><td><span class="tv-tim" style="color:'+tColor+'">'+fmtTs(totalMs)+'</span></td><td><span style="font-size:12px;color:var(--muted)">'+getStatusTextoTV(o)+'</span></td></tr>';
   }).join('');
-  var done=_tvPub.filter(function(o){return o.status==='finalizado';});
+  var done=_tvPub.filter(function(o){return o.status!=='cancelado' && !!o.finalizado_at;});
   var avgMs=done.length?done.reduce(function(s,o){return s+(tsMs(o.finalizado_at)-tsMs(o.entrada_at));},0)/done.length:0;
   if(el('tvp-avg'))el('tvp-avg').textContent=done.length?fmtTs(avgMs):'--:--';
   if(el('tvp-done'))el('tvp-done').textContent=done.length;
@@ -1027,8 +1400,9 @@ if(window.location.search.indexOf('tv=1')>=0){
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   el('screen-tv-pub').style.display='block';
   iniciarTVPublica();
+}else{
+  restoreSession();
 }
-
 
 el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
 el('tv-clock').textContent=fmtClock(new Date());
