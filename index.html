@@ -269,7 +269,6 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
   <div class="nav-right">
     <span id="nav-nome">—</span>
     <span id="nav-user" style="font-size:13px;font-weight:700;color:var(--text);letter-spacing:.02em">—</span><span class="badge-r" id="nav-role">—</span>
-    <button id="pause-timer-btn" class="adm-only" onclick="toggleTimers()" style="display:none;padding:5px 14px;background:#f59e0b;border:none;border-radius:var(--radius);color:#fff;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.03em">⏸ Pausar</button>
     <span class="badge-s" id="nav-setor" style="display:none">—</span>
     <button class="tab" onclick="logout()">Sair</button>
   </div>
@@ -572,106 +571,7 @@ let _tvPub=[], _tvAudioReady=false;
 let _tvSpeakQueue=[], _tvSpeaking=false;
 let _occCtx=null, _audioCtx=null;
 const el = id => document.getElementById(id);
-// ── PAUSEABLE TIMER ──
-var _timerPaused = false;
-var _timerPauseOffset = 0;   // total ms accumulated while paused
-var _timerPausedAt = null;   // timestamp when pause started
-
-// ── Sync timer state from localStorage (for TV tab) ──
-function loadTimerState() {
-  try {
-    var s = localStorage.getItem('co_timer_state');
-    if (!s) return;
-    var obj = JSON.parse(s);
-    _timerPauseOffset = obj.offset || 0;
-    _timerPaused      = obj.paused || false;
-    _timerPausedAt    = obj.pausedAt || null;
-  } catch(e) {}
-}
-
-function saveTimerState() {
-  try {
-    localStorage.setItem('co_timer_state', JSON.stringify({
-      offset:   _timerPauseOffset,
-      paused:   _timerPaused,
-      pausedAt: _timerPausedAt
-    }));
-  } catch(e) {}
-}
-
-// Listen for state changes from other tabs (e.g. painel → TV)
-window.addEventListener('storage', function(e) {
-  if (e.key === 'co_timer_state') {
-    loadTimerState();
-    updatePauseBtn();
-  }
-});
-
-// Load state on startup
-loadTimerState();
-
-function now() {
-  if (_timerPaused && _timerPausedAt !== null) {
-    return _timerPausedAt - _timerPauseOffset;
-  }
-  return Date.now() - _timerPauseOffset;
-}
-
-function pauseTimers() {
-  if (_timerPaused) return;
-  _timerPaused = true;
-  _timerPausedAt = Date.now();
-  saveTimerState();
-  updatePauseBtn();
-  toast('Cronômetros pausados', 'warn', 3000);
-}
-
-function resumeTimers() {
-  if (!_timerPaused) return;
-  _timerPauseOffset += Date.now() - _timerPausedAt;
-  _timerPausedAt = null;
-  _timerPaused = false;
-  saveTimerState();
-  updatePauseBtn();
-  toast('Cronômetros retomados', 'ok', 3000);
-}
-
-function toggleTimers() {
-  if (!isAdmin()) { toast('Apenas administradores podem pausar os cronômetros.', 'err', 4000); return; }
-  _timerPaused ? resumeTimers() : pauseTimers();
-}
-
-function updatePauseBtn() {
-  var btn = document.getElementById('pause-timer-btn');
-  if (!btn) return;
-  btn.textContent = _timerPaused ? '▶ Retomar' : '⏸ Pausar';
-  btn.style.background = _timerPaused ? '#22d3a7' : '#f59e0b';
-  btn.style.display = isAdmin() ? '' : 'none';
-}
-
-// ── AUTO PAUSE: 18:15 pause, 08:30 resume ──
-function checkAutoTimerSchedule() {
-  var d = new Date();
-  var h = d.getHours(), m = d.getMinutes();
-  var mins = h * 60 + m;
-  var pauseMins  = 18 * 60 + 15;  // 18:15
-  var resumeMins =  8 * 60 + 30;  //  8:30
-  if (mins === pauseMins && !_timerPaused) {
-    _timerPaused = true;
-    _timerPausedAt = Date.now();
-    saveTimerState();
-    updatePauseBtn();
-    toast('Cronômetros pausados automaticamente (18:15)', 'warn', 5000);
-  }
-  if (mins === resumeMins && _timerPaused) {
-    _timerPauseOffset += Date.now() - _timerPausedAt;
-    _timerPausedAt = null;
-    _timerPaused = false;
-    saveTimerState();
-    updatePauseBtn();
-    toast('Cronômetros retomados automaticamente (08:30)', 'ok', 5000);
-  }
-}
+const now = () => Date.now();
 const tsMs = ts => ts ? new Date(ts).getTime() : 0;
 
 // ══════════════════════════════════════════════
@@ -1311,8 +1211,6 @@ function startClock(){
 
     // Atualiza apenas os textos de tempo sem rebuild
     updateTimersInPlace();
-    // Auto pause/resume schedule
-    checkAutoTimerSchedule();
 
     // Check Ag. Retira 15-day alerts
     checkAgRetiraAlerts();
@@ -1613,6 +1511,38 @@ async function createOrder(){
   finally{ov(false);}
 }
 
+// ── TEMPO OPERACIONAL CORRIGIDO ──
+// Calcula o tempo entre entrada e saída considerando apenas horário comercial
+// (08:30 às 18:15). Pedidos que ficaram overnight não inflam a média.
+function businessMs(startMs, endMs) {
+  if (!startMs || !endMs || endMs <= startMs) return 0;
+  var OPEN_H  = 8,  OPEN_M  = 30;  // 08:30
+  var CLOSE_H = 18, CLOSE_M = 15;  // 18:15
+  var OPEN_SEC  = OPEN_H  * 3600 + OPEN_M  * 60;
+  var CLOSE_SEC = CLOSE_H * 3600 + CLOSE_M * 60;
+  var DAY_SEC   = CLOSE_SEC - OPEN_SEC; // 35100s = 9h45m
+
+  var total = 0;
+  var cur = new Date(startMs);
+  cur.setSeconds(0, 0);
+
+  while (cur.getTime() < endMs) {
+    var dayStart = new Date(cur);
+    dayStart.setHours(OPEN_H, OPEN_M, 0, 0);
+    var dayEnd = new Date(cur);
+    dayEnd.setHours(CLOSE_H, CLOSE_M, 0, 0);
+
+    var from = Math.max(startMs, dayStart.getTime());
+    var to   = Math.min(endMs,   dayEnd.getTime());
+    if (to > from) total += (to - from);
+
+    // Advance to next day 08:30
+    cur.setDate(cur.getDate() + 1);
+    cur.setHours(OPEN_H, OPEN_M, 0, 0);
+  }
+  return Math.max(0, total);
+}
+
 // ── MUDANÇA 6: renderTV unificado (usado por TV logada e TV pública) ──
 function buildTVRows(pedidos) {
   var active = pedidos.filter(isTVVisivel);
@@ -1636,10 +1566,8 @@ function buildTVRows(pedidos) {
       ? '<span class="tv-set '+(SC[o.setor]||'tag-do')+'">'+(SL[o.setor]||o.setor)+'</span> <span style="font-size:11px;color:var(--corte)">→ '+(SL[o.setor_pendente]||o.setor_pendente||'')+'</span>'
       : '<span class="tv-set '+getSetorClassTV(o)+'">'+(o.status==='pronto_balcao' || o.status==='balcao_chamado' ? 'Balcão' : (SL[o.setor]||o.setor))+'</span>';
 
-    // Adjust entry timestamps to account for accumulated pause offset
-    // so that data-timer-entry-ts attributes work correctly with now()
-    var adjSEntry = sFreeze ? sEntry : sEntry + _timerPauseOffset;
-    var adjTEntry = t.freeze ? t.entry : t.entry + _timerPauseOffset;
+    var adjSEntry = sEntry;
+    var adjTEntry = t.entry;
 
     var sFreezeAttr = sFreeze ? ' data-timer-freeze-ts="'+sFreeze+'"' : '';
     var tFreezeAttr = t.freeze ? ' data-timer-freeze-ts="'+t.freeze+'"' : '';
@@ -1649,7 +1577,7 @@ function buildTVRows(pedidos) {
 
   var hoje=new Date();hoje.setHours(0,0,0,0);var hojeMs=hoje.getTime();
   var done=pedidos.filter(function(o){return o.status!=='cancelado' && !!o.finalizado_at && tsMs(o.finalizado_at)>=hojeMs;});
-  var avgMs=done.length?done.reduce(function(s,o){return s+(tsMs(o.finalizado_at)-tsMs(o.entrada_at));},0)/done.length:0;
+  var avgMs=done.length?done.reduce(function(s,o){return s+businessMs(tsMs(o.entrada_at),tsMs(o.finalizado_at));},0)/done.length:0;
 
   return { html: html, avgMs: avgMs, doneCount: done.length, activeCount: active.length };
 }
@@ -1679,7 +1607,7 @@ function renderRelatorios(){
   if(_relFiltroPedido){all=all.filter(function(o){return o.numero && o.numero.indexOf(_relFiltroPedido)>=0;});}
   var done=all.filter(function(o){return !!o.finalizado_at;});
   var active=all.filter(function(o){return !o.finalizado_at && o.status!=='cancelado';});
-  var times=done.map(function(o){return tsMs(o.finalizado_at)-tsMs(o.entrada_at);}).filter(function(t){return t>0;});
+  var times=done.map(function(o){return businessMs(tsMs(o.entrada_at),tsMs(o.finalizado_at));}).filter(function(t){return t>0;});
   var avg=times.length?times.reduce(function(a,b){return a+b;},0)/times.length:0;
   var minT=times.length?Math.min.apply(null,times):0,maxT=times.length?Math.max.apply(null,times):0;
   var periodo=getPeriodRange(REPORT_DATE_START||fmtDateInput(new Date()),REPORT_DATE_END||fmtDateInput(new Date()));
