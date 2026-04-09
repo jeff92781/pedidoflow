@@ -116,10 +116,12 @@ main{padding:24px;max-width:1500px;margin:0 auto;width:100%;position:relative;z-
 .card.cd{border-color:rgba(239,68,68,.6)!important;animation:pd 1.5s infinite}
 @keyframes pd{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}50%{box-shadow:0 0 0 4px rgba(239,68,68,.15)}}
 .card.transito{border-style:dashed;border-color:rgba(59,130,246,.4)!important;background:rgba(59,130,246,.04)!important}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:3px;gap:6px}
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;overflow:hidden}
+.card-top .card-num{min-width:0;flex:1}
+.card-top>div{display:flex;gap:4px;align-items:center;flex-shrink:0}
 .card-num{font-family:var(--font-head);font-size:22px;font-weight:800;letter-spacing:-0.5px}
 .card-cli{font-size:13px;color:var(--text);margin-bottom:5px;font-weight:600}
-.pb{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;flex-shrink:0;margin-top:2px}
+.pb{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;flex-shrink:0;margin-top:0;white-space:nowrap}
 .pb.balcao{background:rgba(239,68,68,.12);color:var(--danger);font-weight:700}
 .pb.retira{background:rgba(59,130,246,.1);color:var(--blue)}
 .card-meta{color:var(--muted);font-size:11px;line-height:1.8;margin-bottom:8px}
@@ -134,7 +136,7 @@ main{padding:24px;max-width:1500px;margin:0 auto;width:100%;position:relative;z-
 .tv.warn{color:var(--warn)}.tv.danger{color:var(--danger)}
 .ca{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .ca>*:last-child:nth-child(odd){grid-column:1/-1}
-.ca>button,.ca>span{width:100%;box-sizing:border-box;justify-content:center}
+.ca>button{width:100%;box-sizing:border-box;height:36px;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px!important;padding:0 10px!important}
 .bmv{padding:6px 14px;background:#3b82f6;border:none;border-radius:var(--radius);color:#fff;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;font-weight:700}
 .bmv:hover{background:#2563eb;transform:translateY(-1px)}
 .bret{padding:6px 14px;background:#f97316;border:none;border-radius:var(--radius);color:#fff;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;font-weight:700}
@@ -1321,12 +1323,12 @@ function renderTransCard(o){
   var sC=alerta?'cd':elapsed>3*60000?'cw':'';
   var acoes='';
   if(canC){
-    acoes+='<button class="bcon" onclick="confirmarRec(\''+o.id+'\')">✓ Confirmar Recebimento</button>';
+    acoes+='<button class="bcon" onclick="confirmarRec(\''+o.id+'\')">Confirmar</button>';
   } else {
     acoes+='<span style="font-size:11px;color:var(--muted)">Aguardando operador do setor</span>';
   }
   if(canR){
-    acoes+='<button class="bret" onclick="openReturnTransit(\''+o.id+'\')">← Retornar</button>';
+    acoes+='<button class="bret" onclick="openReturnTransit(\''+o.id+'\')">Retornar</button>';
   }
    if(podeExcluirPedido()){
     acoes+='<button class="bexc" onclick="openDeletePedido(\''+o.id+'\')">Excluir</button>';
@@ -1353,19 +1355,19 @@ function renderCard(o,setor){
   }else if(setor==='faturamento' && podeFaturar()){
     acoes.push('<button class="bfin" onclick="openNota(\''+o.id+'\')">Faturar</button>');
   }else if(setor==='estoque' && canAct){
-    acoes.push('<button class="bmv" onclick="enviar(\''+o.id+'\',\'corte\')">→ Corte</button>');
-    acoes.push('<button class="bcon" style="background:#6366f1" onclick="enviar(\''+o.id+'\',\'separacao\')">→ Separação</button>');
+    acoes.push('<button class="bmv" onclick="enviar(\''+o.id+'\',\'corte\')">Corte</button>');
+    acoes.push('<button class="bcon" style="background:#6366f1" onclick="enviar(\''+o.id+'\',\'separacao\')">Separação</button>');
   }else if(setor==='atendimento' && canAct){
-    acoes.push('<button class="bmv" style="background:#c49a6c" onclick="enviar(\''+o.id+'\',\'estoque\')">→ Estoque</button>');
+    acoes.push('<button class="bmv" style="background:#c49a6c" onclick="enviar(\''+o.id+'\',\'estoque\')">Estoque</button>');
   }else if(setor==='corte' && canAct){
-    acoes.push('<button class="bmv" style="background:#6366f1" onclick="enviar(\''+o.id+'\',\'separacao\')">→ Separação</button>');
+    acoes.push('<button class="bmv" style="background:#6366f1" onclick="enviar(\''+o.id+'\',\'separacao\')">Separação</button>');
   }else if(setor==='separacao' && canAct){
-    acoes.push('<button class="bmv" onclick="enviar(\''+o.id+'\',\'faturamento\')">→ Faturamento</button>');
+    acoes.push('<button class="bmv" onclick="enviar(\''+o.id+'\',\'faturamento\')">Faturamento</button>');
   }
 
   var etapaPosFaturamento=(o.status==='pronto_balcao' || o.status==='balcao_chamado');
   if(canAct && setor!=='atendimento' && !etapaPosFaturamento){
-    acoes.push('<button class="bret" onclick="openReturnActive(\''+o.id+'\')">← Retornar</button>');
+    acoes.push('<button class="bret" onclick="openReturnActive(\''+o.id+'\')">Retornar</button>');
   }
      if(podeExcluirPedido() && !etapaPosFaturamento){
     acoes.push('<button class="bexc" onclick="openDeletePedido(\''+o.id+'\')">Excluir</button>');
@@ -1380,7 +1382,7 @@ function renderCard(o,setor){
   var totalFreezeAttr = t.freeze ? ' data-timer-freeze="'+t.freeze+'"' : '';
 
   return '<div class="card '+pC+' '+(o.status==='pronto_balcao'?'balcao-ready':'')+'">' +
-    '<div class="card-top"><span class="card-num">#'+o.numero+'</span><div style="display:flex;gap:4px;align-items:center">'+prioBadge(prio)+(podeCriarPedido()?'<button class="bmv" style="padding:2px 5px;font-size:9px;line-height:1;border-radius:6px;min-width:0;flex-shrink:0;align-self:center" onclick="togglePrio(\''+o.id+'\',\''+prio+'\')">⇄</button>':'')+'</div></div>' +
+    '<div class="card-top"><span class="card-num">#'+o.numero+'</span><div style="display:flex;gap:4px;align-items:center">'+prioBadge(prio)+(podeCriarPedido()?'<button class="bmv" style="padding:1px 5px;font-size:10px;line-height:1.4;border-radius:5px;min-width:0;flex-shrink:0" onclick="togglePrio(\''+o.id+'\',\''+prio+'\')">⇄</button>':'')+'</div></div>' +
     (o.nome_cliente?'<div class="card-cli">'+o.nome_cliente+'</div>':'') +
     '<div class="card-meta">Entrada: '+hora+' · Por: '+o.criado_por+'</div>' +
     prontoHtml +
@@ -2032,7 +2034,7 @@ function renderOcorrencias() {
 
     var acoes = adm
       ? '<div class="act-btns">' +
-          '<button class="bmv" style="border-color:rgba(245,158,11,.4);color:var(--warn)" onclick="occRetornarAgRetira(\'' + o.id + '\')">← Retornar</button>' +
+          '<button class="bmv" style="border-color:rgba(245,158,11,.4);color:var(--warn)" onclick="occRetornarAgRetira(\'' + o.id + '\')">Retornar</button>' +
           '<button class="bexc" onclick="occCancelar(\'' + o.id + '\')">Cancelar</button>' +
         '</div>'
       : '<span style="font-size:10px;color:var(--muted)">Somente admin</span>';
