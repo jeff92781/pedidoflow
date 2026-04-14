@@ -576,12 +576,6 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
   <div class="mo">
     <div class="mt" id="occ-title">Registrar ocorrência</div>
     <p id="occ-desc" style="color:var(--muted);font-size:12px;margin-bottom:16px">Descreva o ocorrido.</p>
-    <div id="occ-parcial-div" style="display:none;margin-bottom:14px;padding:10px 14px;background:rgba(245,158,11,.08);border-radius:8px;border:1px solid rgba(245,158,11,.3)">
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
-        <input type="checkbox" id="occ-parcial-chk" style="width:15px;height:15px;accent-color:var(--warn)"/>
-        <span style="font-size:12px;color:var(--warn);font-weight:600">⚡ Marcar como pedido PARCIAL após o retorno</span>
-      </label>
-    </div>
     <div class="f">
       <label class="fl">Motivo *</label>
       <textarea id="occ-text" style="width:100%;min-height:120px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:13px;outline:none;resize:vertical"></textarea>
@@ -833,8 +827,6 @@ function openM(id){var n=el(id);if(n)n.classList.add('open');}
 function closeM(id){var n=el(id);if(n)n.classList.remove('open');}
 function closeOccurrenceModal(){
   el('occ-text').value='';
-  if(el('occ-parcial-chk'))el('occ-parcial-chk').checked=false;
-  if(el('occ-parcial-div'))el('occ-parcial-div').style.display='none';
   _occCtx=null;
   closeM('m-ocorrencia');
 }
@@ -991,11 +983,6 @@ async function openReturnActive(id){
     el('occ-title').textContent='Retornar pedido';
     el('occ-desc').textContent='Informe o motivo do retorno para '+(SL[anterior]||anterior)+'.';
     el('occ-text').value='';
-    // Mostrar opção Parcial apenas quando retorna para o Atendimento
-    var parcialDiv=el('occ-parcial-div');
-    var parcialChk=el('occ-parcial-chk');
-    if(parcialDiv) parcialDiv.style.display=(anterior==='atendimento')?'':'none';
-    if(parcialChk){ parcialChk.checked=pedido.parcial||false; }
     openM('m-ocorrencia');
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
@@ -1043,12 +1030,6 @@ async function submitOccurrenceModal(){
       }).eq('id',_occCtx.id);
       if(res2.error)throw res2.error;
       upsertPedidoLocal({id:_occCtx.id,setor:_occCtx.setorDestino,status:'em_andamento',setor_pendente:'',pendente_desde:null,setor_entrada_at:agora});
-      // Se retornou ao Atendimento, salvar opção de Parcial
-      if(_occCtx.setorDestino==='atendimento'){
-        var marcaParcial=el('occ-parcial-chk')&&el('occ-parcial-chk').checked;
-        var parcialUpdate=await sb.from('pedidos').update({parcial:marcaParcial?true:false}).eq('id',_occCtx.id);
-        upsertPedidoLocal({id:_occCtx.id,parcial:marcaParcial?true:false});
-      }
       await sb.from('movimentacoes').insert({
         pedido_id:_occCtx.id,
         setor_origem:pedido.setor,
