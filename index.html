@@ -504,14 +504,16 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
 <div class="mb" id="m-new-order">
   <div class="mo">
     <div class="mt">Novo Pedido — Atendimento</div>
-    <div class="f"><label class="fl">Número do Pedido *</label><input type="text" id="no-num" placeholder="Ex: 00123"/></div>
+    <div class="f"><label class="fl">Número do Pedido *</label><input type="text" id="no-num" placeholder="Ex: 00123" oninput="verificarDuplicataLive(this.value)"/>
+      <div id="no-num-feedback" style="margin-top:6px;font-size:11px;min-height:14px"></div>
+    </div>
     <div class="f"><label class="fl">Nome do Cliente *</label><input type="text" id="no-cli" placeholder="Nome completo"/></div>
     <div class="f"><label class="fl">Prioridade</label>
       <select id="no-prio"><option value="retira">Retira</option><option value="balcao">Balcão</option></select>
     </div>
     <div class="f"><label class="fl">Observação (opcional)</label><input type="text" id="no-obs"/></div>
-    <div class="f"><label class="fl">Vendedor (opcional)</label><input type="text" id="no-vendedor" placeholder="Nome do vendedor responsável"/></div>
-    <div class="f"><label class="fl">Valor do Pedido R$ (opcional)</label><input type="number" id="no-valor" placeholder="0.00" step="0.01" min="0"/></div>
+    <div class="f"><label class="fl">Vendedor *</label><input type="text" id="no-vendedor" placeholder="Nome do vendedor responsável"/></div>
+    <div class="f"><label class="fl">Valor do Pedido R$ *</label><input type="number" id="no-valor" placeholder="0.00" step="0.01" min="0"/></div>
     <div class="f" style="display:flex;align-items:center;gap:14px">
       <label class="fl" style="margin-bottom:0">Pedido Parcial?</label>
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
@@ -1600,7 +1602,37 @@ async function chamarBalcao(id){
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
-function openNewOrder(){el('no-num').value='';el('no-cli').value='';el('no-obs').value='';el('no-prio').value='retira';el('no-valor').value='';el('no-vendedor').value='';el('no-parcial').checked=false;openM('m-new-order');}
+function openNewOrder(){el('no-num').value='';el('no-cli').value='';el('no-obs').value='';el('no-prio').value='retira';el('no-valor').value='';el('no-vendedor').value='';el('no-parcial').checked=false;if(el('no-num-feedback'))el('no-num-feedback').textContent='';openM('m-new-order');}
+
+var _dupCheckTimer=null;
+function verificarDuplicataLive(val){
+  var fb=el('no-num-feedback');
+  if(!fb)return;
+  if(!val||!val.trim()){fb.textContent='';return;}
+  clearTimeout(_dupCheckTimer);
+  fb.style.color='var(--muted)';
+  fb.textContent='Verificando...';
+  _dupCheckTimer=setTimeout(async function(){
+    var numNorm=normalizarNumero(val.trim());
+    try{
+      var res=await sb.from('pedidos').select('id,numero,status,criado_por,entrada_at,nome_cliente,tem_pendencia,pendencia_status').not('status','in','("finalizado","cancelado")');
+      var match=(res.data||[]).find(function(p){return normalizarNumero(p.numero)===numNorm;});
+      if(match){
+        var dt=match.entrada_at?new Date(match.entrada_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+        fb.style.color='var(--danger)';
+        if(match.tem_pendencia&&match.pendencia_status==='aberta'){
+          fb.textContent='⚠ Em PENDÊNCIAS (saldo em aberto) — lançado por '+match.criado_por+' em '+dt;
+        }else{
+          fb.textContent='⚠ Já existe! '+(SL[match.status]||match.status)+' — '+match.criado_por+' · '+dt+' · '+(match.nome_cliente||'');
+        }
+      }else{
+        fb.style.color='var(--accent)';
+        fb.textContent='✓ Número disponível';
+        setTimeout(function(){if(fb.textContent==='✓ Número disponível')fb.textContent='';},2000);
+      }
+    }catch(e){fb.textContent='';}
+  },500);
+}
 async function createOrder(){
   var num=el('no-num').value.trim(),cli=el('no-cli').value.trim(),prio=el('no-prio').value;
   var valorPedido=parseFloat(el('no-valor').value)||0;
@@ -1608,25 +1640,32 @@ async function createOrder(){
   var parcial=el('no-parcial').checked?true:false;
   if(!num){toast('Informe o número do pedido.','err');return;}
   if(!cli){toast('Informe o nome do cliente.','err');return;}
+  if(!vendedor){toast('Informe o nome do vendedor.','err');return;}
+  if(valorPedido<=0){toast('Informe o valor do pedido.','err');return;}
   var numNorm=normalizarNumero(num);
   ov(true);
   try{
-    // Busca todos pedidos ativos com este número (normalizado, sem zeros à esquerda)
     var dupRes=await sb.from('pedidos').select('id,numero,status,criado_por,entrada_at,nome_cliente,tem_pendencia,pendencia_status').not('status','in','("finalizado","cancelado")');
     var dupMatch=(dupRes.data||[]).find(function(p){return normalizarNumero(p.numero)===numNorm;});
     if(dupMatch){
-      // Formatar data/hora de criação
       var dtCriacao=dupMatch.entrada_at?new Date(dupMatch.entrada_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
       if(dupMatch.tem_pendencia&&dupMatch.pendencia_status==='aberta'){
         toast('⚠ Pedido #'+numNorm+' está em PENDÊNCIAS com saldo em aberto (lançado por '+dupMatch.criado_por+' em '+dtCriacao+'). Acesse a aba Pendências.','err',8000);
       }else{
-        toast('Pedido #'+numNorm+' já está ativo ('+SL[dupMatch.status]||dupMatch.status+') — lançado por '+dupMatch.criado_por+' em '+dtCriacao+' — Cliente: '+(dupMatch.nome_cliente||'—'),'err',8000);
+        toast('Pedido #'+numNorm+' já está ativo ('+(SL[dupMatch.status]||dupMatch.status)+') — lançado por '+dupMatch.criado_por+' em '+dtCriacao+' — Cliente: '+(dupMatch.nome_cliente||'—'),'err',8000);
       }
       return;
     }
     closeM('m-new-order');
+    if(el('no-num-feedback'))el('no-num-feedback').textContent='';
     var agora=new Date().toISOString();
-    var res=await sb.from('pedidos').insert({numero:numNorm,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,obs:el('no-obs').value,nome_cliente:cli,prioridade:prio,num_nota:'',valor_pedido:valorPedido,vendedor:vendedor,parcial:parcial});
+    var payload={numero:numNorm,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,obs:el('no-obs').value,nome_cliente:cli,prioridade:prio,num_nota:'',valor_pedido:valorPedido,vendedor:vendedor,parcial:parcial};
+    var res=await sb.from('pedidos').insert(payload);
+    // Fallback: se coluna 'parcial' ainda não existe no banco, tenta sem ela
+    if(res.error&&res.error.message&&res.error.message.indexOf('parcial')>=0){
+      delete payload.parcial;
+      res=await sb.from('pedidos').insert(payload);
+    }
     if(res.error)throw res.error;
     await refreshUI();
     toast('Pedido #'+numNorm+' criado — '+cli,'ok');
@@ -2010,6 +2049,7 @@ el('tv-clock').textContent=fmtClock(new Date());
 // AG. RETIRA + OCORRÊNCIAS
 // ══════════════════════════════════════════════
 var AGR_15_DAYS_MS = 15 * 24 * 60 * 60 * 1000;
+var AGR_30_DAYS_ALERT_MS = 30 * 24 * 60 * 60 * 1000; // alerta piscante só após 30 dias
 var OCC_48H_MS = 48 * 60 * 60 * 1000;
 var _agrAlertDismissed = {};
 var _agraFiltroVencidos = false;
@@ -2494,8 +2534,9 @@ function checkOcorrencias48h() {
 // ── Alertas Ag. Retira (15 dias) - msg piscante com NF ──
 function checkAgRetiraAlerts() {
   var items = PEDIDOS.filter(function(o) { return o.status === 'ag_retira'; });
+  // Alerta piscante vermelho só aparece após 30 dias (vencimento dos boletos)
   var expired = items.filter(function(o) {
-    return o.pendente_desde && (now() - tsMs(o.pendente_desde)) >= AGR_15_DAYS_MS && !_agrAlertDismissed[o.id];
+    return o.pendente_desde && (now() - tsMs(o.pendente_desde)) >= AGR_30_DAYS_ALERT_MS && !_agrAlertDismissed[o.id];
   });
 
   var alertBox = el('alert-retira-box');
