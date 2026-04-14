@@ -511,7 +511,7 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
     <div class="f"><label class="fl">Prioridade</label>
       <select id="no-prio"><option value="retira">Retira</option><option value="balcao">Balcão</option></select>
     </div>
-    <div class="f"><label class="fl">Observação (opcional)</label><input type="text" id="no-obs"/></div>
+    <div class="f"><label class="fl">Nome de quem está retirando (opcional)</label><input type="text" id="no-retirada" placeholder="Ex: João Motorista"/></div>
     <div class="f"><label class="fl">Vendedor *</label><input type="text" id="no-vendedor" placeholder="Nome do vendedor responsável"/></div>
     <div class="f"><label class="fl">Valor do Pedido R$ *</label><input type="number" id="no-valor" placeholder="0.00" step="0.01" min="0"/></div>
     <div class="f" style="display:flex;align-items:center;gap:14px">
@@ -1127,7 +1127,7 @@ function testarVoz() {
   _vozNome  = el('cfg-voz') ? el('cfg-voz').value : _vozNome;
   _vozRate  = el('cfg-rate') ? parseFloat(el('cfg-rate').value) : _vozRate;
   _vozPitch = el('cfg-pitch') ? parseFloat(el('cfg-pitch').value) : _vozPitch;
-  narrar('Por favor, cliente teste, dirija-se ao balcão para retirada do seu pedido 59000.');
+  narrar('Por favor, cliente teste, dirija-se ao balcão para retirada do seu pedido 59000. João Motorista, por favor.');
 }
 
 function salvarConfig() {
@@ -1635,7 +1635,7 @@ async function chamarBalcao(id){
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
-function openNewOrder(){el('no-num').value='';el('no-cli').value='';el('no-obs').value='';el('no-prio').value='retira';el('no-valor').value='';el('no-vendedor').value='';el('no-parcial').checked=false;if(el('no-num-feedback'))el('no-num-feedback').textContent='';openM('m-new-order');}
+function openNewOrder(){el('no-num').value='';el('no-cli').value='';el('no-retirada').value='';el('no-prio').value='retira';el('no-valor').value='';el('no-vendedor').value='';el('no-parcial').checked=false;if(el('no-num-feedback'))el('no-num-feedback').textContent='';openM('m-new-order');}
 
 var _dupCheckTimer=null;
 function verificarDuplicataLive(val){
@@ -1692,7 +1692,7 @@ async function createOrder(){
     closeM('m-new-order');
     if(el('no-num-feedback'))el('no-num-feedback').textContent='';
     var agora=new Date().toISOString();
-    var payload={numero:numNorm,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,obs:el('no-obs').value,nome_cliente:cli,prioridade:prio,num_nota:'',valor_pedido:valorPedido,vendedor:vendedor,parcial:parcial};
+    var payload={numero:numNorm,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,nome_cliente:cli,prioridade:prio,num_nota:'',valor_pedido:valorPedido,vendedor:vendedor,nome_retirada:(el('no-retirada').value||'').trim()};
     var res=await sb.from('pedidos').insert(payload);
     // Fallback: se coluna 'parcial' ainda não existe no banco, tenta sem ela
     if(res.error&&res.error.message&&res.error.message.indexOf('parcial')>=0){
@@ -2000,7 +2000,7 @@ function anunciarTVPublica(listaAtual) {
 
     toast('🔔 Chamada no balcão: '+(o.nome_cliente || 'cliente')+' · Pedido #'+o.numero,'ok',8500);
     tocarAlertaTV();
-    enfileirarChamadaTV('Por favor, ' + (o.nome_cliente || 'cliente') + ', dirija-se ao balcão para retirada do seu pedido ' + o.numero + '.');
+    enfileirarChamadaTV('Por favor, ' + (o.nome_cliente || 'cliente') + ', dirija-se ao balcão para retirada do seu pedido ' + o.numero + (o.nome_retirada ? '. ' + o.nome_retirada + ', por favor.' : '.'));
   });
 }
 
