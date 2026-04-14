@@ -265,6 +265,7 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
     <button class="tab adm-only" onclick="go('config')" style="display:none">Configurações</button>
     <button class="tab" onclick="go('agretira')" id="tab-agretira">Ag. Retira <span id="agretira-badge" style="display:none;background:rgba(226,75,74,.2);color:var(--danger);padding:1px 6px;border-radius:10px;font-size:10px;margin-left:4px">0</span></button>
     <button class="tab" onclick="go('ocorrencias')" id="tab-ocorrencias">Ocorrências <span id="ocorrencias-badge" style="display:none;background:rgba(239,159,39,.2);color:var(--warn);padding:1px 6px;border-radius:10px;font-size:10px;margin-left:4px">0</span></button>
+    <button class="tab" onclick="go('pendencias')" id="tab-pendencias">Pendências <span id="pendencias-badge" style="display:none;background:rgba(239,68,68,.2);color:var(--danger);padding:1px 6px;border-radius:10px;font-size:10px;margin-left:4px">0</span></button>
   </div>
   <div class="nav-right">
     <span id="nav-nome">—</span>
@@ -360,7 +361,7 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
     <div id="bars-conf" class="adm-only" style="margin-bottom:28px;display:none"></div>
     <div class="st">Registro dos pedidos</div>
     <table class="rkt">
-      <thead><tr><th>Entrada</th><th>Pedido</th><th>Cliente</th><th>NF</th><th>Tempo total</th><th>Destino</th></tr></thead>
+      <thead><tr><th>Entrada</th><th>Pedido</th><th>Cliente</th><th>NF</th><th>Valor Faturado</th><th>Tempo total</th><th>Destino</th></tr></thead>
       <tbody id="pedidos-dia-body"></tbody>
     </table>
   </main>
@@ -427,11 +428,16 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
     <div class="ph">
       <span class="pt">Aguardando Retirada</span>
       <span style="color:var(--muted);font-size:12px" id="agr-count"></span>
+      <div id="agr-valor-total" style="font-size:12px;color:var(--accent);font-weight:600;background:var(--accent-dim);padding:5px 14px;border-radius:20px;border:1px solid rgba(34,211,167,.3)"></div>
+      <button onclick="exportarAgRetiraExcel()" style="padding:8px 16px;background:#10b981;border:none;border-radius:var(--radius);color:#fff;font-family:var(--font-mono);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar
+      </button>
       <button class="btnn" id="btn-agr-manual" style="display:none" onclick="openM('m-agr-manual')">+ Inserir Nota</button>
     </div>
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
       <table class="utbl" id="agr-table">
-        <thead><tr><th style="width:30px"></th><th>Pedido</th><th>Cliente</th><th>Nota Fiscal</th><th>Entrada</th><th>Dias</th><th>Ações</th></tr></thead>
+        <thead><tr><th style="width:30px"></th><th>Pedido</th><th>Cliente</th><th>Nota Fiscal</th><th>Valor NF</th><th>Entrada</th><th>Dias</th><th>Ações</th></tr></thead>
         <tbody id="agr-tbody"></tbody>
       </table>
     </div>
@@ -455,6 +461,25 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
     <div id="occ-empty" style="color:var(--muted);font-size:13px;text-align:center;padding:40px 0;display:none">Nenhuma ocorrência no momento.</div>
   </main>
 </div>
+<div class="screen" id="screen-pendencias">
+  <main>
+    <div class="ph">
+      <span class="pt">Pendências de Saldo</span>
+      <span style="color:var(--muted);font-size:12px" id="pend-count"></span>
+    </div>
+    <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:20px;font-size:12px;color:var(--muted)">
+      ⚠ Pedidos com saldo em aberto: o valor faturado foi inferior ao valor original do pedido. Use <strong style="color:var(--text)">Retornar para Operação</strong> quando o saldo for entregue, ou <strong style="color:var(--text)">Encerrar Saldo</strong> caso o cliente não queira aguardar.
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+      <table class="utbl" id="pend-table">
+        <thead><tr><th>Pedido</th><th>Cliente</th><th>Nota Fiscal</th><th>Valor Pedido</th><th>Valor Faturado</th><th>Saldo em Aberto</th><th>Data</th><th>Ações</th></tr></thead>
+        <tbody id="pend-tbody"></tbody>
+      </table>
+    </div>
+    <div id="pend-empty" style="color:var(--muted);font-size:13px;text-align:center;padding:40px 0;display:none">Nenhuma pendência de saldo no momento.</div>
+  </main>
+</div>
+
 <div id="alert-retira-box" class="alert-retira" onclick="go('agretira')">
   ⚠ Pedido(s) com 15+ dias em Ag. Retira
 </div>
@@ -482,6 +507,7 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
       <select id="no-prio"><option value="retira">Retira</option><option value="balcao">Balcão</option></select>
     </div>
     <div class="f"><label class="fl">Observação (opcional)</label><input type="text" id="no-obs"/></div>
+    <div class="f"><label class="fl">Valor do Pedido R$ (opcional)</label><input type="number" id="no-valor" placeholder="0.00" step="0.01" min="0"/></div>
     <div class="ma"><button class="bcan" onclick="closeM('m-new-order')">Cancelar</button><button class="bok" onclick="createOrder()">Criar Pedido</button></div>
   </div>
 </div>
@@ -490,6 +516,9 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
     <div class="mt">Faturamento — Nota Fiscal</div>
     <p style="color:var(--muted);font-size:12px;margin-bottom:16px">Informe o número da NF. Após faturar, o pedido volta para a Separação com o botão de chamar balcão.</p>
     <div class="f"><label class="fl">Número da Nota Fiscal *</label><input type="text" id="nota-num" placeholder="000123"/></div>
+    <div class="f"><label class="fl">Valor da Nota Fiscal R$ *</label><input type="number" id="nota-valor" placeholder="0.00" step="0.01" min="0"/>
+      <div id="nota-saldo-preview" style="margin-top:8px;font-size:12px;color:var(--muted);min-height:16px"></div>
+    </div>
     <div class="ma"><button class="bcan" onclick="closeM('m-nota')">Cancelar</button><button class="bok" onclick="confirmarNota()">Faturar e Enviar</button></div>
   </div>
 </div>
@@ -696,6 +725,19 @@ function escapeCsv(v){
   if(v===null||v===undefined)return '';
   v=String(v).replace(/"/g,'""');
   return /[;"\n]/.test(v)?'"'+v+'"':v;
+}
+
+function normalizarNumero(num) {
+  var s = String(num).trim();
+  var n = parseInt(s, 10);
+  return isNaN(n) ? s : String(n);
+}
+
+function fmtBRL(v) {
+  var n = parseFloat(v);
+  if (!v && v !== 0) return '—';
+  if (isNaN(n) || n === 0) return '—';
+  return 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
 function meuSetor(){return ME&&ME.setor?ME.setor:'';}
@@ -1170,18 +1212,23 @@ async function aplicarFiltroRelatorios(){
 }
 function exportarPedidosExcel(){
   if(!REPORT_PEDIDOS_EXPORT.length){toast('Não há registros para exportar no período selecionado.','warn');return;}
-  var linhas=[['Entrada','Pedido','Cliente','NF','Tempo total','Destino'].join(';')];
+  var linhas=[['Entrada','Pedido','Cliente','NF','Valor Faturado','Tempo total','Destino'].join(';')];
+  var totalValor=0;
   REPORT_PEDIDOS_EXPORT.forEach(function(o){
     var total=(tsMs(o.finalizado_at)||now())-tsMs(o.entrada_at);
+    var valorNF=parseFloat(o.valor_nota_fat)||0;
+    totalValor+=valorNF;
     linhas.push([
       escapeCsv(o.entrada_at?new Date(o.entrada_at).toLocaleString('pt-BR'):'—'),
       escapeCsv('#'+(o.numero||'')),
       escapeCsv(o.nome_cliente||'—'),
       escapeCsv(o.num_nota||'—'),
+      escapeCsv(valorNF>0?valorNF.toFixed(2):'—'),
       escapeCsv(fmtT(Math.max(0,total))),
       escapeCsv(getDestinoFinalTexto(o))
     ].join(';'));
   });
+  if(totalValor>0)linhas.push(['','','','TOTAL',totalValor.toFixed(2),'',''].join(';'));
   var blob=new Blob(['\ufeff'+linhas.join('\r\n')],{type:'text/csv;charset=utf-8;'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -1213,6 +1260,7 @@ async function go(name){
   if(name==='config'){setTimeout(carregarVozes,100);}
   if(name==='agretira'){ov(true);await fetchPedidos();ov(false);renderAgRetira();}
   if(name==='ocorrencias'){ov(true);await fetchPedidos();ov(false);renderOcorrencias();}
+  if(name==='pendencias'){ov(true);await fetchPedidos();ov(false);renderPendencias();}
 }
 
 // ── MUDANÇA 5: Clock SÓ atualiza texto do relógio + timers in-place ──
@@ -1231,6 +1279,7 @@ function startClock(){
     checkAgRetiraAlerts();
     checkOcorrencias48h();
     renderOcorrenciasBadge();
+    renderPendenciasBadge();
 
     // Alertas de 10min (raro, não causa render)
     PEDIDOS.forEach(function(o){
@@ -1451,16 +1500,31 @@ async function confirmarRec(id){
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
-function openNota(id){_notaTarget=id;el('nota-num').value='';openM('m-nota');}
+function openNota(id){
+  _notaTarget=id;
+  el('nota-num').value='';
+  el('nota-valor').value='';
+  if(el('nota-saldo-preview'))el('nota-saldo-preview').textContent='';
+  var pedido=getPedidoById(id);
+  if(pedido&&pedido.valor_pedido>0){
+    if(el('nota-saldo-preview'))el('nota-saldo-preview').textContent='Valor do pedido: '+fmtBRL(pedido.valor_pedido)+'. Se o valor da NF for inferior, haverá saldo em Pendências.';
+  }
+  openM('m-nota');
+}
 async function confirmarNota(){
   var nota=el('nota-num').value.trim();
+  var valorNota=parseFloat(el('nota-valor').value)||0;
   if(!nota){toast('Informe o número da nota fiscal.','err');return;}
+  if(valorNota<=0){toast('Informe o valor da nota fiscal.','err');return;}
   closeM('m-nota');ov(true);
   try{
     var o=PEDIDOS.find(function(p){return p.id===_notaTarget;});
     if(!o)throw new Error('Pedido não encontrado');
     var agora=new Date().toISOString();
     var tempoSetor=Math.max(0,new Date(agora)-new Date(o.setor_entrada_at));
+    var valorPedido=parseFloat(o.valor_pedido)||0;
+    var saldo=valorPedido>0?Math.max(0,Math.round((valorPedido-valorNota)*100)/100):0;
+    var temPendencia=saldo>0.01;
     var res=await sb.from('pedidos').update({
       setor:'separacao',
       status:'pronto_balcao',
@@ -1468,10 +1532,14 @@ async function confirmarNota(){
       pendente_desde:null,
       setor_entrada_at:agora,
       finalizado_at:agora,
-      num_nota:nota
+      num_nota:nota,
+      valor_nota_fat:valorNota,
+      tem_pendencia:temPendencia,
+      saldo_pendencia:temPendencia?saldo:0,
+      pendencia_status:temPendencia?'aberta':''
     }).eq('id',_notaTarget);
     if(res.error)throw res.error;
-    upsertPedidoLocal({id:_notaTarget,setor:'separacao',status:'pronto_balcao',setor_pendente:'',pendente_desde:null,setor_entrada_at:agora,finalizado_at:agora,num_nota:nota});
+    upsertPedidoLocal({id:_notaTarget,setor:'separacao',status:'pronto_balcao',setor_pendente:'',pendente_desde:null,setor_entrada_at:agora,finalizado_at:agora,num_nota:nota,valor_nota_fat:valorNota,tem_pendencia:temPendencia,saldo_pendencia:temPendencia?saldo:0,pendencia_status:temPendencia?'aberta':''});
     _lastPainelSnap='';
     atualizarTelasAtivas();
     sb.from('movimentacoes').insert({
@@ -1487,7 +1555,11 @@ async function confirmarNota(){
       tempo_confirmacao_ms:0
     });
     refreshPedidosSoon(500);
-    toast('Faturado! Pedido voltou para a Separação para chamar balcão.','move');
+    if(temPendencia){
+      toast('Faturado! Saldo de '+fmtBRL(saldo)+' registrado em Pendências.','warn',5000);
+    }else{
+      toast('Faturado! Pedido voltou para a Separação para chamar balcão.','move');
+    }
   }catch(e){toast(e.message,'err');}
   finally{ov(false);_notaTarget=null;}
 }
@@ -1511,20 +1583,24 @@ async function chamarBalcao(id){
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
-function openNewOrder(){el('no-num').value='';el('no-cli').value='';el('no-obs').value='';el('no-prio').value='retira';openM('m-new-order');}
+function openNewOrder(){el('no-num').value='';el('no-cli').value='';el('no-obs').value='';el('no-prio').value='retira';el('no-valor').value='';openM('m-new-order');}
 async function createOrder(){
   var num=el('no-num').value.trim(),cli=el('no-cli').value.trim(),prio=el('no-prio').value;
+  var valorPedido=parseFloat(el('no-valor').value)||0;
   if(!num){toast('Informe o número do pedido.','err');return;}
   if(!cli){toast('Informe o nome do cliente.','err');return;}
+  var numNorm=normalizarNumero(num);
   closeM('m-new-order');ov(true);
   try{
-    var dup=await sb.from('pedidos').select('id').eq('numero',num).neq('status','finalizado');
-    if(dup.data&&dup.data.length>0){toast('Já existe um pedido ativo com este número.','err');return;}
+    // Busca duplicatas considerando número normalizado (sem zeros à esquerda)
+    var dup=await sb.from('pedidos').select('id,numero,status').not('status','in','("finalizado","cancelado")');
+    var isDup=(dup.data||[]).some(function(p){return normalizarNumero(p.numero)===numNorm;});
+    if(isDup){toast('Já existe um pedido ativo com este número (#'+numNorm+').','err');return;}
     var agora=new Date().toISOString();
-    var res=await sb.from('pedidos').insert({numero:num,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,obs:el('no-obs').value,nome_cliente:cli,prioridade:prio,num_nota:''});
+    var res=await sb.from('pedidos').insert({numero:numNorm,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,obs:el('no-obs').value,nome_cliente:cli,prioridade:prio,num_nota:'',valor_pedido:valorPedido});
     if(res.error)throw res.error;
     await refreshUI();
-    toast('Pedido #'+num+' criado — '+cli,'ok');
+    toast('Pedido #'+numNorm+' criado — '+cli,'ok');
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
@@ -1651,8 +1727,10 @@ function renderRelatorios(){
     {l:'Prontos p/ balcão',v:active.filter(function(o){return o.status==='pronto_balcao' || o.status==='balcao_chamado';}).length,s:'após faturar'},
     {l:'Tempo médio',v:avg?fmtTs(avg):'--',s:'até o faturamento (horário comercial)'},
     {l:'Mais rápido',v:minT?fmtTs(minT):'--',s:''},
-    {l:'Mais lento',v:maxT?fmtTs(maxT):'--',s:''}
-  ].map(function(k){return '<div class="kpi"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'</div><div class="ks">'+k.s+'</div></div>';}).join('');
+    {l:'Mais lento',v:maxT?fmtTs(maxT):'--',s:''},
+    {l:'Valor total faturado',v:(function(){var t=done.reduce(function(s,o){return s+(parseFloat(o.valor_nota_fat)||0);},0);return t>0?fmtBRL(t):'—';})(),s:'soma das notas faturadas'},
+    {l:'Ticket médio',v:(function(){var ds=done.filter(function(o){return parseFloat(o.valor_nota_fat)>0;});var t=ds.reduce(function(s,o){return s+(parseFloat(o.valor_nota_fat)||0);},0);return ds.length&&t>0?fmtBRL(t/ds.length):'—';})(),s:'por pedido faturado'}
+  ].map(function(k){return '<div class="kpi"><div class="kl">'+k.l+'</div><div class="kv" style="font-size:'+((k.v&&String(k.v).length>8)?'16px':'24px')+'">'+k.v+'</div><div class="ks">'+k.s+'</div></div>';}).join('');
 
   var sA={},sC={};
   MOVS.forEach(function(m){
@@ -1687,8 +1765,9 @@ function renderRelatorios(){
   el('pedidos-dia-body').innerHTML=all.length?all.map(function(o){
     var t=(o.finalizado_at?tsMs(o.finalizado_at):now())-tsMs(o.entrada_at);
     var destino=getDestinoFinal(o);
-    return '<tr><td>'+(o.entrada_at?new Date(o.entrada_at).toLocaleString('pt-BR'):'—')+'</td><td style="font-family:var(--font-head);font-size:16px;font-weight:700">#'+o.numero+'</td><td>'+(o.nome_cliente||'—')+'</td><td>'+(o.num_nota||'—')+'</td><td>'+fmtT(Math.max(0,t))+'</td><td>'+destino+'</td></tr>';
-  }).join(''):'<tr><td colspan="6" style="color:var(--muted);text-align:center">Nenhum pedido registrado no período selecionado.</td></tr>';
+    var valorNF=parseFloat(o.valor_nota_fat)||0;
+    return '<tr><td>'+(o.entrada_at?new Date(o.entrada_at).toLocaleString('pt-BR'):'—')+'</td><td style="font-family:var(--font-head);font-size:16px;font-weight:700">#'+o.numero+'</td><td>'+(o.nome_cliente||'—')+'</td><td>'+(o.num_nota||'—')+'</td><td style="color:var(--accent);font-weight:600">'+(valorNF>0?fmtBRL(valorNF):'—')+'</td><td>'+fmtT(Math.max(0,t))+'</td><td>'+destino+'</td></tr>';
+  }).join(''):'<tr><td colspan="7" style="color:var(--muted);text-align:center">Nenhum pedido registrado no período selecionado.</td></tr>';
 }
 var SETORlabel={todos:'Todos',atendimento:'Atendimento',estoque:'Estoque',corte:'Corte',separacao:'Separação',faturamento:'Faturamento'};
 function renderUsers(users){el('users-body').innerHTML=users.map(function(u){return '<tr><td>'+u.nome+'</td><td style="color:var(--muted)">'+u.login+'</td><td style="font-size:12px">'+(SETORlabel[u.setor]||u.setor)+'</td><td><span class="bar '+(u.role==='admin'?'bar-a':'bar-o')+'">'+u.role+'</span></td><td><span class="'+(u.ativo?'bon':'boff')+'">'+(u.ativo?'Ativo':'Inativo')+'</span></td><td><button class="bmv" onclick="toggleUser(\''+u.id+'\','+u.ativo+',\''+u.login+'\')">'+(u.ativo?'Desativar':'Ativar')+'</button></td></tr>';}).join('');}
@@ -1861,6 +1940,31 @@ if(window.location.search.indexOf('tv=1')>=0){
 el('panel-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
 el('tv-clock').textContent=fmtClock(new Date());
 
+// Preview de saldo no modal de faturamento
+(function(){
+  var notaValorEl=el('nota-valor');
+  if(notaValorEl){
+    notaValorEl.addEventListener('input',function(){
+      var preview=el('nota-saldo-preview');
+      if(!preview||!_notaTarget)return;
+      var pedido=getPedidoById(_notaTarget);
+      if(!pedido||!(parseFloat(pedido.valor_pedido)>0)){preview.textContent='';return;}
+      var valorPedido=parseFloat(pedido.valor_pedido);
+      var valorNota=parseFloat(notaValorEl.value)||0;
+      var saldo=Math.max(0,Math.round((valorPedido-valorNota)*100)/100);
+      if(saldo>0.01){
+        preview.style.color='var(--danger)';
+        preview.textContent='⚠ Saldo em aberto: '+fmtBRL(saldo)+' será registrado em Pendências.';
+      }else if(valorNota>=valorPedido&&valorPedido>0){
+        preview.style.color='var(--accent)';
+        preview.textContent='✓ Valor completo. Nenhuma pendência.';
+      }else{
+        preview.textContent='';
+      }
+    });
+  }
+})();
+
 
 // ══════════════════════════════════════════════
 // ══════════════════════════════════════════════
@@ -1987,6 +2091,102 @@ async function occCancelar(id) {
 
 // ── Render Ag. Retira ──
 
+// ── Pendências de Saldo ──
+function renderPendenciasBadge() {
+  var items = PEDIDOS.filter(function(o) { return o.tem_pendencia && o.pendencia_status === 'aberta'; });
+  var badge = el('pendencias-badge');
+  if (badge) {
+    if (items.length > 0) { badge.textContent = items.length; badge.style.display = 'inline'; }
+    else { badge.style.display = 'none'; }
+  }
+}
+
+function renderPendencias() {
+  var items = PEDIDOS.filter(function(o) { return o.tem_pendencia && o.pendencia_status === 'aberta'; });
+  renderPendenciasBadge();
+  if (el('pend-count')) el('pend-count').textContent = items.length + ' pendência(s)';
+  if (el('pend-empty')) el('pend-empty').style.display = items.length ? 'none' : 'block';
+  if (!el('pend-tbody')) return;
+  if (el('pend-table')) el('pend-table').style.display = items.length ? '' : 'none';
+
+  el('pend-tbody').innerHTML = items.map(function(o) {
+    var saldo = parseFloat(o.saldo_pendencia) || 0;
+    var valorPedido = parseFloat(o.valor_pedido) || 0;
+    var valorNota = parseFloat(o.valor_nota_fat) || 0;
+    var dataFat = o.finalizado_at ? new Date(o.finalizado_at).toLocaleDateString('pt-BR') : '—';
+    return '<tr>' +
+      '<td style="font-family:var(--font-head);font-size:15px;font-weight:700">#' + o.numero + '</td>' +
+      '<td>' + (o.nome_cliente || '—') + '</td>' +
+      '<td style="color:var(--sep)">' + (o.num_nota || '—') + '</td>' +
+      '<td style="color:var(--muted)">' + fmtBRL(valorPedido) + '</td>' +
+      '<td style="color:var(--accent)">' + fmtBRL(valorNota) + '</td>' +
+      '<td style="color:var(--danger);font-weight:700">' + fmtBRL(saldo) + '</td>' +
+      '<td style="color:var(--muted)">' + dataFat + '</td>' +
+      '<td><div class="act-btns">' +
+        '<button class="bmv" style="background:#3b82f6" onclick="pendenciaRetornar(\'' + o.id + '\')">↩ Retornar Operação</button>' +
+        '<button class="bexc" onclick="pendenciaEncerrar(\'' + o.id + '\')">✕ Encerrar Saldo</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+}
+
+async function pendenciaRetornar(id) {
+  var pedido = getPedidoById(id);
+  if (!pedido) { toast('Pedido não encontrado.', 'err'); return; }
+  if (!confirm('Retornar pedido #' + pedido.numero + ' para a operação? Ele voltará ao Atendimento para processar o saldo de ' + fmtBRL(pedido.saldo_pendencia) + '.')) return;
+  ov(true);
+  try {
+    var agora = new Date().toISOString();
+    var res = await sb.from('pedidos').update({
+      pendencia_status: 'retornada',
+      setor: 'atendimento',
+      status: 'em_andamento',
+      setor_pendente: '',
+      pendente_desde: null,
+      setor_entrada_at: agora,
+      finalizado_at: null,
+      num_nota: '',
+      valor_nota_fat: 0,
+      tem_pendencia: false,
+      saldo_pendencia: 0
+    }).eq('id', id);
+    if (res.error) throw res.error;
+    upsertPedidoLocal({id: id, pendencia_status: 'retornada', setor: 'atendimento', status: 'em_andamento', setor_pendente: '', pendente_desde: null, setor_entrada_at: agora, finalizado_at: null, num_nota: '', valor_nota_fat: 0, tem_pendencia: false, saldo_pendencia: 0});
+    var linha = buildOccurrenceLine('PENDÊNCIA', 'Pendências', 'Saldo de ' + fmtBRL(pedido.saldo_pendencia) + ' retornado para a operação.');
+    await appendObsPedido(id, linha);
+    _lastPainelSnap = '';
+    atualizarTelasAtivas();
+    refreshPedidosSoon(500);
+    renderPendencias();
+    toast('Pedido #' + pedido.numero + ' retornado para Atendimento.', 'ok');
+  } catch(e) { toast(e.message, 'err'); }
+  finally { ov(false); }
+}
+
+async function pendenciaEncerrar(id) {
+  var pedido = getPedidoById(id);
+  if (!pedido) { toast('Pedido não encontrado.', 'err'); return; }
+  if (!confirm('Encerrar o saldo de ' + fmtBRL(pedido.saldo_pendencia) + ' do pedido #' + pedido.numero + '? O cliente não irá retirar o restante.')) return;
+  ov(true);
+  try {
+    var res = await sb.from('pedidos').update({
+      pendencia_status: 'encerrada',
+      tem_pendencia: false,
+      saldo_pendencia: 0
+    }).eq('id', id);
+    if (res.error) throw res.error;
+    upsertPedidoLocal({id: id, pendencia_status: 'encerrada', tem_pendencia: false, saldo_pendencia: 0});
+    var linha = buildOccurrenceLine('PENDÊNCIA', 'Pendências', 'Saldo de ' + fmtBRL(pedido.saldo_pendencia) + ' encerrado. Cliente não irá retirar o restante.');
+    await appendObsPedido(id, linha);
+    _lastPainelSnap = '';
+    atualizarTelasAtivas();
+    refreshPedidosSoon(500);
+    renderPendencias();
+    toast('Saldo encerrado para o pedido #' + pedido.numero + '.', 'warn');
+  } catch(e) { toast(e.message, 'err'); }
+  finally { ov(false); }
+}
+
 // ── Log ocorrência no Supabase ──
 async function logOcorrencia(pedido_id, numero, nome_cliente, num_nota, tipo, descricao) {
   try {
@@ -2006,11 +2206,15 @@ async function logOcorrencia(pedido_id, numero, nome_cliente, num_nota, tipo, de
 
 // ── Inserir Ag. Retira manual (notas antigas) ──
 async function inserirAgRetiraManual() {
-  var num = (el('agr-m-num').value || '').trim();
+  var num = normalizarNumero((el('agr-m-num').value || '').trim());
   var cli = (el('agr-m-cli').value || '').trim();
   var nf = (el('agr-m-nf').value || '').trim();
   var data = (el('agr-m-data').value || '').trim();
   if (!num || !cli || !nf || !data) { toast('Preencha todos os campos.', 'err'); return; }
+  // Verificar duplicidade normalizada
+  var dup = await sb.from('pedidos').select('id,numero,status').not('status','in','("finalizado","cancelado")');
+  var isDup = (dup.data||[]).some(function(p){return normalizarNumero(p.numero)===num;});
+  if(isDup){toast('Já existe um pedido ativo com o número #'+num+'.','err');return;}
   closeM('m-agr-manual');
   ov(true);
   try {
@@ -2052,6 +2256,17 @@ function renderAgRetira() {
   if (!el('agr-tbody')) return;
   if(el('agr-table'))el('agr-table').style.display=items.length?'':'none';
 
+  // Total em valor
+  var totalValor = items.reduce(function(s,o){return s+(parseFloat(o.valor_nota_fat)||0);},0);
+  if(el('agr-valor-total')){
+    if(totalValor>0){
+      el('agr-valor-total').textContent='Total em retirada: '+fmtBRL(totalValor);
+      el('agr-valor-total').style.display='';
+    }else{
+      el('agr-valor-total').style.display='none';
+    }
+  }
+
   el('agr-tbody').innerHTML = items.map(function(o) {
     var entrou = tsMs(o.pendente_desde);
     var diasMs = now() - entrou;
@@ -2060,12 +2275,14 @@ function renderAgRetira() {
     var dataEntrada = o.pendente_desde ? new Date(o.pendente_desde).toLocaleDateString('pt-BR') : '—';
     var dotClass = dias >= 15 ? 'dot-red' : dias >= 10 ? 'dot-yellow' : 'dot-green';
     var btnOcc = expired ? '<button class="boc" onclick="enviarParaOcorrencias(\'' + o.id + '\')">Ocorrências</button>' : '';
+    var valorNF = parseFloat(o.valor_nota_fat) || 0;
 
     return '<tr>' +
       '<td><span class="dot-status ' + dotClass + '"></span></td>' +
       '<td style="font-family:var(--font-head);font-size:15px;font-weight:700">#' + o.numero + '</td>' +
       '<td>' + (o.nome_cliente || '—') + '</td>' +
       '<td style="color:var(--sep)">' + (o.num_nota || '—') + '</td>' +
+      '<td style="color:var(--accent);font-weight:600">' + (valorNF > 0 ? fmtBRL(valorNF) : '—') + '</td>' +
       '<td style="color:var(--muted)">' + dataEntrada + '</td>' +
       '<td><span style="font-weight:600;color:' + (dias>=15?'var(--danger)':dias>=10?'var(--warn)':'var(--accent)') + '">' + dias + ' dia(s)</span></td>' +
       '<td><div class="act-btns">' +
@@ -2075,6 +2292,35 @@ function renderAgRetira() {
       '</div></td>' +
     '</tr>';
   }).join('');
+}
+
+function exportarAgRetiraExcel() {
+  var items = PEDIDOS.filter(function(o) { return o.status === 'ag_retira'; });
+  if (!items.length) { toast('Nenhum pedido aguardando retirada.', 'warn'); return; }
+  var linhas = [['Pedido','Cliente','Nota Fiscal','Valor NF','Entrada','Dias'].join(';')];
+  items.forEach(function(o) {
+    var entrou = tsMs(o.pendente_desde);
+    var dias = Math.floor((now() - entrou) / (24*60*60*1000));
+    var dataEntrada = o.pendente_desde ? new Date(o.pendente_desde).toLocaleDateString('pt-BR') : '—';
+    var valorNF = parseFloat(o.valor_nota_fat) || 0;
+    linhas.push([
+      escapeCsv('#'+(o.numero||'')),
+      escapeCsv(o.nome_cliente||'—'),
+      escapeCsv(o.num_nota||'—'),
+      escapeCsv(valorNF>0?valorNF.toFixed(2):'—'),
+      escapeCsv(dataEntrada),
+      escapeCsv(dias+' dia(s)')
+    ].join(';'));
+  });
+  var totalValor = items.reduce(function(s,o){return s+(parseFloat(o.valor_nota_fat)||0);},0);
+  if(totalValor>0) linhas.push(['','','TOTAL',totalValor.toFixed(2),'',''].join(';'));
+  var blob = new Blob(['\ufeff'+linhas.join('\r\n')], {type:'text/csv;charset=utf-8;'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'aguardando_retirada_'+fmtDateInput(new Date())+'.csv';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},100);
+  toast('Exportado com sucesso!','ok');
 }
 
 // ── Render Ocorrências ──
