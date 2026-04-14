@@ -112,6 +112,7 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
 .card{background:var(--bg3);border-radius:var(--radius-lg);border:1px solid var(--border);padding:18px;margin-bottom:12px;transition:all .3s;position:relative}
 .card:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(0,0,0,0.25)}
 .card.prio-balcao{background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.25)}
+.pb-parcial{background:rgba(245,158,11,.15);color:var(--warn);border:1px solid rgba(245,158,11,.4);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:.04em}
 
 .card.cw{border-color:rgba(245,158,11,.5)!important}
 .card.cd{border-color:rgba(239,68,68,.6)!important;animation:pd 1.5s infinite}
@@ -361,7 +362,7 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
     <div id="bars-conf" class="adm-only" style="margin-bottom:28px;display:none"></div>
     <div class="st">Registro dos pedidos</div>
     <table class="rkt">
-      <thead><tr><th>Entrada</th><th>Pedido</th><th>Cliente</th><th>Vendedor</th><th>NF</th><th>Valor Faturado</th><th>Tempo total</th><th>Destino</th></tr></thead>
+      <thead><tr><th>Entrada</th><th>Pedido</th><th>Cliente</th><th>NF</th><th>Valor Faturado</th><th>Tempo total</th><th>Destino</th></tr></thead>
       <tbody id="pedidos-dia-body"></tbody>
       <tfoot id="pedidos-dia-tfoot"></tfoot>
     </table>
@@ -430,6 +431,7 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
       <span class="pt">Aguardando Retirada</span>
       <span style="color:var(--muted);font-size:12px" id="agr-count"></span>
       <div id="agr-valor-total" style="font-size:12px;color:var(--accent);font-weight:600;background:var(--accent-dim);padding:5px 14px;border-radius:20px;border:1px solid rgba(34,211,167,.3)"></div>
+      <button id="btn-agr-vencidos" onclick="toggleFiltroVencidos()" style="padding:6px 14px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:20px;color:var(--danger);font-family:var(--font-mono);font-size:12px;font-weight:700;cursor:pointer">⚠ Apenas vencidos</button>
       <button onclick="exportarAgRetiraExcel()" style="padding:8px 16px;background:#10b981;border:none;border-radius:var(--radius);color:#fff;font-family:var(--font-mono);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Exportar
@@ -510,6 +512,13 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
     <div class="f"><label class="fl">Observação (opcional)</label><input type="text" id="no-obs"/></div>
     <div class="f"><label class="fl">Vendedor (opcional)</label><input type="text" id="no-vendedor" placeholder="Nome do vendedor responsável"/></div>
     <div class="f"><label class="fl">Valor do Pedido R$ (opcional)</label><input type="number" id="no-valor" placeholder="0.00" step="0.01" min="0"/></div>
+    <div class="f" style="display:flex;align-items:center;gap:14px">
+      <label class="fl" style="margin-bottom:0">Pedido Parcial?</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="no-parcial" style="width:16px;height:16px;accent-color:var(--warn);cursor:pointer"/>
+        <span style="font-size:12px;color:var(--warn);font-weight:600">SIM — entrega parcial</span>
+      </label>
+    </div>
     <div class="ma"><button class="bcan" onclick="closeM('m-new-order')">Cancelar</button><button class="bok" onclick="createOrder()">Criar Pedido</button></div>
   </div>
 </div>
@@ -555,7 +564,8 @@ main{padding:20px 28px;width:100%;position:relative;z-index:1}
     <div class="f"><label class="fl">Número do Pedido *</label><input type="text" id="agr-m-num" placeholder="Ex: 00123"/></div>
     <div class="f"><label class="fl">Nome do Cliente *</label><input type="text" id="agr-m-cli" placeholder="Nome completo"/></div>
     <div class="f"><label class="fl">Número da Nota Fiscal *</label><input type="text" id="agr-m-nf" placeholder="Ex: 51200"/></div>
-    <div class="f"><label class="fl">Valor da Nota Fiscal R$ (opcional)</label><input type="number" id="agr-m-valor" placeholder="0.00" step="0.01" min="0"/></div>
+    <div class="f"><label class="fl">Valor da Nota Fiscal R$ *</label><input type="number" id="agr-m-valor" placeholder="0.00" step="0.01" min="0"/></div>
+    <div class="f"><label class="fl">Vendedor (opcional)</label><input type="text" id="agr-m-vendedor" placeholder="Nome do vendedor responsável"/></div>
     <div class="f"><label class="fl">Data do Faturamento *</label><input type="date" id="agr-m-data"/></div>
     <div class="ma"><button class="bcan" onclick="closeM('m-agr-manual')">Cancelar</button><button class="bok" onclick="inserirAgRetiraManual()">Inserir</button></div>
   </div>
@@ -1215,7 +1225,7 @@ async function aplicarFiltroRelatorios(){
 }
 function exportarPedidosExcel(){
   if(!REPORT_PEDIDOS_EXPORT.length){toast('Não há registros para exportar no período selecionado.','warn');return;}
-  var linhas=[['Entrada','Pedido','Cliente','Vendedor','NF','Valor Faturado','Tempo total','Destino'].join(';')];
+  var linhas=[['Entrada','Pedido','Cliente','NF','Valor Faturado','Tempo total','Destino'].join(';')];
   var totalValor=0;
   REPORT_PEDIDOS_EXPORT.forEach(function(o){
     var total=(tsMs(o.finalizado_at)||now())-tsMs(o.entrada_at);
@@ -1225,14 +1235,13 @@ function exportarPedidosExcel(){
       escapeCsv(o.entrada_at?new Date(o.entrada_at).toLocaleString('pt-BR'):'—'),
       escapeCsv('#'+(o.numero||'')),
       escapeCsv(o.nome_cliente||'—'),
-      escapeCsv(o.vendedor||'—'),
       escapeCsv(o.num_nota||'—'),
       escapeCsv(valorNF>0?valorNF.toFixed(2):'—'),
       escapeCsv(fmtT(Math.max(0,total))),
       escapeCsv(getDestinoFinalTexto(o))
     ].join(';'));
   });
-  if(totalValor>0)linhas.push(['','','','','TOTAL',totalValor.toFixed(2),'',''].join(';'));
+  if(totalValor>0)linhas.push(['','','','TOTAL',totalValor.toFixed(2),'',''].join(';'));
   var blob=new Blob(['\ufeff'+linhas.join('\r\n')],{type:'text/csv;charset=utf-8;'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -1449,13 +1458,17 @@ function renderCard(o,setor){
     ? '<div class="ready-chip"><span class="ready-dot"></span>Pronto para chamar no balcão</div>'
     : '';
 
+  var parcialBadge=o.parcial?'<span class="pb-parcial">⚡ PARCIAL</span>':'';
+  var vendedorHtml=o.vendedor?'<div style="font-size:11px;color:var(--cyan);margin-bottom:4px">Vendedor: '+o.vendedor+'</div>':'';
+
   // ── MUDANÇA: data-timer-entry para atualização in-place dos tempos ──
   var setorFreezeAttr = s.freeze ? ' data-timer-freeze="'+s.freeze+'"' : '';
   var totalFreezeAttr = t.freeze ? ' data-timer-freeze="'+t.freeze+'"' : '';
 
   return '<div class="card '+pC+' '+(o.status==='pronto_balcao'?'balcao-ready':'')+'">' +
-    '<div class="card-top"><span class="card-num">#'+o.numero+'</span></div>' +
+    '<div class="card-top"><span class="card-num">#'+o.numero+'</span>'+parcialBadge+'</div>' +
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">'+(o.nome_cliente?'<span class="card-cli" style="margin-bottom:0">'+o.nome_cliente+'</span>':'')+'<span class="card-meta" style="margin-bottom:0">'+hora+' · '+o.criado_por+'</span>'+prioBadge(prio)+'</div>' +
+    vendedorHtml +
     (podeCriarPedido()?'<div style="margin-bottom:6px"><button class="bmv" style="padding:2px 10px;font-size:10px;line-height:1.5;border-radius:6px" onclick="togglePrio(\''+o.id+'\',\''+prio+'\')">⇄ Alterar</button></div>':'') +
     prontoHtml +
     (o.num_nota?'<div class="card-nota">NF: '+o.num_nota+'</div>':'') +
@@ -1587,11 +1600,12 @@ async function chamarBalcao(id){
   }catch(e){toast(e.message,'err');}
   finally{ov(false);}
 }
-function openNewOrder(){el('no-num').value='';el('no-cli').value='';el('no-obs').value='';el('no-prio').value='retira';el('no-valor').value='';el('no-vendedor').value='';openM('m-new-order');}
+function openNewOrder(){el('no-num').value='';el('no-cli').value='';el('no-obs').value='';el('no-prio').value='retira';el('no-valor').value='';el('no-vendedor').value='';el('no-parcial').checked=false;openM('m-new-order');}
 async function createOrder(){
   var num=el('no-num').value.trim(),cli=el('no-cli').value.trim(),prio=el('no-prio').value;
   var valorPedido=parseFloat(el('no-valor').value)||0;
   var vendedor=(el('no-vendedor').value||'').trim();
+  var parcial=el('no-parcial').checked?true:false;
   if(!num){toast('Informe o número do pedido.','err');return;}
   if(!cli){toast('Informe o nome do cliente.','err');return;}
   var numNorm=normalizarNumero(num);
@@ -1612,7 +1626,7 @@ async function createOrder(){
     }
     closeM('m-new-order');
     var agora=new Date().toISOString();
-    var res=await sb.from('pedidos').insert({numero:numNorm,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,obs:el('no-obs').value,nome_cliente:cli,prioridade:prio,num_nota:'',valor_pedido:valorPedido,vendedor:vendedor});
+    var res=await sb.from('pedidos').insert({numero:numNorm,setor:'atendimento',setor_pendente:'',status:'em_andamento',criado_por:ME.login,entrada_at:agora,setor_entrada_at:agora,obs:el('no-obs').value,nome_cliente:cli,prioridade:prio,num_nota:'',valor_pedido:valorPedido,vendedor:vendedor,parcial:parcial});
     if(res.error)throw res.error;
     await refreshUI();
     toast('Pedido #'+numNorm+' criado — '+cli,'ok');
@@ -1783,12 +1797,12 @@ function renderRelatorios(){
     var t=(o.finalizado_at?tsMs(o.finalizado_at):now())-tsMs(o.entrada_at);
     var destino=getDestinoFinal(o);
     var valorNF=parseFloat(o.valor_nota_fat)||0;
-    return '<tr><td>'+(o.entrada_at?new Date(o.entrada_at).toLocaleString('pt-BR'):'—')+'</td><td style="font-family:var(--font-head);font-size:16px;font-weight:700">#'+o.numero+'</td><td>'+(o.nome_cliente||'—')+'</td><td style="color:var(--cyan);font-weight:600">'+(o.vendedor||'<span style="color:var(--muted)">—</span>')+'</td><td>'+(o.num_nota||'—')+'</td><td style="color:var(--accent);font-weight:600">'+(valorNF>0?fmtBRL(valorNF):'—')+'</td><td>'+fmtT(Math.max(0,t))+'</td><td>'+destino+'</td></tr>';
-  }).join(''):'<tr><td colspan="8" style="color:var(--muted);text-align:center">Nenhum pedido registrado no período selecionado.</td></tr>';
+    return '<tr><td>'+(o.entrada_at?new Date(o.entrada_at).toLocaleString('pt-BR'):'—')+'</td><td style="font-family:var(--font-head);font-size:16px;font-weight:700">#'+o.numero+'</td><td>'+(o.nome_cliente||'—')+'</td><td>'+(o.num_nota||'—')+'</td><td style="color:var(--accent);font-weight:600">'+(valorNF>0?fmtBRL(valorNF):'—')+'</td><td>'+fmtT(Math.max(0,t))+'</td><td>'+destino+'</td></tr>';
+  }).join(''):'<tr><td colspan="7" style="color:var(--muted);text-align:center">Nenhum pedido registrado no período selecionado.</td></tr>';
 
   if(el('pedidos-dia-tfoot')){
     if(totalValorRel>0){
-      el('pedidos-dia-tfoot').innerHTML='<tr style="background:var(--accent-dim);border-top:2px solid rgba(34,211,167,.3)"><td colspan="4" style="padding:12px 14px;font-weight:700;color:var(--accent)">TOTAL DO PERÍODO</td><td></td><td style="padding:12px 14px;font-weight:800;color:var(--accent);font-size:14px">'+fmtBRL(totalValorRel)+'</td><td colspan="2"></td></tr>';
+      el('pedidos-dia-tfoot').innerHTML='<tr style="background:var(--accent-dim);border-top:2px solid rgba(34,211,167,.3)"><td colspan="3" style="padding:12px 14px;font-weight:700;color:var(--accent)">TOTAL DO PERÍODO</td><td></td><td style="padding:12px 14px;font-weight:800;color:var(--accent);font-size:14px">'+fmtBRL(totalValorRel)+'</td><td colspan="2"></td></tr>';
     }else{
       el('pedidos-dia-tfoot').innerHTML='';
     }
@@ -1998,6 +2012,17 @@ el('tv-clock').textContent=fmtClock(new Date());
 var AGR_15_DAYS_MS = 15 * 24 * 60 * 60 * 1000;
 var OCC_48H_MS = 48 * 60 * 60 * 1000;
 var _agrAlertDismissed = {};
+var _agraFiltroVencidos = false;
+
+function toggleFiltroVencidos() {
+  _agraFiltroVencidos = !_agraFiltroVencidos;
+  var btn = el('btn-agr-vencidos');
+  if (btn) {
+    btn.style.background = _agraFiltroVencidos ? 'rgba(239,68,68,.35)' : 'rgba(239,68,68,.12)';
+    btn.textContent = _agraFiltroVencidos ? '✕ Todos' : '⚠ Apenas vencidos';
+  }
+  renderAgRetira();
+}
 
 async function enviarAgRetira(id) {
   ov(true);
@@ -2050,6 +2075,38 @@ async function agRetiraCancelar(id) {
   el('occ-desc').textContent = 'Informe o motivo do cancelamento.';
   el('occ-text').value = '';
   openM('m-ocorrencia');
+}
+
+// ── Retornar de Ag. Retira para Operação (pedidos parciais) ──
+async function agRetiraRetornarOperacao(id) {
+  var pedido = getPedidoById(id);
+  if (!pedido) { toast('Pedido não encontrado.', 'err'); return; }
+  if (!pedido.parcial) { toast('Apenas pedidos marcados como PARCIAL podem usar esta função.', 'warn'); return; }
+  if (!confirm('Retornar pedido #' + pedido.numero + ' para a operação? Ele voltará ao Atendimento para processar a parte restante.')) return;
+  ov(true);
+  try {
+    var agora = new Date().toISOString();
+    var res = await sb.from('pedidos').update({
+      status: 'em_andamento',
+      setor: 'atendimento',
+      setor_pendente: '',
+      pendente_desde: null,
+      setor_entrada_at: agora,
+      finalizado_at: null,
+      num_nota: '',
+      valor_nota_fat: 0
+    }).eq('id', id);
+    if (res.error) throw res.error;
+    upsertPedidoLocal({id: id, status: 'em_andamento', setor: 'atendimento', setor_pendente: '', pendente_desde: null, setor_entrada_at: agora, finalizado_at: null, num_nota: '', valor_nota_fat: 0});
+    var linha = buildOccurrenceLine('PARCIAL', 'Ag. Retira', 'Pedido parcial retornado para a operação para processar saldo restante.');
+    await appendObsPedido(id, linha);
+    _lastPainelSnap = '';
+    atualizarTelasAtivas();
+    refreshPedidosSoon(500);
+    renderAgRetira();
+    toast('Pedido #' + pedido.numero + ' retornado para Atendimento.', 'ok');
+  } catch(e) { toast(e.message, 'err'); }
+  finally { ov(false); }
 }
 
 // ── Enviar para aba Ocorrências ──
@@ -2236,7 +2293,9 @@ async function inserirAgRetiraManual() {
   var nf = (el('agr-m-nf').value || '').trim();
   var data = (el('agr-m-data').value || '').trim();
   var valorNF = parseFloat(el('agr-m-valor').value) || 0;
+  var vendedorAgr = (el('agr-m-vendedor').value || '').trim();
   if (!num || !cli || !nf || !data) { toast('Preencha todos os campos obrigatórios.', 'err'); return; }
+  if (valorNF <= 0) { toast('Informe o valor da nota fiscal.', 'err'); return; }
   // Ag. Retira manual permite repetição de número (notas parciais do mesmo pedido).
   // Apenas avisa se já existe outro registro com mesmo número para consciência do operador.
   var dupRes = await sb.from('pedidos').select('id,numero,status,criado_por,entrada_at').eq('status','ag_retira');
@@ -2255,6 +2314,7 @@ async function inserirAgRetiraManual() {
       nome_cliente: cli,
       num_nota: nf,
       valor_nota_fat: valorNF,
+      vendedor: vendedorAgr,
       setor: 'separacao',
       setor_pendente: '',
       status: 'ag_retira',
@@ -2274,16 +2334,20 @@ async function inserirAgRetiraManual() {
     el('agr-m-cli').value = '';
     el('agr-m-nf').value = '';
     el('agr-m-valor').value = '';
+    el('agr-m-vendedor').value = '';
     el('agr-m-data').value = '';
   } catch(e) { toast(e.message, 'err'); }
   finally { ov(false); }
 }
 
 function renderAgRetira() {
-  var items = PEDIDOS.filter(function(o) { return o.status === 'ag_retira'; });
+  var all = PEDIDOS.filter(function(o) { return o.status === 'ag_retira'; });
+  var items = _agraFiltroVencidos
+    ? all.filter(function(o){ return (now() - tsMs(o.pendente_desde)) >= AGR_15_DAYS_MS; })
+    : all;
   renderAgRetiraBadge();
   if(el('btn-agr-manual'))el('btn-agr-manual').style.display=(isAdmin()||meuSetor()==='atendimento')?'flex':'none';
-  if (el('agr-count')) el('agr-count').textContent = items.length + ' pedido(s)';
+  if (el('agr-count')) el('agr-count').textContent = (_agraFiltroVencidos?'Vencidos: '+items.length+' / ':'')+all.length + ' pedido(s)';
   if (el('agr-empty')) el('agr-empty').style.display = items.length ? 'none' : 'block';
   if (!el('agr-tbody')) return;
   if(el('agr-table'))el('agr-table').style.display=items.length?'':'none';
@@ -2292,7 +2356,7 @@ function renderAgRetira() {
   var totalValor = items.reduce(function(s,o){return s+(parseFloat(o.valor_nota_fat)||0);},0);
   if(el('agr-valor-total')){
     if(totalValor>0){
-      el('agr-valor-total').textContent='Total em retirada: '+fmtBRL(totalValor);
+      el('agr-valor-total').textContent=(_agraFiltroVencidos?'Vencidos: ':'Total em retirada: ')+fmtBRL(totalValor);
       el('agr-valor-total').style.display='';
     }else{
       el('agr-valor-total').style.display='none';
@@ -2307,11 +2371,12 @@ function renderAgRetira() {
     var dataEntrada = o.pendente_desde ? new Date(o.pendente_desde).toLocaleDateString('pt-BR') : '—';
     var dotClass = dias >= 15 ? 'dot-red' : dias >= 10 ? 'dot-yellow' : 'dot-green';
     var btnOcc = expired ? '<button class="boc" onclick="enviarParaOcorrencias(\'' + o.id + '\')">Ocorrências</button>' : '';
+    var btnParcial = o.parcial ? '<button class="bmv" style="background:#f59e0b" onclick="agRetiraRetornarOperacao(\'' + o.id + '\')">↩ Retornar Operação</button>' : '';
     var valorNF = parseFloat(o.valor_nota_fat) || 0;
 
     return '<tr>' +
       '<td><span class="dot-status ' + dotClass + '"></span></td>' +
-      '<td style="font-family:var(--font-head);font-size:15px;font-weight:700">#' + o.numero + '</td>' +
+      '<td style="font-family:var(--font-head);font-size:15px;font-weight:700">#' + o.numero + (o.parcial?'<span class="pb-parcial" style="margin-left:6px;font-size:9px">PARCIAL</span>':'') + '</td>' +
       '<td>' + (o.nome_cliente || '—') + '</td>' +
       '<td style="color:var(--cyan);font-weight:600">' + (o.vendedor || '<span style="color:var(--muted)">—</span>') + '</td>' +
       '<td style="color:var(--sep)">' + (o.num_nota || '—') + '</td>' +
@@ -2320,6 +2385,7 @@ function renderAgRetira() {
       '<td><span style="font-weight:600;color:' + (dias>=15?'var(--danger)':dias>=10?'var(--warn)':'var(--accent)') + '">' + dias + ' dia(s)</span></td>' +
       '<td><div class="act-btns">' +
         '<button class="bcall" onclick="agRetiraChamarBalcao(\'' + o.id + '\')" style="animation:none">Chamar balcão</button>' +
+        btnParcial +
         btnOcc +
         '<button class="bexc" onclick="agRetiraCancelar(\'' + o.id + '\')">Cancelar</button>' +
       '</div></td>' +
